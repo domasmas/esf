@@ -1,8 +1,8 @@
 ﻿using Microsoft.Owin;
 using Owin;
 
-[assembly: OwinStartupAttribute(typeof(Esf.Web.Startup))]
-namespace Esf.Web
+[assembly: OwinStartupAttribute(typeof(Esf.Website.Startup))]
+namespace Esf.Website
 {
     public partial class Startup
     {

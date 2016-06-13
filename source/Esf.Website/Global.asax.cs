@@ -1,7 +1,7 @@
 ﻿using System.Web.Mvc;
 using System.Web.Routing;
 
-namespace Esf.Web
+namespace Esf.Website
 {
     public class MvcApplication : System.Web.HttpApplication
     {

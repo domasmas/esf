@@ -1,6 +1,6 @@
 ﻿using System.Web.Mvc;
 
-namespace Esf.Web.Controllers
+namespace Esf.Website.Controllers
 {
     public class HomeController : Controller
     {
