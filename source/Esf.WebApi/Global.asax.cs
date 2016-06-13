@@ -1,6 +1,5 @@
 ﻿using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.Routing;
 
 namespace Esf.WebApi
 {
@@ -10,7 +9,6 @@ namespace Esf.WebApi
         {
             AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-            RouteConfig.RegisterRoutes(RouteTable.Routes);
         }
     }
 }
