@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website", "Esf.Website\Esf.Website.csproj", "{08905CC7-E07E-415F-9F05-3586BAF5CB56}"
 EndProject
@@ -18,6 +18,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Domain.Tests", "Esf.Domain.Tests\Esf.Domain.Tests.csproj", "{369708B4-28B4-48BE-BF18-99C7161947A7}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataAccess", "DataAccess", "{A93FB772-61A4-4531-8BFE-C688445673B6}"
+	ProjectSection(SolutionItems) = preProject
+		DbDeployment.ps1 = DbDeployment.ps1
+		DbDeploymentConfig.cfg = DbDeploymentConfig.cfg
+		StartDbServer.ps1 = StartDbServer.ps1
+		StopDbServer.ps1 = StopDbServer.ps1
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{D346AEB2-6C24-4DB2-B7E0-85474ADD22E0}"
 EndProject
