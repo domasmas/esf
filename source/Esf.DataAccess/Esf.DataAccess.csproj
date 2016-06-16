@@ -52,8 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EsState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StateRepository.cs" />
+    <Compile Include="EsStatesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

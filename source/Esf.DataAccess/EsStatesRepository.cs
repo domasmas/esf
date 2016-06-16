@@ -8,16 +8,42 @@ using MongoDB.Driver;
 
 namespace Esf.DataAccess
 {
-    public class StateRepository
+    public class EsStatesRepository
     {
         private IMongoClient _client;
         private IMongoDatabase _database;
+        private const string CollectionName = "esStates";
 
-        public StateRepository()
+        public EsStatesRepository()
         {
             _client = new MongoClient();
-            const string databaseName = "ESFiddle";
+            const string databaseName = "esFiddle";
             _database = _client.GetDatabase(databaseName);
+        }
+
+        public async Task<IList<EsState>> GetEsStatesCollection()
+        {
+            var collection = _database.GetCollection<EsState>(CollectionName);
+            IList<EsState> result = new List<EsState>();
+            var filter = new BsonDocument();
+            using (var cursor = await collection.FindAsync<EsState>(filter))
+            {
+                while (await cursor.MoveNextAsync())
+                {
+                    var batch = cursor.Current;
+                    foreach (var document in batch)
+                    {
+                        result.Add(document);
+                    }
+                }
+            };
+            return result;
+        }
+
+        public async Task InsertEsState(EsState state)
+        {
+            var esStatesCollection = _database.GetCollection<EsState>("esStates");
+            await esStatesCollection.InsertOneAsync(state);
         }
 
         public async Task InsertSampleDate()
@@ -35,7 +61,7 @@ namespace Esf.DataAccess
 
         public async Task ReadSampleDate()
         {
-            var collection = _database.GetCollection<BsonDocument>("states");
+            var collection = _database.GetCollection<BsonDocument>(CollectionName);
             var filter = new BsonDocument();
             var count = 0;
             using (var cursor = await collection.FindAsync(filter))
