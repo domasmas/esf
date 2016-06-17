@@ -43,6 +43,7 @@ namespace Esf.DataAccess
         public async Task InsertEsState(EsState state)
         {
             var esStatesCollection = _database.GetCollection<EsState>("esStates");
+            state._id = ObjectId.GenerateNewId();
             await esStatesCollection.InsertOneAsync(state);
         }
 

@@ -1,11 +1,10 @@
-function deployDb($esfSolutionDirectory, $mongoDBServerDirectory, $dbRootDirectory, $dbName)
+function deployDb($mongoDBServerDirectory, $mongoDbPath, $mongoDbLogPath)
 {
     $mongoDBServer = $mongoDBServerDirectory + "mongod.exe"
-    $dbPath = $dbRootDirectory + $dbName
-    $logPath = $dbRootDirectory + "log\" + $dbName + ".log"
-    New-Item -ItemType Directory -Force -Path $dbPath
-    New-Item -ItemType File -Force $logPath
-    & $mongoDBServer --dbpath $dbPath --logpath $logPath
+    New-Item -ItemType Directory -Force -Path $mongoDbPath
+    New-Item -ItemType File -Force $mongoDbLogPath
+    & $mongoDBServer --dbpath $mongoDbPath --logpath $mongoDbLogPath
 }
-
-deployDb "C:\Sources\esf\source\" "C:\Program Files\MongoDB\Server\3.2\bin\" "C:\databases\" "EsFiddle"
+$dbDeploymentConfig = (Get-Content .\dbDeploymentConfig.json) -join "`n" | ConvertFrom-Json
+echo $dbDeploymentConfig
+deployDb $dbDeploymentConfig.mongoDbServerDirectory $dbDeploymentConfig.mongoDbPath $dbDeploymentConfig.mongoDbLogPath
