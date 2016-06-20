@@ -91,7 +91,25 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Esf.DataAccess.Deployment\dbDeploymentConfig.json">
+      <Link>DeploymentScripts\dbDeploymentConfig.json</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Esf.DataAccess.Deployment\DeployDb.ps1">
+      <Link>DeploymentScripts\DeployDb.ps1</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\Esf.DataAccess.Deployment\StopDbServer.ps1">
+      <Link>DeploymentScripts\StopDbServer.ps1</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="..\Esf.DataAccess.Deployment\StopDbServer.js">
+      <Link>DeploymentScripts\StopDbServer.js</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

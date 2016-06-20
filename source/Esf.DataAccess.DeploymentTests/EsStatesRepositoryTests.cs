@@ -15,10 +15,19 @@ namespace Esf.DataAccess.Tests
     public class EsStatesRepositoryTests
     {
         private DbDeploymentConfig _dbDeploymentConfig;
+
+        private string GetDeploymentScriptPath(string fileName)
+        {
+            
+            string projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            string result = Path.Combine(projectDirectory, "DeploymentScripts", fileName);
+            return result;
+        }
+
         [OneTimeSetUp]
         public void Init()
         {
-            const string dbDeploymentConfigPath = "C:\\ESFiddle\\esf\\source\\dbDeploymentConfig.json";
+            string dbDeploymentConfigPath = GetDeploymentScriptPath("dbDeploymentConfig.json");
             var jsonContent = File.ReadAllText(dbDeploymentConfigPath);
             _dbDeploymentConfig = JsonConvert.DeserializeObject<DbDeploymentConfig>(jsonContent);
             Directory.Delete(_dbDeploymentConfig.mongoDbPath, true);
@@ -35,7 +44,7 @@ namespace Esf.DataAccess.Tests
         [OneTimeTearDown]
         public void TearDown()
         {
-            const string stopDbServerPath = "C:\\ESFiddle\\esf\\source\\StopDbServer.js";
+            string stopDbServerPath = GetDeploymentScriptPath("StopDbServer.js");
             Process.Start(_dbDeploymentConfig.mongoDbServerDirectory + "mongo.exe", stopDbServerPath);
         }
 

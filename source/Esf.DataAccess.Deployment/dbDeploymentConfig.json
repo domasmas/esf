@@ -1,0 +1,5 @@
+{
+  "mongoDbServerDirectory": "C:\\Program Files\\MongoDB\\Server\\3.2\\bin\\",
+  "mongoDbPath": "C:\\Databases\\EsFiddle\\DB",
+  "mongoDbLogPath": "C:\\Databases\\EsFiddle\\Log.log"
+}
