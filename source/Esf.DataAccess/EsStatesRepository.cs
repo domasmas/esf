@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Linq.Expressions;
 
 namespace Esf.DataAccess
 {
-    public class EsStatesRepository
+    public class EsStatesRepository : IEsStatesRepository
     {
         private IMongoDatabase _database;
 
@@ -27,14 +25,25 @@ namespace Esf.DataAccess
         
         public async Task<EsState> GetEsState(string id)
         {
-            var esFilter = Builders<EsState>.Filter;
-            return await EsStatesCollection.Find(esFilter.Eq((esState) => esState.Id, id)).FirstOrDefaultAsync();
+            Expression<Func<EsState, bool>> filter = (esState) => esState.Id == id;
+            return await EsStatesCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
+        public async Task<IList<EsState>> FindEsStates(Expression<Func<EsState, bool>> filter)
+        {
+            return await EsStatesCollection.Find(filter).ToListAsync();
         }
 
         public async Task<EsState> InsertEsState(EsState state)
         {
             await EsStatesCollection.InsertOneAsync(state);
             return state;
+        }
+
+        public async Task<bool> DeleteEsState(string id)
+        {
+            DeleteResult deleteResult = await EsStatesCollection.DeleteOneAsync<EsState>((esState) => esState.Id == id);
+            return deleteResult.IsAcknowledged;
         }
     }
 }

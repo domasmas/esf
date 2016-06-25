@@ -40,6 +40,7 @@ namespace Esf.DataAccess.Tests
             _esState.StateUrl = stateUrl;
             return this;
         }
+
         private EsState _esState;
 
         public EsState Build()

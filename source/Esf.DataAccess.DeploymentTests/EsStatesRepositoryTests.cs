@@ -1,14 +1,10 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Core.Clusters;
-using Newtonsoft.Json;
+using MongoDB.Driver.Core.Misc;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -62,36 +58,53 @@ namespace Esf.DataAccess.Tests
             do
             {
                 if (_database.Client.Cluster.Description.State == ClusterState.Connected)
+                {
+                    Assert.AreEqual(_database.DatabaseNamespace.DatabaseName, "esFiddle");
                     Assert.Pass();
+                }
                 Thread.Sleep(100);
             }
             while (DateTime.Now < timeout);
             Assert.Fail(); 
         }
-
+        
         [Test]
-        public async Task TestEsStatesInsert()
+        public void TestDatabaseVersionIs3_2()
         {
-            var esStatesRepository = new EsStatesRepository(_database);
-            var testData1 = new EsStateBuilder().SetQuery("query1").Build();
-            var testData2 = new EsStateBuilder().SetQuery("query3").Build();
-            var testData3 = new EsStateBuilder().SetQuery("query3").Build();
-
-            var inserted1 = await esStatesRepository.InsertEsState(testData1);
-            var inserted2 = await esStatesRepository.InsertEsState(testData2);
-            var inserted3 = await esStatesRepository.InsertEsState(testData3);           
+            SemanticVersion databaseVersion = _database.Client.Cluster.Description.Servers[0].Version;
+            Assert.AreEqual(databaseVersion.Major, 3);
+            Assert.AreEqual(databaseVersion.Minor, 2);
+            Assert.AreEqual(databaseVersion.PreRelease, null);
         }
 
         [Test]
-        public async Task TestEsStatesRead()
+        public async Task TestEsStatesCollectionInsertReadDelete()
         {
             var esStatesRepository = new EsStatesRepository(_database);
-            var testData = new EsStateBuilder().SetQuery("query1").Build();
+            Func<int> getEsStatesRepositoryCount = () => (esStatesRepository.FindEsStates((esState) => true)).Result.Count; 
+            int initialEsStatesCount = getEsStatesRepositoryCount();
+            var testData1 = new EsStateBuilder().SetQuery("query1").SetMapping("mapping").SetStateUrl(Guid.NewGuid())
+                    .SetDocuments("doc1", "doc2").Build();
 
-            var inserted = await esStatesRepository.InsertEsState(testData);
-            var read = await esStatesRepository.GetEsState(inserted.Id);
-            Assert.AreEqual(inserted.Id, read.Id);
-            Assert.AreEqual(inserted.Query, read.Query);
+            var insertedState = await esStatesRepository.InsertEsState(testData1);
+
+            var readState = await esStatesRepository.GetEsState(insertedState.Id);
+            Assert.AreEqual(insertedState.Id, readState.Id);
+            Assert.AreEqual(insertedState.Query, readState.Query);
+            Assert.AreEqual(insertedState.Mapping, readState.Mapping);
+            Assert.AreEqual(insertedState.StateUrl, readState.StateUrl);
+            Action<string, string> verifyInsertedEqualsRead = (string insertedDoc, string readDoc) =>
+            {
+                Assert.AreEqual(insertedDoc, readDoc);
+            };
+            for (int i = 0; i < insertedState.Documents.Count; i++)
+                verifyInsertedEqualsRead(insertedState.Documents[i], readState.Documents[i]);
+
+            bool isAcknowledgedDeletion = await esStatesRepository.DeleteEsState(readState.Id);
+            Assert.IsTrue(isAcknowledgedDeletion);
+
+            int finalEsStatesCount = getEsStatesRepositoryCount();
+            Assert.AreEqual(initialEsStatesCount, finalEsStatesCount);
         }
     }
 }
