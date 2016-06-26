@@ -1,5 +1,46 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@using Esf.Website.Extensions
+@{
+    Layout = null;
 }
 
-<h1>Hello World</h1>
+<html>
+<head>
+    <title>Angular 2 QuickStart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @if (Html.IsDebug())
+    {
+        <link rel="stylesheet" href="@Url.Content("~/wwwroot/content/styles.css")">
+    }
+    else
+    {
+        <link rel="stylesheet" href="@Url.Content("~/wwwroot/css/styles.css")">
+    }
+</head>
+<body>
+    <my-app>Loading...</my-app>
+
+    @if (Html.IsDebug())
+    {
+        @*<script src="@Url.Content("~/wwwroot/lib/vendors.js")"></script>
+        <script src="@Url.Content("~/wwwroot/app/app.js")"></script>*@
+
+        <script src="@Url.Content("~/node_modules/core-js/client/shim.min.js")"></script>
+        <script src="@Url.Content("~/node_modules/zone.js/dist/zone.js")"></script>
+        <script src="@Url.Content("~/node_modules/reflect-metadata/Reflect.js")"></script>
+        <script src="@Url.Content("~/node_modules/systemjs/dist/system.src.js")"></script>
+        <script src="@Url.Content("~/systemjs.config.js")"></script>
+        <script>
+            System
+                .import('app')
+                .catch(function(err) {
+                    console.error(err);
+                });
+        </script>
+    }
+    else
+    {
+        <script src="@Url.Content("~/wwwroot/js/app.bundle.js")"></script>
+    }
+</body>
+</html>
