@@ -22,6 +22,8 @@ bld/
 !/bin/
 /bin/*/*
 [Oo]bj/
+wwwroot/
+typings/
 
 # Visual Studio 2015 cache/options directory
 .vs/
