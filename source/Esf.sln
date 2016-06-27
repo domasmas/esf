@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website", "Esf.Website\Esf.Website.csproj", "{08905CC7-E07E-415F-9F05-3586BAF5CB56}"
 EndProject
@@ -13,7 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Domain", "Esf.Domain\Es
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi.Tests", "Esf.WebApi.Tests\Esf.WebApi.Tests.csproj", "{84C7E640-3668-4654-BA39-EC3FBBDD4A59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.DataAccess.Tests", "Esf.DataAccess.Tests\Esf.DataAccess.Tests.csproj", "{8B865B7E-4120-422B-8294-413A6129C8AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.DataAccess.DeploymentTests", "Esf.DataAccess.DeploymentTests\Esf.DataAccess.DeploymentTests.csproj", "{8B865B7E-4120-422B-8294-413A6129C8AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Domain.Tests", "Esf.Domain.Tests\Esf.Domain.Tests.csproj", "{369708B4-28B4-48BE-BF18-99C7161947A7}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Website", "Website", "{30C098A3-59BF-456B-934C-C955CA8823C9}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{851B989A-B3D4-4D3E-B8B8-873488553BE6}"
+EndProject
+Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Esf.DataAccess.Deployment", "Esf.DataAccess.Deployment\Esf.DataAccess.Deployment.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +61,10 @@ Global
 		{369708B4-28B4-48BE-BF18-99C7161947A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{369708B4-28B4-48BE-BF18-99C7161947A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{369708B4-28B4-48BE-BF18-99C7161947A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +77,6 @@ Global
 		{84C7E640-3668-4654-BA39-EC3FBBDD4A59} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
 		{8B865B7E-4120-422B-8294-413A6129C8AC} = {A93FB772-61A4-4531-8BFE-C688445673B6}
 		{369708B4-28B4-48BE-BF18-99C7161947A7} = {D346AEB2-6C24-4DB2-B7E0-85474ADD22E0}
+		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {A93FB772-61A4-4531-8BFE-C688445673B6}
 	EndGlobalSection
 EndGlobal
