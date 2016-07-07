@@ -1,2 +1,2 @@
-﻿gulp build
-gulp release
+﻿npm run gulp build
+npm run gulp release

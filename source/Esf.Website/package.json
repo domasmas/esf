@@ -4,7 +4,8 @@
   "scripts": {
     "lite": "lite-server",
     "postinstall": "typings install",
-    "typings": "typings"
+    "typings": "typings",
+    "gulp": "gulp"
   },
   "license": "ISC",
   "dependencies": {
