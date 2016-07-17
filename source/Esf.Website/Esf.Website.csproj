@@ -208,6 +208,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
+    <Content Include="Scripts\app\esFiddler.component.html" />
     <Content Include="SetupEnvironment.ps1" />
     <None Include="systemjs.config.js" />
     <Content Include="Web.config" />
@@ -232,7 +233,8 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\app\app.component.ts" />
+    <TypeScriptCompile Include="Scripts\app\esFiddler.component.ts" />
+    <TypeScriptCompile Include="Scripts\app\esfState\esfState.service.ts" />
     <TypeScriptCompile Include="Scripts\app\main.ts" />
   </ItemGroup>
   <ItemGroup>

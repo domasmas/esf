@@ -1,4 +1,5 @@
-﻿var gulp = require('gulp');
+﻿/// <binding BeforeBuild='build:ts-dev' ProjectOpened='watch' />
+var gulp = require('gulp');
 var tsc = require('gulp-typescript');
 var tscConfig = require('./tsconfig.json');
 var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
@@ -147,7 +148,6 @@ gulp.task('build:ts-dev',
     function (callback) {
         runSequence(
             'compile:ts',
-            'bundle:app',
             callback
         );
     });

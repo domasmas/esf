@@ -62,10 +62,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Esf.WebApi\Esf.WebApi.csproj">
-      <Project>{7312dc2c-31e5-4b05-9aad-6683ca12fe33}</Project>
-      <Name>Esf.WebApi</Name>
-    </ProjectReference>
+    <None Include="app.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

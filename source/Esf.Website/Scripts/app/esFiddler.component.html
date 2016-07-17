@@ -1,0 +1,30 @@
+﻿<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">ESFiddle</a>
+        </div>
+        <button type="button" (click)="queryRunner.run()" class="btn btn-default navbar-btn">Run</button>
+    </div>
+</nav>
+<section id="editors" class="container">
+    <div class="row">
+        <div class="col-xs-6">
+            <label>Mapping</label>
+            <textarea [(ngModel)]="state.mapping" style="min-width: 100%" rows="10"></textarea>
+        </div>
+        <div class="col-xs-6">
+            <label>Documents</label>
+            <textarea [(ngModel)]="state.documents" style="min-width: 100%" rows="10"></textarea>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <label>Query</label>
+            <textarea [(ngModel)]="state.query" style="min-width: 100%" rows="10"></textarea>
+        </div>
+        <div class="col-xs-6">
+            <label>Result</label>
+            <pre>{{queryRunner.queryResult}}</pre>
+        </div>
+    </div>
+</section>
