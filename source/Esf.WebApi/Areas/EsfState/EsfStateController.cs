@@ -3,14 +3,16 @@ using System.Web.Http;
 
 namespace Esf.WebApi.Areas.EsfState
 {
+    [RoutePrefix("states")]
     public class EsfStateController : ApiController
     {
-        // GET: api/EsfState
+        [Route("")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
+        [Route("{id:int}")]
         // GET: api/EsfState/5
         public string Get(int id)
         {

@@ -16,10 +16,12 @@ export class EsFiddlerComponent {
         this.state = new EsfState();
         this.esfStateService.getInitialState().subscribe((state: EsfStateDto) => {
             this.state = {
-                documents: state.Documents,
-                mapping: state.Mapping,
-                query: state.Query   
+                documents: state.documents,
+                mapping: state.mapping,
+                query: state.query   
             };
+        },(error: Error) => {
+            console.log(error);
         });
         this.queryRunner = new EsfQueryRunner(esfStateService);
     }

@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website", "Esf.Website\Esf.Website.csproj", "{08905CC7-E07E-415F-9F05-3586BAF5CB56}"
 EndProject
@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{851B98
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Esf.DataAccess.Deployment", "Esf.DataAccess.Deployment\Esf.DataAccess.Deployment.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi", "Esf.WebApi\Esf.WebApi.csproj", "{DBC84DBB-5047-441B-94B4-896A27DF6CD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi", "Esf.WebApi\Esf.WebApi.csproj", "{24A64EE9-A151-4131-8136-7680007AFB46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,10 +61,10 @@ Global
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DBC84DBB-5047-441B-94B4-896A27DF6CD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DBC84DBB-5047-441B-94B4-896A27DF6CD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBC84DBB-5047-441B-94B4-896A27DF6CD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DBC84DBB-5047-441B-94B4-896A27DF6CD0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24A64EE9-A151-4131-8136-7680007AFB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24A64EE9-A151-4131-8136-7680007AFB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24A64EE9-A151-4131-8136-7680007AFB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24A64EE9-A151-4131-8136-7680007AFB46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -77,6 +77,6 @@ Global
 		{8B865B7E-4120-422B-8294-413A6129C8AC} = {A93FB772-61A4-4531-8BFE-C688445673B6}
 		{369708B4-28B4-48BE-BF18-99C7161947A7} = {D346AEB2-6C24-4DB2-B7E0-85474ADD22E0}
 		{6CAFC0C6-A428-4D30-A9F9-700E829FEA51} = {A93FB772-61A4-4531-8BFE-C688445673B6}
-		{DBC84DBB-5047-441B-94B4-896A27DF6CD0} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
+		{24A64EE9-A151-4131-8136-7680007AFB46} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
 	EndGlobalSection
 EndGlobal

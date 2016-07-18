@@ -1,21 +1,28 @@
-﻿import {Observable } from 'rxjs/Rx';
+﻿import 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 import {Http, Response} from '@angular/http';
 import { Injectable } from '@angular/core';
 
 @Injectable()
 export class EsfStateService {
-    private static serviceUrl: string = 'http://localhost:54328';
+    private static serviceUrl: string = 'http://localhost:11116';
 
     constructor(private http: Http) {
         
     }
     getInitialState(): Observable<EsfStateDto> {
-        return this.http.get(`${EsfStateService.serviceUrl}/state/new/`).map((response: Response) => <EsfStateDto>response.json());
+        var url = `${EsfStateService.serviceUrl}/states/new`;
+        return this.http.get(url).map((res: Response) => {
+            var result = res.json();
+            return <EsfStateDto>result;
+        }, (error: Error) => {
+            return error;
+        });
     }
 }
 
 export class EsfStateDto {
-    Mapping: string;
-    Documents: string;
-    Query: string;
+    mapping: string;
+    documents: string;
+    query: string;
 }
