@@ -37,10 +37,8 @@ namespace Esf.DataAccess.Tests
             if (Directory.Exists(_dbDeploymentConfig.mongoDbPath))
                 Directory.Delete(_dbDeploymentConfig.mongoDbPath, true);
             Directory.CreateDirectory(_dbDeploymentConfig.mongoDbPath);
-            using (File.CreateText(_dbDeploymentConfig.mongoDbLogPath))
-            {
-
-            }
+            string logPath = Path.GetDirectoryName(_dbDeploymentConfig.mongoDbPath);
+            Directory.CreateDirectory(logPath);
         }
 
         [OneTimeTearDown]
@@ -53,7 +51,7 @@ namespace Esf.DataAccess.Tests
         [Test]
         public void TestDatabaseIsUp()
         {
-            TimeSpan timeoutSpan = new TimeSpan(0, 0, 0, 0, 500);
+            TimeSpan timeoutSpan = new TimeSpan(0, 0, 0, 0, 5000);
             DateTime timeout = DateTime.Now.Add(timeoutSpan);
             do
             {
