@@ -2,7 +2,8 @@ function deployDb($mongoDBServerDirectory, $mongoDbPath, $mongoDbLogPath)
 {
     $mongoDBServer = $mongoDBServerDirectory + "mongod.exe"
     New-Item -ItemType Directory -Force -Path $mongoDbPath
-    New-Item -ItemType File -Force $mongoDbLogPath
+    $mongoDBLogPathDirectory = Split-Path $mongoDbLogPath
+    New-Item -ItemType Directory -Force -Path  $mongoDBLogPathDirectory
     & $mongoDBServer --dbpath $mongoDbPath --logpath $mongoDbLogPath
 }
 $dbDeploymentConfig = (Get-Content .\dbDeploymentConfig.json) -join "`n" | ConvertFrom-Json

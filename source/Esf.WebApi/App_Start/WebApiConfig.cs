@@ -27,7 +27,7 @@ namespace Esf.WebApi
                 name: "DefaultApi",
                 routeTemplate: "{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
-            );            
+            );
         }
 
         private static void ConfigureJsonSerializer(HttpConfiguration config)

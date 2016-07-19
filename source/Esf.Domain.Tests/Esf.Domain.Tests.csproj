@@ -62,6 +62,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">
+      <Project>{37f79771-977a-4e8e-8f38-1a128254e711}</Project>
+      <Name>Esf.DataAccess</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Esf.Domain\Esf.Domain.csproj">
       <Project>{64e089b7-0f7e-4afe-9980-d182ab7aa241}</Project>
       <Name>Esf.Domain</Name>

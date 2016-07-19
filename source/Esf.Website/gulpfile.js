@@ -1,4 +1,4 @@
-﻿/// <binding AfterBuild='build, build:ts-dev' ProjectOpened='build' />
+﻿/// <binding AfterBuild='build-dev' ProjectOpened='build' />
 var gulp = require('gulp');
 var tsc = require('gulp-typescript');
 var tscConfig = require('./tsconfig.json');

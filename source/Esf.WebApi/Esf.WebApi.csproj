@@ -30,7 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\bin\Esf.WebApi\</OutputPath>
+    <OutputPath>bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -153,7 +153,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
-    <Compile Include="Areas\EsfState\EsfStateController.cs" />
     <Compile Include="Areas\EsfState\EsfStateDto.cs" />
     <Compile Include="Areas\EsfState\New\NewEsfStateController.cs" />
     <Compile Include="Global.asax.cs">
@@ -177,6 +176,16 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">
+      <Project>{37f79771-977a-4e8e-8f38-1a128254e711}</Project>
+      <Name>Esf.DataAccess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Esf.Domain\Esf.Domain.csproj">
+      <Project>{64e089b7-0f7e-4afe-9980-d182ab7aa241}</Project>
+      <Name>Esf.Domain</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
