@@ -6,7 +6,7 @@
     "typings": "typings",
     "gulp": "gulp"
   },
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "@angular/common": "2.0.0-rc.4",
     "@angular/compiler": "2.0.0-rc.4",
@@ -25,12 +25,11 @@
     "rxjs": "5.0.0-beta.6",
     "zone.js": "^0.6.12",
     "angular2-in-memory-web-api": "0.0.14",
-    "bootstrap": "^3.3.6",
 
     "bootstrap-less": "^3.3.8",
     "gulp": "^3.9.1",
     "gulp-typescript": "^2.13.6"
-  },
+  }, 
   "devDependencies": {
     "concurrently": "^2.0.0",
     "gulp-clean": "^0.3.2",
@@ -40,11 +39,10 @@
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^1.5.4",
     "gulp-watch": "^4.3.8",
-    "lite-server": "^2.2.0",
     "ntypescript": "^1.201606180105.1",
     "run-sequence": "^1.2.1",
     "systemjs-builder": "^0.15.23",
     "typescript": "^1.9.0-dev",
-    "typings": "1.0.4"
+    "typings": "1.0.4" 
   }
 }
