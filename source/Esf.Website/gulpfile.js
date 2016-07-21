@@ -1,4 +1,5 @@
-﻿/// <binding AfterBuild='build-dev' ProjectOpened='build, watch' />
+﻿/// <binding AfterBuild='after-build' ProjectOpened='project-open' />
+
 var gulp = require('gulp');
 var tsc = require('gulp-typescript');
 var tscConfig = require('./tsconfig.json');
@@ -39,7 +40,7 @@ gulp.task('clean:content',
             .pipe(clean({ force: true }));
     });
 
-gulp.task('compile:ts', ['clean:app'],
+gulp.task('compile:ts',
     function() {
         var sourceTsFiles = [
             './Scripts/app/**/*.ts',
@@ -58,7 +59,7 @@ gulp.task('compile:ts', ['clean:app'],
         return tsResult;
     });
 
-gulp.task('copy:vendor', ['clean:vendor'], function () {
+gulp.task('copy:vendor', function () {
     return gulp.src([
         'node_modules/rxjs/**/*',
         'node_modules/observable/*',
@@ -88,7 +89,6 @@ gulp.task('bundle:app', ['compile:ts'], function () {
 });
 
 gulp.task('compile:less',
-    ['clean:content'],
     function() {
         return gulp.src([
                 './Content/less/**/*.less'
@@ -114,6 +114,7 @@ gulp.task('bundle', function () {
 
 gulp.task('build', function(callback) {
     runSequence(
+            ['clean:app', 'clean:vendor', 'clean:content']
             ['compile:ts', 'copy:vendor', 'compile:less'],
             ['bundle:vendor', 'bundle:app'],
             callback
@@ -141,39 +142,63 @@ gulp.task('release:css',
 
 gulp.task('release', ['release:js', 'release:css']);
 
-gulp.task('build:ts',
-    function(callback) {
-        runSequence(
-            'compile:ts',
-            'bundle:app',
-            callback
-        );
-    });
-
-gulp.task('build:ts-dev',
-    function (callback) {
-        runSequence(
-            'compile:ts',
-            callback
-        );
-    });
-
 gulp.task('watch:less',
     function() {
         gulp.watch('./Content/less/**/*.less', ['compile:less']);
     });
 
+gulp.task('module-changed',
+    function(callback) {
+        runSequence(
+            ['clean:app', 'clean:vendor'],
+            'copy:vendor',
+            ['compile:ts', 'compile:less'],
+            callback
+        );
+    });
+
 gulp.task('watch:modules',
     function () {
-        // Requires a lot of system resources
-        gulp.watch('./node_modules/**/*', ['build']);
+        gulp.watch('./node_modules/**/*', ['module-changed']);
     });
 
 gulp.task('watch:ts',
     function () {
-        gulp.watch('./Scripts/app/**/*.ts', ['build:ts-dev']);
+        gulp.watch('./Scripts/app/**/*.ts', ['compile:ts']);
     });
 
 gulp.task('watch', ['watch:less', 'watch:ts']);
+
+gulp.task('before-build',
+    function(callback) {
+        runSequence(
+            []
+        );
+    });
+
+gulp.task('after-build',
+    function (callback) {
+        runSequence(
+            ['compile:less', 'compile:ts'],
+            callback
+        );
+    });
+
+gulp.task('project-open',
+    function (callback) {
+        runSequence(
+            ['compile:less', 'compile:ts'],
+            'watch',
+            callback
+        );
+    });
+
+gulp.task('project-clean',
+    function (callback) {
+        runSequence(
+            [],
+            callback
+        );
+    });
 
 gulp.task('default', ['build']);
