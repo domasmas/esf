@@ -1,11 +1,11 @@
 ﻿import { Component } from '@angular/core';
-import { EsfStateService, EsfStateDto } from "./esfState/esfState.service";
+import { EsfStateService, EsfStateDto } from "./esfState.service";
 import { HTTP_PROVIDERS, Response} from '@angular/http';
 
 @
 Component({
     selector: 'my-app',
-    templateUrl: '/Scripts/app/esFiddler.component.html',
+    templateUrl: '/App/esfState/esfState.component.html',
     providers: [ EsfStateService, HTTP_PROVIDERS ]
 })
 export class EsFiddlerComponent {
@@ -25,8 +25,6 @@ export class EsFiddlerComponent {
         });
         this.queryRunner = new EsfQueryRunner(esfStateService);
     }
-
-
 }
 
 export class EsfState {

@@ -154,7 +154,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
-    <Content Include="Scripts\app\esFiddler.component.html" />
+    <Content Include="App\esfState\esfState.component.html" />
     <Content Include="SetupEnvironment.ps1" />
     <None Include="systemjs.config.js" />
     <Content Include="Web.config">
@@ -172,6 +172,9 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App\common\services\" />
+    <Folder Include="App\common\styles\" />
+    <Folder Include="Content\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
@@ -181,9 +184,9 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Scripts\app\esFiddler.component.ts" />
-    <TypeScriptCompile Include="Scripts\app\esfState\esfState.service.ts" />
-    <TypeScriptCompile Include="Scripts\app\main.ts" />
+    <TypeScriptCompile Include="App\esfState\esfState.component.ts" />
+    <TypeScriptCompile Include="App\esfState\esfState.service.ts" />
+    <TypeScriptCompile Include="App\main.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -195,7 +198,7 @@
     <None Include="typings.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\less\styles.less" />
+    <Content Include="App\esfState\esfSate.styles.less" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PreDeploy.ps1" />

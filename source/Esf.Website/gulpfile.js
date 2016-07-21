@@ -12,6 +12,7 @@ var less = require('gulp-less');
 var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var cleanCSS = require('gulp-clean-css');
+var gulpConcatCss = require('gulp-concat-css');
 
 
 var WWW_ROOT = './wwwroot';
@@ -43,8 +44,7 @@ gulp.task('clean:content',
 gulp.task('compile:ts',
     function() {
         var sourceTsFiles = [
-            './Scripts/app/**/*.ts',
-            './Scripts/typings/**/*.d.ts',
+            './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
             './typings/**/*.d.ts'
         ];
@@ -91,7 +91,7 @@ gulp.task('bundle:app', ['compile:ts'], function () {
 gulp.task('compile:less',
     function() {
         return gulp.src([
-                './Content/less/**/*.less'
+                './App/**/*.less'
             ])
             .pipe(less({
                 paths: [
@@ -99,6 +99,7 @@ gulp.task('compile:less',
                     './node_modules/bootstrap-less'
                 ]
             }))
+            .pipe(gulpConcatCss('styles.css'))
             .pipe(gulp.dest(CONTENT_DESTINATION));
     });
 
@@ -114,7 +115,7 @@ gulp.task('bundle', function () {
 
 gulp.task('build', function(callback) {
     runSequence(
-            ['clean:app', 'clean:vendor', 'clean:content']
+            ['clean:app', 'clean:vendor', 'clean:content'],
             ['compile:ts', 'copy:vendor', 'compile:less'],
             ['bundle:vendor', 'bundle:app'],
             callback
@@ -144,7 +145,7 @@ gulp.task('release', ['release:js', 'release:css']);
 
 gulp.task('watch:less',
     function() {
-        gulp.watch('./Content/less/**/*.less', ['compile:less']);
+        gulp.watch('./App/**/*.less', ['compile:less']);
     });
 
 gulp.task('module-changed',
@@ -164,7 +165,7 @@ gulp.task('watch:modules',
 
 gulp.task('watch:ts',
     function () {
-        gulp.watch('./Scripts/app/**/*.ts', ['compile:ts']);
+        gulp.watch('./App/**/*.ts', ['compile:ts']);
     });
 
 gulp.task('watch', ['watch:less', 'watch:ts']);
