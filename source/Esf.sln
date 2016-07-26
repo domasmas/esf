@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website", "Esf.Website\Esf.Website.csproj", "{08905CC7-E07E-415F-9F05-3586BAF5CB56}"
 EndProject
@@ -24,6 +24,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{851B989A-B3D4-4D3E-B8B8-873488553BE6}"
 EndProject
 Project("{F5034706-568F-408A-B7B3-4D38C6DB8A32}") = "Esf.DataAccess.Deployment", "Esf.DataAccess.Deployment\Esf.DataAccess.Deployment.pssproj", "{6CAFC0C6-A428-4D30-A9F9-700E829FEA51}"
+	ProjectSection(ProjectDependencies) = postProject
+		{37F79771-977A-4E8E-8F38-1A128254E711} = {37F79771-977A-4E8E-8F38-1A128254E711}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi", "Esf.WebApi\Esf.WebApi.csproj", "{24A64EE9-A151-4131-8136-7680007AFB46}"
 EndProject

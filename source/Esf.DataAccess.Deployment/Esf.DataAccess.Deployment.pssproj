@@ -34,10 +34,18 @@
   <ItemGroup>
     <Content Include="dbDeploymentConfig.json" />
     <Content Include="StopDbServer.js" />
+    <Content Include="upgrade.js" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeployDb.ps1" />
     <Compile Include="StopDbServer.ps1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">
+      <Name>Esf.DataAccess</Name>
+      <Project>{37f79771-977a-4e8e-8f38-1a128254e711}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

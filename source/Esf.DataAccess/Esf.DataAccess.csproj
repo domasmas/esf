@@ -69,7 +69,20 @@
     <Compile Include="EsStatesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="package.json" />
     <None Include="packages.config" />
+    <None Include="tsconfig.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="Upgrade\mongodb.d.ts" />
+    <TypeScriptCompile Include="Upgrade\upgrade.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="gulpfile.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="tsTypings\" />
+    <Folder Include="UpgradeOutput\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
