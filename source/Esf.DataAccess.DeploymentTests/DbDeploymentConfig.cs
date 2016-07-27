@@ -7,8 +7,7 @@ namespace Esf.DataAccess.Tests
     public class DbDeploymentConfig
     {
         public string mongoDbServerDirectory { get; set; }
-        public string mongoDbPath { get; set; }
-        public string mongoDbLogPath { get; set; }
+        public string esFiddleDbPath { get; set; }
 
         public static DbDeploymentConfig Load()
         {

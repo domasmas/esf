@@ -1,11 +1,9 @@
-function deployDb($mongoDBServerDirectory, $mongoDbPath, $mongoDbLogPath)
+function deployDb($mongoDbServerDirectory, $mongoDbPath)
 {
-    $mongoDBServer = $mongoDBServerDirectory + "mongod.exe"
-    New-Item -ItemType Directory -Force -Path $mongoDbPath
-    $mongoDBLogPathDirectory = Split-Path $mongoDbLogPath
-    New-Item -ItemType Directory -Force -Path  $mongoDBLogPathDirectory
-    & $mongoDBServer --dbpath $mongoDbPath --logpath $mongoDbLogPath
+    $mongoDbServer = $mongoDbServerDirectory + "mongod.exe"
+    New-Item -ItemType Directory -Force -Path "$mongoDbPath\DB"
+    & $mongoDbServer --dbpath "$mongoDbPath\DB" --logpath "$mongoDbPath\Log.log"
 }
 $dbDeploymentConfig = (Get-Content .\dbDeploymentConfig.json) -join "`n" | ConvertFrom-Json
 echo $dbDeploymentConfig
-deployDb $dbDeploymentConfig.mongoDbServerDirectory $dbDeploymentConfig.mongoDbPath $dbDeploymentConfig.mongoDbLogPath
+deployDb $dbDeploymentConfig.mongoDbServerDirectory $dbDeploymentConfig.esFiddleDbPath

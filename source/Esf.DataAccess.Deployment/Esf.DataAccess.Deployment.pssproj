@@ -13,6 +13,7 @@
     <PowerShellVersion />
     <ProcessorArchitecture>x64</ProcessorArchitecture>
     <RequiredModules />
+    <WorkingDirectory>C:\Sources\esf\source\Esf.DataAccess.Deployment\</WorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,11 +35,13 @@
   <ItemGroup>
     <Content Include="dbDeploymentConfig.json" />
     <Content Include="StopDbServer.js" />
-    <Content Include="upgrade.js" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeleteDb.ps1" />
     <Compile Include="DeployDb.ps1" />
+    <Compile Include="StartMongoShell.ps1" />
     <Compile Include="StopDbServer.ps1" />
+    <Compile Include="UpgradeDb.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">

@@ -21,7 +21,7 @@ namespace Esf.DataAccess.Tests
         {
             _dbDeploymentConfig = DbDeploymentConfig.Load();
             SetupDbPathAndLogFile();
-            var arguments = string.Format(@"-dbpath ""{0}"" -logpath ""{1}""", _dbDeploymentConfig.mongoDbPath, _dbDeploymentConfig.mongoDbLogPath);
+            var arguments = string.Format(@"-dbpath ""{0}\\DB"" -logpath ""{1}\\Log.log""", _dbDeploymentConfig.esFiddleDbPath, _dbDeploymentConfig.esFiddleDbPath);
             var startInfo = new ProcessStartInfo(_dbDeploymentConfig.mongoDbServerDirectory + "mongod.exe", arguments);
             Process.Start(startInfo);
         }
@@ -34,11 +34,10 @@ namespace Esf.DataAccess.Tests
 
         private void SetupDbPathAndLogFile()
         {
-            if (Directory.Exists(_dbDeploymentConfig.mongoDbPath))
-                Directory.Delete(_dbDeploymentConfig.mongoDbPath, true);
-            Directory.CreateDirectory(_dbDeploymentConfig.mongoDbPath);
-            string logPath = Path.GetDirectoryName(_dbDeploymentConfig.mongoDbPath);
-            Directory.CreateDirectory(logPath);
+            if (Directory.Exists(_dbDeploymentConfig.esFiddleDbPath))
+                Directory.Delete(_dbDeploymentConfig.esFiddleDbPath, true);
+            Directory.CreateDirectory(_dbDeploymentConfig.esFiddleDbPath);
+            Directory.CreateDirectory(_dbDeploymentConfig.esFiddleDbPath + "\\DB");
         }
 
         [OneTimeTearDown]

@@ -74,14 +74,14 @@
     <None Include="tsconfig.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="Upgrade\mongodb.d.ts" />
-    <TypeScriptCompile Include="Upgrade\upgrade.ts" />
+    <TypeScriptCompile Include="Upgrade\Framework\mongodb.d.ts" />
+    <TypeScriptCompile Include="Upgrade\Framework\upgradeFramework.ts" />
+    <TypeScriptCompile Include="Upgrade\Scripts\upgrade-v1.ts" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="gulpfile.js" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="tsTypings\" />
     <Folder Include="UpgradeOutput\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

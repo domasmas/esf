@@ -1,13 +1,11 @@
 {
 	"version": "1.0.0",
-	"name": "esf data access",
+	"name": "esf.dataAccess",
   "private": true,
-  "scripts": {
-    "postinstall": "typings install"
-  },
   "devDependencies": {
     "typescript": "1.8.10",
     "gulp": "3.9.1",
-    "gulp-typescript": "2.13.6"
+    "gulp-typescript": "2.13.6",
+    "gulp-concat": "2.6.0"
   }
 }
