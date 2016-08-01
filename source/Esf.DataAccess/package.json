@@ -6,6 +6,7 @@
     "typescript": "1.8.10",
     "gulp": "3.9.1",
     "gulp-typescript": "2.13.6",
-    "gulp-concat": "2.6.0"
+    "gulp-concat": "2.6.0",
+    "gulp-clean": "0.3.2"
   }
 }

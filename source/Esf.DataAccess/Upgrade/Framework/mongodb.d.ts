@@ -9,4 +9,12 @@ declare interface IMongoDb {
 }
 declare interface IMongoCollection {
     insert(obj: Object);
+    find(query: Object): IMongoCursor;
+    find(query: Object, projection: Object): IMongoCursor;
+}
+
+declare interface IMongoCursor {
+    hasNext(): boolean;
+    next(): Object;
+    toArray(): Object[];
 }

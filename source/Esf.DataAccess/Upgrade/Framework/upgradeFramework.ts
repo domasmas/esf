@@ -15,10 +15,15 @@ module upgradeFramework {
         }
 
         beginAudit(): void {
-            this._db.upgradeScriptsAudit.insert({ ScriptName: this._scriptName, Version: this._version, Action: 'begin upgrade audit'});
+            this.auditAction('begin upgrade audit');
         }
         endAudit(): void {
-            this._db.upgradeScriptsAudit.insert({ ScriptName: this._scriptName, Version: this._version, Action: 'end upgrade audit' });
+            this.auditAction('end upgrade audit');
+        }
+
+        isUpgradePerformed(): boolean {
+            var result = this._db.upgradeScriptsAudit.find({ ScriptName: this._scriptName, Version: this._version });
+            return result.hasNext();
         }
 
         auditAction(action: string): void {
