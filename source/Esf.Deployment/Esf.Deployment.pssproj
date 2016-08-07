@@ -9,8 +9,9 @@
     <AssemblyName>MyApplication</AssemblyName>
     <Name>Esf.deployment</Name>
     <ProjectHome />
-    <StartupFile>Deploy.ps1</StartupFile>
-    <WorkingDirectory>${Project Folder}</WorkingDirectory>
+    <StartupFile>
+    </StartupFile>
+    <WorkingDirectory>C:\Sources\esf\source\Esf.Deployment\</WorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,8 +35,11 @@
     <Folder Include="WIP\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GulpBuildEsfDebug.ps1" />
+    <Compile Include="MsBuildEsfDebug.ps1" />
     <Compile Include="Deploy.ps1" />
     <Compile Include="esfWebApi.config.json" />
+    <Compile Include="CleanEnvironment.ps1" />
     <Compile Include="WIP\esf.deployment.psd1" />
     <Compile Include="WIP\esf.deployment.psm1" />
     <Compile Include="WIP\esf.deployment.tests.ps1" />

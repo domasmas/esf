@@ -69,6 +69,7 @@
     <Compile Include="EsStatesRepository.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Deploy.ps1" />
     <None Include="package.json" />
     <None Include="packages.config" />
     <None Include="tsconfig.json" />
