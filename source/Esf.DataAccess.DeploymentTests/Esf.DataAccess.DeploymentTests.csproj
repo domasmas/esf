@@ -106,8 +106,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Esf.DataAccess.Deployment\dbDeploymentConfig.json">
-      <Link>DeploymentScripts\dbDeploymentConfig.json</Link>
+    <None Include="..\Esf.DataAccess.Deployment\dbDeployment.config.json">
+      <Link>DeploymentScripts\dbDeployment.config.json</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="..\Esf.DataAccess.Deployment\DeployDb.ps1">

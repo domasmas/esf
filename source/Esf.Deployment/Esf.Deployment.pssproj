@@ -3,17 +3,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9978017f-5a49-445d-8685-962eef01d638}</ProjectGuid>
+    <ProjectGuid>6CAFC0C6-A428-4d30-A9F9-700E829FEA51</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>Esf.DataAccess.Deployment</Name>
-    <ClrVersion />
-    <PowerShellHostVersion />
-    <PowerShellVersion />
-    <ProcessorArchitecture>x64</ProcessorArchitecture>
-    <RequiredModules />
-    <WorkingDirectory>C:\Sources\esf\source\Esf.DataAccess.Deployment\</WorkingDirectory>
+    <Name>Esf.deployment</Name>
+    <ProjectHome />
+    <StartupFile>Deploy.ps1</StartupFile>
+    <WorkingDirectory>${Project Folder}</WorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,23 +30,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Content Include="dbDeployment.config.json" />
-    <Content Include="StopDbServer.js" />
+    <Folder Include="DeploymentOutput\" />
+    <Folder Include="WIP\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DeleteDb.ps1" />
-    <Compile Include="DeployDb.ps1" />
-    <Compile Include="StartEsfMongoServer.ps1" />
-    <Compile Include="StartMongoShell.ps1" />
-    <Compile Include="StopDbServer.ps1" />
-    <Compile Include="UpgradeDb.ps1" />
+    <Compile Include="Deploy.ps1" />
+    <Compile Include="esfWebApi.config.json" />
+    <Compile Include="WIP\esf.deployment.psd1" />
+    <Compile Include="WIP\esf.deployment.psm1" />
+    <Compile Include="WIP\esf.deployment.tests.ps1" />
+    <Compile Include="DeployWebsiteAndWebApi.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">
-      <Name>Esf.DataAccess</Name>
-      <Project>{37f79771-977a-4e8e-8f38-1a128254e711}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Content Include="esfWebsite.config.json" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

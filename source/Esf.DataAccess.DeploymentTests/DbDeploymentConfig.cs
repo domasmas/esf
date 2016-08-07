@@ -11,7 +11,7 @@ namespace Esf.DataAccess.Tests
 
         public static DbDeploymentConfig Load()
         {
-            string dbDeploymentConfigPath = GetDeploymentScriptPath("dbDeploymentConfig.json");
+            string dbDeploymentConfigPath = GetDeploymentScriptPath("dbDeployment.config.json");
             var jsonContent = File.ReadAllText(dbDeploymentConfigPath);
             var result = JsonConvert.DeserializeObject<DbDeploymentConfig>(jsonContent);
             return result;

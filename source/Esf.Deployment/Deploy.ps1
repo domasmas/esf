@@ -1,0 +1,3 @@
+$deployDbProjectPath = Resolve-Path "..\Esf.DataAccess.Deployment\"
+Start-Process powershell.exe -ArgumentList "-file $deployDbProjectPath\DeployDb.ps1 -deployDbOutputFileName $PSScriptRoot\DeploymentOutput\dbDeployOutput.txt" -WorkingDirectory $deployDbProjectPath
+Start-Process powershell.exe -ArgumentList "-file .\DeployWebsiteAndWebApi.ps1" -RedirectStandardOutput .\DeploymentOutput\DeployWebsiteAndWebApi.txt
