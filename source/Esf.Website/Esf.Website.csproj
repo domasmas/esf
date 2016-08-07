@@ -151,6 +151,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App\common\components\app.component.html" />
+    <Content Include="App\common\components\pageNotFound.component.html" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
@@ -184,9 +186,12 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="App\common\components\app.component.ts" />
+    <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.component.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.service.ts" />
     <TypeScriptCompile Include="App\main.ts" />
+    <TypeScriptCompile Include="App\app.routes.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

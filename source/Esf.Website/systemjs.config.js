@@ -47,7 +47,6 @@
     ngPackageNames.forEach(setPackageConfig);
 
     System.config({
-        baseURL: '/',
         map: map,
         packages: packages
     });

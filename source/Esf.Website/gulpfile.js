@@ -165,7 +165,7 @@ gulp.task('watch:modules',
 
 gulp.task('watch:ts',
     function () {
-        gulp.watch('./App/**/*.ts', ['compile:ts']);
+        gulp.watch(['./App/**/*.ts', './App/*.ts'], ['compile:ts']);
     });
 
 gulp.task('watch', ['watch:less', 'watch:ts']);

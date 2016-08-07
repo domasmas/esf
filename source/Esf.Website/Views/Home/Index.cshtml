@@ -1,21 +1,21 @@
-﻿@using System.Web.Mvc
-@using Esf.Website.Extensions
+﻿@using Esf.Website.Extensions
 @{
     Layout = null;
 }
 
 <html>
 <head>
+    <base href="/" >
     <title>Elasticsearch Fiddler</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @if (Html.IsDebug())
     {
-        <link rel="stylesheet" href="@Url.Content("~/wwwroot/content/styles.css")">
+        <link rel="stylesheet" href="/wwwroot/content/styles.css">
     }
     else
     {
-        <link rel="stylesheet" href="@Url.Content("~/wwwroot/css/styles.css")">
+        <link rel="stylesheet" href="/wwwroot/css/styles.css">
     }
 </head>
 <body>
@@ -23,11 +23,11 @@
 
     @if (Html.IsDebug())
     {
-        <script src="@Url.Content("~/node_modules/core-js/client/shim.min.js")"></script>
-        <script src="@Url.Content("~/node_modules/zone.js/dist/zone.js")"></script>
-        <script src="@Url.Content("~/node_modules/reflect-metadata/Reflect.js")"></script>
-        <script src="@Url.Content("~/node_modules/systemjs/dist/system.src.js")"></script>
-        <script src="@Url.Content("~/systemjs.config.js")"></script>
+        <script src="/node_modules/core-js/client/shim.min.js"></script>
+        <script src="/node_modules/zone.js/dist/zone.js"></script>
+        <script src="/node_modules/reflect-metadata/Reflect.js"></script>
+        <script src="/node_modules/systemjs/dist/system.src.js"></script>
+        <script src="/systemjs.config.js"></script>
         <script>
             System
                 .import('app')
@@ -38,7 +38,7 @@
     }
     else
     {
-        <script src="@Url.Content("~/wwwroot/js/app.bundle.js")"></script>
+        <script src="/wwwroot/js/app.bundle.js"></script>
     }
 </body>
 </html>
