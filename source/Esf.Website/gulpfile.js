@@ -13,6 +13,7 @@ var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var cleanCSS = require('gulp-clean-css');
 var gulpConcatCss = require('gulp-concat-css');
+var merge = require('merge-stream');
 
 
 var WWW_ROOT = './wwwroot';
@@ -46,6 +47,8 @@ gulp.task('compile:ts',
         var sourceTsFiles = [
             './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
+            './node_modules/ng2-ace-editor/**/*.ts',
+            './node_modules/ng2-ace-editor/**/*.d.ts',
             './typings/**/*.d.ts'
         ];
 
@@ -60,14 +63,21 @@ gulp.task('compile:ts',
     });
 
 gulp.task('copy:vendor', function () {
-    return gulp.src([
-        'node_modules/rxjs/**/*',
-        'node_modules/observable/*',
-        'node_modules/reflect-metadata/Reflect.js',
-        'node_modules/@angular/**/*',
-        'node_modules/bootstrap-less/js/*.js'
-    ])
-    .pipe(gulp.dest(LIBRARIES_DESTINATION));
+    var one = gulp.src([
+            'node_modules/rxjs/**/*',
+            'node_modules/observable/*',
+            'node_modules/reflect-metadata/Reflect.js',
+            'node_modules/@angular/**/*',
+            'node_modules/bootstrap-less/js/*.js'
+        ])
+        .pipe(gulp.dest(LIBRARIES_DESTINATION));
+
+    var two = gulp.src([
+            'node_modules/ng2-ace-editor/*.js'
+        ])
+        .pipe(gulp.dest(LIBRARIES_DESTINATION + '/ng2-ace-editor/'));
+
+    return merge(one, two);
 });
 
 gulp.task('bundle:vendor', function () {

@@ -2,12 +2,14 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, EsfStateDto } from "./esfState.service";
 import { HTTP_PROVIDERS, Response} from '@angular/http';
+import { JsonEditorDirective } from '../common/components/jsonEditor.directive';
 
 @
 Component({
     selector: 'my-app',
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [ EsfStateService, HTTP_PROVIDERS ]
+    providers: [EsfStateService, HTTP_PROVIDERS],
+    directives: [JsonEditorDirective]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfState;
@@ -78,7 +80,7 @@ export class EsfState {
     mapping: string;
     query: string;
     documents: string[];
-    id: string
+    id: string;
 }
 
 export class EsfQueryRunner {
@@ -91,4 +93,4 @@ export class EsfQueryRunner {
     public run(): void {
         this.queryResult = 'Query was run';
     }
-}
+} 

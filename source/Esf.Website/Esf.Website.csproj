@@ -186,6 +186,7 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="App\common\components\jsonEditor.directive.ts" />
     <TypeScriptCompile Include="App\common\components\app.component.ts" />
     <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.component.ts" />
