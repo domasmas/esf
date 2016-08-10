@@ -12,23 +12,23 @@
         <div class="col-xs-6">
             <label>Mapping</label>
             <!--<textarea [(ngModel)]="state.mapping" style="min-width: 100%" rows="10"></textarea>-->
-            <div [text]="state.mapping" ace-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div [(text)]="state.mapping" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
         <div class="col-xs-6">
             <label>Documents</label>
             <!--<textarea [(ngModel)]="state.documents" style="min-width: 100%" rows="10"></textarea>-->
-            <div [text]="state.documents" ace-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div [(text)]="state.documents" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-6">
             <label>Query</label>
             <!--<textarea [(ngModel)]="state.query" style="min-width: 100%" rows="10"></textarea>-->
-            <div [text]="state.query" ace-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div [(text)]="state.query" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
         <div class="col-xs-6">
             <label>Result</label>
-            <pre>{{queryRunner.queryResult}}</pre>
+            <div [text]="state.documents" json-editor [readOnly]="true" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
     </div>
 </section>

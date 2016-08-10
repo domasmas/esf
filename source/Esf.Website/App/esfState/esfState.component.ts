@@ -34,7 +34,6 @@ export class EsFiddlerComponent implements OnInit {
     ngOnInit() {
         this.sub = this.route.params.subscribe(params => {
             let id = params['id'];
-            console.log(id);
             if (id == null) {
                 this.esfStateService.getInitialState().subscribe((state: EsfStateDto) => {
                     this.state = {
@@ -44,7 +43,7 @@ export class EsFiddlerComponent implements OnInit {
                         id: state.id
                     };
                 }, (error: Error) => {
-                    console.log(error);
+                    console.error(error);
                 });
             } else {
                 this.esfStateService.getState(id)
@@ -68,10 +67,9 @@ export class EsFiddlerComponent implements OnInit {
                 query: state.query,
                 id: state.id
             };
-            console.log('After update server returned: ', state);
             this.router.navigate(['/state', state.id]);
         }, (error: Error) => {
-            console.log(error);
+            console.error(error);
         });
     }
 }
