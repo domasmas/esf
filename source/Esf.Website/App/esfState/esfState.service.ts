@@ -48,7 +48,7 @@ export class EsfStateService {
 
 export class EsfStateDto {
     mapping: string;
-    documents: string[];
+    documents: string;
     query: string;
     id: string;
 }

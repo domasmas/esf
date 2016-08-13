@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Esf.DataAccess.Tests
 {
@@ -11,7 +7,7 @@ namespace Esf.DataAccess.Tests
         public EsStateBuilder()
         {
             _esState = new EsState();
-            _esState.Documents = new List<string>();
+            _esState.Documents = "";
             _esState.Mapping = "";
             _esState.Query = "";
             _esState.StateUrl = Guid.Empty;
@@ -19,7 +15,6 @@ namespace Esf.DataAccess.Tests
 
         public EsStateBuilder SetDocuments(params string[] documents)
         {
-            _esState.Documents = new List<string>(documents);
             return this;
         }
 

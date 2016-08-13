@@ -4,7 +4,7 @@ import { EsFiddlerComponent } from '../../esfState/esfState.component';
 
 @
 Component({
-    selector: 'my-app',
+    selector: 'esf-app',
     templateUrl: 'App/common/components/app.component.html',
     directives: [ROUTER_DIRECTIVES],
     precompile: [EsFiddlerComponent]

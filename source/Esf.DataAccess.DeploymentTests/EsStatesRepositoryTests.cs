@@ -94,8 +94,7 @@ namespace Esf.DataAccess.Tests
             {
                 Assert.AreEqual(insertedDoc, readDoc);
             };
-            for (int i = 0; i < insertedState.Documents.Count; i++)
-                verifyInsertedEqualsRead(insertedState.Documents[i], readState.Documents[i]);
+            verifyInsertedEqualsRead(insertedState.Documents, readState.Documents);
 
             bool isAcknowledgedDeletion = await esStatesRepository.DeleteEsState(readState.Id);
             Assert.IsTrue(isAcknowledgedDeletion);

@@ -47,6 +47,7 @@ export class JsonEditorDirective {
             if (typeof this.oldText !== 'undefined') {
                 this.textChange.emit(newVal);
             }
+
             this.oldText = newVal;
             this.text = newVal;
         });
@@ -76,6 +77,5 @@ export class JsonEditorDirective {
 
         this.editor.setValue(text);
         this.editor.clearSelection();
-        //this.editor.focus();
     }
 }

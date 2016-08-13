@@ -6,7 +6,6 @@ import { JsonEditorDirective } from '../common/components/jsonEditor.directive';
 
 @
 Component({
-    selector: 'my-app',
     templateUrl: '/App/esfState/esfState.component.html',
     providers: [EsfStateService, HTTP_PROVIDERS],
     directives: [JsonEditorDirective]
@@ -14,6 +13,7 @@ Component({
 export class EsFiddlerComponent implements OnInit {
     state: EsfState;
     queryRunner: EsfQueryRunner;
+    lastSavedState: EsfState;
     private sub: any;
 
     constructor(
@@ -35,49 +35,84 @@ export class EsFiddlerComponent implements OnInit {
         this.sub = this.route.params.subscribe(params => {
             let id = params['id'];
             if (id == null) {
-                this.esfStateService.getInitialState().subscribe((state: EsfStateDto) => {
-                    this.state = {
-                        documents: state.documents,
-                        mapping: state.mapping,
-                        query: state.query,
-                        id: state.id
-                    };
-                }, (error: Error) => {
-                    console.error(error);
-                });
+                this.getInitialState();
             } else {
-                this.esfStateService.getState(id)
-                    .subscribe((state: EsfStateDto) => {
-                        this.state = {
-                            documents: state.documents,
-                            mapping: state.mapping,
-                            query: state.query,
-                            id: state.id
-                        };
-                    });
+                this.getStateById(id);
             }
         }); 
     }
 
+    private getInitialState(): void {
+        this.esfStateService
+            .getInitialState()
+            .subscribe((state: EsfStateDto) => {
+                this.state = {
+                    documents: state.documents,
+                    mapping: state.mapping,
+                    query: state.query,
+                    id: state.id
+                };
+        }, (error: Error) => {
+            console.error(error);
+        });        
+    }
+
+    private getStateById(id: string): void {
+        this.esfStateService.getState(id)
+            .subscribe((state: EsfStateDto) => {
+                this.state = {
+                    documents: state.documents,
+                    mapping: state.mapping,
+                    query: state.query,
+                    id: state.id
+                };
+                this.lastSavedState = this.copy(this.state);
+            });        
+    }
+
     public save(): void {
-        this.esfStateService.createNewVersion(this.state).subscribe((state: EsfStateDto) => {
-            this.state = {
-                documents: state.documents,
-                mapping: state.mapping,
-                query: state.query,
-                id: state.id
-            };
-            this.router.navigate(['/state', state.id]);
+        if (!this.validateState()) {
+            return;
+        }
+        this.esfStateService
+            .createNewVersion(this.state)
+            .subscribe((state: EsfStateDto) => {
+                this.state = {
+                    documents: state.documents,
+                    mapping: state.mapping,
+                    query: state.query,
+                    id: state.id
+                };
+                this.lastSavedState = this.copy(this.state);
+                this.router.navigate(['/state', state.id]);
         }, (error: Error) => {
             console.error(error);
         });
+    }
+
+    private validateState(): boolean {
+        if (JSON.stringify(this.state) ===
+            JSON.stringify(this.lastSavedState)) {
+            return false;
+        }
+
+        if (!(JSON.parse(this.state.documents) instanceof Array)) {
+            alert("Documents field must be an array");
+            return false;
+        }
+
+        return true;
+    }
+
+    private copy(source: any): any {
+        return JSON.parse(JSON.stringify(source));
     }
 }
 
 export class EsfState {
     mapping: string;
     query: string;
-    documents: string[];
+    documents: string;
     id: string;
 }
 

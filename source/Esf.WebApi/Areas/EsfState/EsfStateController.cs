@@ -39,7 +39,6 @@ namespace Esf.WebApi.Areas.EsfState
         {
             var esState = EsfStateDto.ToDomainObject(newState);
             esState.Id = Guid.NewGuid().ToString();
-            esState.Query += " (updated from controller) ";
             var newEsState = await this.stateRepository.InsertEsState(esState);
             return EsfStateDto.FromDomainObject(newEsState);
         }

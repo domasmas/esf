@@ -14,7 +14,7 @@ gulp.task('cleanOutput', function () {
 gulp.task('tsCompile', function () {
     var tsResult = gulp.src('Upgrade/**/*.ts')
     .pipe(ts(tsProject));
-    tsResult.js.pipe(gulp.dest('UpgradeOutput'))
+    tsResult.js.pipe(gulp.dest('UpgradeOutput'));
 });
 
 gulp.task('bundleUpgrade', ['tsCompile'], function () {

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using Esf.DataAccess;
+﻿using Esf.DataAccess;
+using Esf.Domain.Helpers;
 
 namespace Esf.WebApi.Areas.EsfState
 {
@@ -7,7 +7,7 @@ namespace Esf.WebApi.Areas.EsfState
     {
         public string Id { get; set; }
         public string Mapping { get; set; }
-        public List<string> Documents { get; set; }
+        public string Documents { get; set; }
         public string Query { get; set; }
 
         public static EsState ToDomainObject(EsfStateDto dto)
@@ -26,7 +26,7 @@ namespace Esf.WebApi.Areas.EsfState
             return new EsfStateDto
             {
                 Query = domainObject.Query,
-                Documents = domainObject.Documents,
+                Documents = JSON.Serialize(domainObject.Documents),
                 Mapping = domainObject.Mapping,
                 Id = domainObject.Id
             };
