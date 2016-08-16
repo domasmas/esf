@@ -1,3 +1,4 @@
 {
-  "DeploymentPath":  "..\\Esf.Website"
+  "DeploymentPath": "..\\Esf.Website",
+  "Port":  40082
 }

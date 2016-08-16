@@ -29,12 +29,18 @@ function CreateWebsite($websiteName, $portNumber, $physicalPath)
     New-WebAppPool -Name $websiteName -Force
     New-Website -Name $websiteName -Port $portNumber -PhysicalPath $physicalPath -ApplicationPool $websiteName -Force
 }
-
+function GetPSScriptRootPath($pathRelativeToProject)
+{
+	return  Resolve-Path "$PSScriptRoot\$pathRelativeToProject"
+}
 $webApiDeploymentConfig = GetDeploymentConfig "$PSScriptRoot\esfWebApi.config.json"
 $websiteDeploymentConfig = GetDeploymentConfig "$PSScriptRoot\esfWebsite.config.json"
 ImportWebAministrationModule
 cd IIS:
-$webApiPath = Resolve-Path "$PSScriptRoot\$($webApiDeploymentConfig.DeploymentPath)"
-$websitePath = Resolve-Path "$PSScriptRoot\$($websiteDeploymentConfig.DeploymentPath)"
-CreateWebsite "esf.WebApi" 40081 $webApiPath
-CreateWebsite "esf.Website" 40082 $websitePath
+$webApiPath = GetPSScriptRootPath($webApiDeploymentConfig.DeploymentPath)
+$websitePath = GetPSScriptRootPath($websiteDeploymentConfig.DeploymentPath)
+CreateWebsite "esf.WebApi" $webApiDeploymentConfig.Port $webApiPath 
+CreateWebsite "esf.Website" $websiteDeploymentCOnfig.Port $websitePath
+
+$unitTestsPath = "$PSScriptRoot\DeployWebsiteAndWebApi.tests.ps1"
+Invoke-Pester -Script @{ Path = $unitTestsPath}

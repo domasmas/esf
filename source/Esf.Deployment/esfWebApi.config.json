@@ -1,3 +1,4 @@
 {
-  "DeploymentPath":  "..\\Esf.WebApi"
+  "DeploymentPath": "..\\Esf.WebApi",
+  "Port": 40081
 }

@@ -32,7 +32,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="DeploymentOutput\" />
-    <Folder Include="WIP\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GulpBuildEsfDebug.ps1" />
@@ -40,9 +39,7 @@
     <Compile Include="Deploy.ps1" />
     <Compile Include="esfWebApi.config.json" />
     <Compile Include="CleanEnvironment.ps1" />
-    <Compile Include="WIP\esf.deployment.psd1" />
-    <Compile Include="WIP\esf.deployment.psm1" />
-    <Compile Include="WIP\esf.deployment.tests.ps1" />
+    <Compile Include="DeployWebsiteAndWebApi.tests.ps1" />
     <Compile Include="DeployWebsiteAndWebApi.ps1" />
   </ItemGroup>
   <ItemGroup>
