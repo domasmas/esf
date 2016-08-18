@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApi", "WebApi", "{851B98
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi", "Esf.WebApi\Esf.WebApi.csproj", "{24A64EE9-A151-4131-8136-7680007AFB46}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.DataAccess.IntegrationTests", "Esf.DataAccess.IntegrationTests\Esf.DataAccess.IntegrationTests.csproj", "{ACAE4673-121A-4B65-9300-CF5810C34316}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{24A64EE9-A151-4131-8136-7680007AFB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24A64EE9-A151-4131-8136-7680007AFB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24A64EE9-A151-4131-8136-7680007AFB46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACAE4673-121A-4B65-9300-CF5810C34316}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAE4673-121A-4B65-9300-CF5810C34316}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAE4673-121A-4B65-9300-CF5810C34316}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAE4673-121A-4B65-9300-CF5810C34316}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,5 +70,6 @@ Global
 		{84C7E640-3668-4654-BA39-EC3FBBDD4A59} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
 		{369708B4-28B4-48BE-BF18-99C7161947A7} = {D346AEB2-6C24-4DB2-B7E0-85474ADD22E0}
 		{24A64EE9-A151-4131-8136-7680007AFB46} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
+		{ACAE4673-121A-4B65-9300-CF5810C34316} = {A93FB772-61A4-4531-8BFE-C688445673B6}
 	EndGlobalSection
 EndGlobal
