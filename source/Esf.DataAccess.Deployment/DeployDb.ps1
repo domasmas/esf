@@ -1,5 +1,5 @@
 param (
-    [string]$deployDbOutputFileName = ".\deployDbOutput.txt"
+	[string]$deployDbOutputDir = "."
 )
 
 function RunEsfNUnitDeploymentTests() {
@@ -11,11 +11,15 @@ function RunEsfNUnitDeploymentTests() {
 	$tests = (Get-ChildItem $deploymentTestsOutputDir -Recurse -Include *Tests.dll)
 
 	# Run tests
-	$outputArg = "-work"
-	& $nunit $outputArg $deploymentTestsOutputDir $tests
+	& $nunit "-work" $deployDbOutputDir $tests
 }
 
-Start-Process powershell.exe -ArgumentList "-file .\StartEsfMongoServer.ps1" -NoNewWindow
-Start-Process powershell.exe -ArgumentList "-file .\UpgradeDb.ps1" -NoNewWindow -RedirectStandardOutput $deployDbOutputFileName -Wait
+$deployDbOutputFileName = "$deployDbOutputDir\deployDbOutput.txt"
+$mongoDbServerScriptPath = Resolve-Path $PSScriptRoot\StartEsfMongoServer.ps1
+Start-Process powershell.exe -ArgumentList "-file $mongoDbServerScriptPath" -WorkingDirectory $PSScriptRoot
+cd $PSScriptRoot
+.\Esf.DataAccess.Gulp.Deployment.ps1
+$upgradeDbScriptPath = Resolve-Path $PSScriptRoot\UpgradeDb.ps1
+& $upgradeDbScriptPath 2>&1 > $deployDbOutputFileName
 
 RunEsfNUnitDeploymentTests

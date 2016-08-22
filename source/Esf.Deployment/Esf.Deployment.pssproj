@@ -34,7 +34,7 @@
     <Folder Include="DeploymentOutput\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GulpBuildEsfDebug.ps1" />
+    <Compile Include="Esf.Website.Gulp.Deployment.ps1" />
     <Compile Include="MsBuildEsfDebug.ps1" />
     <Compile Include="Deploy.ps1" />
     <Compile Include="esfWebApi.config.json" />

@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="DeleteDb.ps1" />
     <Compile Include="DeployDb.ps1" />
+    <Compile Include="Esf.DataAccess.Gulp.Deployment.ps1" />
     <Compile Include="StartEsfMongoServer.ps1" />
     <Compile Include="StartMongoShell.ps1" />
     <Compile Include="StopDbServer.ps1" />
