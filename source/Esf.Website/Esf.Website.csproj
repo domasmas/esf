@@ -156,7 +156,6 @@
     <None Include="gulpfile.js" />
     <Content Include="App\esfState\esfState.component.html" />
     <Content Include="SetupEnvironment.ps1" />
-    <Content Include="Deploy.ps1" />
     <None Include="systemjs.config.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
