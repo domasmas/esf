@@ -38,12 +38,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DeleteDb.ps1" />
-    <Compile Include="DeployDb.ps1" />
-    <Compile Include="Esf.DataAccess.Gulp.Deployment.ps1" />
+    <Compile Include="DeployDb.psm1" />
     <Compile Include="StartEsfMongoServer.ps1" />
     <Compile Include="StartMongoShell.ps1" />
     <Compile Include="StopDbServer.ps1" />
-    <Compile Include="UpgradeDb.ps1" />
+    <Compile Include="UpgradeDb.psm1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">

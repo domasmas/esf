@@ -34,13 +34,13 @@
     <Folder Include="DeploymentOutput\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Esf.Website.Gulp.Deployment.ps1" />
-    <Compile Include="MsBuildEsfDebug.ps1" />
+    <Compile Include="Esf.Website.GulpBuild.psm1" />
+    <Compile Include="MsBuild.psm1" />
     <Compile Include="Deploy.ps1" />
     <Compile Include="esfWebApi.config.json" />
-    <Compile Include="CleanEnvironment.ps1" />
-    <Compile Include="DeployWebsiteAndWebApi.tests.ps1" />
-    <Compile Include="DeployWebsiteAndWebApi.ps1" />
+    <Compile Include="DeployToIss.tests.ps1" />
+    <Compile Include="DeployToIss.psm1" />
+    <Compile Include="Permissions.psm1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="esfWebsite.config.json" />
