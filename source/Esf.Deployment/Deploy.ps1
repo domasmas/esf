@@ -4,11 +4,20 @@ function RestoreNugetPackages($solutionPath) {
 	
 	& $nugetPath restore -PackagesDirectory $packagesDirectory $solutionPath
 }
+
+function EnsureDeploymentOutputExists($deploymentOutput) {
+	if (-Not (Test-Path $deploymentOutput)) {
+		New-Item -ItemType Directory $deploymentOutput
+	}
+}
+
 function DeployEsf() {
 	Write-Host -ForegroundColor Cyan "Deployment process of ES Fiddle"
 	Import-Module $PSScriptRoot\MSBuild.psm1
 	$esfSolution = Resolve-Path "$PSScriptRoot\..\Esf.sln"
 	$deploymentOutput = "$PSScriptRoot\DeploymentOutput"
+	EnsureDeploymentOutputExists $deploymentOutput
+
 	RestoreNugetPackages $esfSolution *>&1 | Out-File $deploymentOutput\EsfNugetPackagesRestore.txt
 	$esfDeploymentSolution = Resolve-Path "$PSScriptRoot\..\Esf.Deployment.sln"
 	RestoreNugetPackages $esfDeploymentSolution *>&1 | Out-File $deploymentOutput\EsfDeploymentNugetPackagesRestore.txt

@@ -1,5 +1,8 @@
 function ImportInvoke-MsBuild() {
-	if (-Not (Get-Module Invoke-MsBuild))
+	Import-Module $PSScriptRoot\PsModule.psm1
+	ImportPsGet
+
+	if (-Not (IsModuleInstalled "Invoke-MsBuild"))
 	{
 		Install-Module -Name Invoke-MsBuild -Scope CurrentUser
 	}

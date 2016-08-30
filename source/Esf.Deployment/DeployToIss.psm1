@@ -2,7 +2,7 @@
 	return (Get-Content $configFilePath) -join "`n" | ConvertFrom-Json
 }
 function ImportWebAministrationModule() {
-	if (-Not (Get-Module WebAdministration))
+	if (-Not (IsModuleInstalled "WebAdministration"))
 	{
 		Add-PSSnapin WebAdministration
 	}
@@ -29,6 +29,15 @@ function GetPSScriptRootPath($pathRelativeToProject) {
 	return  Resolve-Path "$PSScriptRoot\$pathRelativeToProject"
 }
 
+function ImportPester() {
+	Import-Module $PSScriptRoot\PsModule.psm1
+	ImportPsGet
+	if (-Not (IsModuleInstalled "Pester")) {
+		Install-Module -Name Pester -Scope CurrentUser
+	}
+	Import-Module Pester
+}
+
 function DeployWebsiteAndWebApi() {
 	Import-Module $PSScriptRoot\Permissions.psm1
 	CheckForElevatedPermissions
@@ -42,6 +51,7 @@ function DeployWebsiteAndWebApi() {
 	CreateWebsite "esf.Website" $websiteDeploymentCOnfig.Port $websitePath
 
 	$unitTestsPath = "$PSScriptRoot\DeployToIss.tests.ps1"
+	ImportPester
 	Invoke-Pester -Script @{ Path = $unitTestsPath}
 }
 Export-ModuleMember -Function DeployWebsiteAndWebApi
