@@ -31,11 +31,8 @@ function GetPSScriptRootPath($pathRelativeToProject) {
 
 function ImportPester() {
 	Import-Module $PSScriptRoot\PsModule.psm1
-	ImportPsGet
-	if (-Not (IsModuleInstalled "Pester")) {
-		Install-Module -Name Pester -Scope CurrentUser
-	}
-	Import-Module Pester
+	EnsureThirdPartyModuleIsInstalled "Pester.psm1" "https://github.com/pester/Pester/blob/master/Pester.psm1"
+	ImportThirdPartyModule "Pester.psm1"
 }
 
 function DeployWebsiteAndWebApi() {

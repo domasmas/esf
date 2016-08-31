@@ -11,7 +11,8 @@
     <ProjectHome />
     <StartupFile>
     </StartupFile>
-    <WorkingDirectory>C:\Sources\esf\source\Esf.Deployment\</WorkingDirectory>
+    <WorkingDirectory>
+    </WorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>

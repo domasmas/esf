@@ -1,12 +1,7 @@
 function ImportInvoke-MsBuild() {
 	Import-Module $PSScriptRoot\PsModule.psm1
-	ImportPsGet
-
-	if (-Not (IsModuleInstalled "Invoke-MsBuild"))
-	{
-		Install-Module -Name Invoke-MsBuild -Scope CurrentUser
-	}
-	Import-Module Invoke-MsBuild
+	EnsureThirdPartyModuleIsInstalled "Invoke-MsBuild.psm1" "https://github.com/deadlydog/Invoke-MsBuild/releases/download/v2.0.0/Invoke-MsBuild.psm1"
+	ImportThirdPartyModule "Invoke-MsBuild.psm1"
 }
 
 function ReportResult($buildResult) {
@@ -24,7 +19,7 @@ function ReportResult($buildResult) {
 	}
 }
 
-function InvokeMsBuildOnProject($msBuildProjectPath, $buildLogDirectoryPath) {
+function InvokeMsBuildOnProject($msBuildProjectPath, $buildLogDirectoryPath) {	
 	$buildResult = Invoke-MsBuild -Path $msBuildProjectPath -BuildLogDirectoryPath $buildLogDirectoryPath -MsBuildParameters "/target:Clean;Build" -KeepBuildLogOnSuccessfulBuilds
 	ReportResult $buildResult
 }

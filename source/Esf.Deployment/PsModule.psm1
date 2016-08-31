@@ -2,10 +2,17 @@ function IsModuleInstalled($moduleName) {
 	return [bool] (Get-Module -ListAvailable | Where-Object { $_.Name -eq $moduleName})
 }
 
-function ImportPsGet() {
-	if (-Not (IsModuleInstalled "PsGet")) {
-		(new-object Net.WebClient).DownloadString("http://psget.net/GetPsGet.ps1") | iex
+function EnsureThirdPartyModuleIsInstalled($moduleName, $url) {
+	if (-Not (Test-Path $PSScriptRoot\ThirdPartyModules\$moduleName)) {
+		if (-Not (Test-Path $PSScriptRoot\ThirdPartyModules)) {
+			New-Item $PSScriptRoot\ThirdPartyModules -type directory
+		}
+		(new-object Net.WebClient).DownloadString($url) | Out-File $PSScriptRoot\ThirdPartyModules\$moduleName
 	}
 }
 
-Export-ModuleMember -Function IsModuleInstalled, ImportPsGet
+function ImportThirdPartyModule($moduleName) {
+	Import-Module $PSScriptRoot\ThirdPartyModules\$moduleName
+}
+
+Export-ModuleMember -Function IsModuleInstalled, ImportThirdPartyModule, EnsureThirdPartyModuleIsInstalled
