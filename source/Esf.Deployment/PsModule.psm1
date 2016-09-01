@@ -3,16 +3,39 @@ function IsModuleInstalled($moduleName) {
 }
 
 function EnsureThirdPartyModuleIsInstalled($moduleName, $url) {
-	if (-Not (Test-Path $PSScriptRoot\ThirdPartyModules\$moduleName)) {
+
+	if (-Not (IsThirdPartyModuleInstalled $moduleName)) {
 		if (-Not (Test-Path $PSScriptRoot\ThirdPartyModules)) {
 			New-Item $PSScriptRoot\ThirdPartyModules -type directory
 		}
-		(new-object Net.WebClient).DownloadString($url) | Out-File $PSScriptRoot\ThirdPartyModules\$moduleName
+		
+		DownloadModuleFile $moduleName $url 
 	}
 }
 
-function ImportThirdPartyModule($moduleName) {
-	Import-Module $PSScriptRoot\ThirdPartyModules\$moduleName
+function DownloadModuleFile($moduleName, $url) {
+	$modulePath	= "$PSScriptRoot\ThirdPartyModules\$moduleName.psm1"
+	(new-object Net.WebClient).DownloadFile($url, $modulePath)
 }
 
-Export-ModuleMember -Function IsModuleInstalled, ImportThirdPartyModule, EnsureThirdPartyModuleIsInstalled
+function DownloadModuleZipFile($moduleName, $url) {
+	$modulePath	= "$PSScriptRoot\ThirdPartyModules\$moduleName.zip"
+	(new-object Net.WebClient).DownloadFile($url, $modulePath)
+}
+
+function IsThirdPartyModuleInstalled($moduleName) {
+	$modulePath	= "$PSScriptRoot\ThirdPartyModules\$moduleName.psm1"
+	return (Test-Path $modulePath);
+}
+
+
+function UnzipFile($backupPath, $destination) {
+	Add-Type -assembly “system.io.compression.filesystem”
+	[io.compression.zipfile]::ExtractToDirectory($backupPath, $destination)
+}
+
+function GetThirdPartyModulePath($moduleName) {
+	Return (Resolve-Path $PSScriptRoot\ThirdPartyModules\$moduleName.psm1)
+}
+
+Export-ModuleMember -Function IsModuleInstalled, GetThirdPartyModulePath, EnsureThirdPartyModuleIsInstalled, DownloadModuleFile, UnzipFile, DownloadModuleZipFile

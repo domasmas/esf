@@ -1,4 +1,6 @@
-﻿function GetDeploymentConfig($configFilePath) {
+﻿Import-Module $PSScriptRoot\PsModule.psm1
+
+function GetDeploymentConfig($configFilePath) {
 	return (Get-Content $configFilePath) -join "`n" | ConvertFrom-Json
 }
 function ImportWebAministrationModule() {
@@ -30,9 +32,12 @@ function GetPSScriptRootPath($pathRelativeToProject) {
 }
 
 function ImportPester() {
-	Import-Module $PSScriptRoot\PsModule.psm1
-	EnsureThirdPartyModuleIsInstalled "Pester.psm1" "https://github.com/pester/Pester/blob/master/Pester.psm1"
-	ImportThirdPartyModule "Pester.psm1"
+	if (-Not (IsModuleInstalled "Pester")) {
+		DownloadModuleZipFile "Pester" "https://github.com/pester/Pester/archive/3.4.3.zip"
+		UnzipFile $PSScriptRoot\ThirdPartyModules\Pester.zip $PSScriptRoot\ThirdPartyModules
+		Copy-Item $PSScriptRoot\ThirdPartyModules\Pester-3.4.3\Pester.psm1 -Destination $PSScriptRoot\ThirdPartyModules
+	}
+	Import-Module (GetThirdPartyModulePath "Pester")
 }
 
 function DeployWebsiteAndWebApi() {
