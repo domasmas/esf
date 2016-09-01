@@ -38,4 +38,4 @@ function GetThirdPartyModulePath($moduleName) {
 	Return (Resolve-Path $PSScriptRoot\ThirdPartyModules\$moduleName.psm1)
 }
 
-Export-ModuleMember -Function IsModuleInstalled, GetThirdPartyModulePath, EnsureThirdPartyModuleIsInstalled, DownloadModuleFile, UnzipFile, DownloadModuleZipFile
+Export-ModuleMember -Function IsModuleInstalled, IsThirdPartyModuleInstalled, GetThirdPartyModulePath, EnsureThirdPartyModuleIsInstalled, DownloadModuleFile, UnzipFile, DownloadModuleZipFile
