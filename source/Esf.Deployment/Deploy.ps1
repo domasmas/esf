@@ -34,12 +34,14 @@ function DeployEsf() {
 	Write-Progress -Activity "Esf.Website Gulp Build" -Status "Finished"
 	Import-Module $PSScriptRoot\..\Esf.DataAccess.Deployment\DeployDb.psm1
 	Write-Progress -Activity "Deploy DB" -Status "Started"
-	& DeployDb $deploymentOutput
+	& DeployDb $deploymentOutput *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.output.txt
 	Write-Progress -Activity "Deploy DB" -Status "Finished"
 	Import-Module $PSScriptRoot\DeployToIss.psm1
 	Write-Progress -Activity "Deploy Website and web api" -Status "Started"
 	DeployWebsiteAndWebApi *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.txt
 	Write-Progress -Activity "Deploy Website and web api" -Status "Finished"
+	Write-Output "Deployment finished. To check if it is successful go to:"
+	Write-Output $deploymentOutput
 }
 
 Clear-Host

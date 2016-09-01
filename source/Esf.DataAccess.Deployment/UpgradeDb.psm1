@@ -1,6 +1,7 @@
 function RunUpgradeScripts($mongoDbServerDirectory) {
 	$mongoShell = $mongoDbServerDirectory + "mongo.exe"
-	& $mongoShell $PSScriptRoot\Esf.DataAccess\UpgradeOutput\upgradeScripts.js
+	$upgradeScriptsPath = Resolve-Path "$PSScriptRoot\..\Esf.DataAccess\UpgradeOutput\upgradeScripts.js"
+	& $mongoShell $upgradeScriptsPath
 }
 
 function GulpGenerateUpgradeScripts() {
@@ -14,6 +15,7 @@ function GulpGenerateUpgradeScripts() {
 
 function UpgradeDb() {
 	GulpGenerateUpgradeScripts
+	cd $PSScriptRoot
 	$dbDeploymentConfig = (Get-Content .\dbDeployment.config.json) -join "`n" | ConvertFrom-Json
 	RunUpgradeScripts $dbDeploymentConfig.mongoDbServerDirectory
 }

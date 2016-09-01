@@ -23,9 +23,13 @@ function DownloadModuleZipFile($moduleName, $url) {
 	(new-object Net.WebClient).DownloadFile($url, $modulePath)
 }
 
-function IsThirdPartyModuleInstalled($moduleName) {
-	$modulePath	= "$PSScriptRoot\ThirdPartyModules\$moduleName.psm1"
-	return (Test-Path $modulePath);
+function IsThirdPartyModuleInstalled($moduleName, $modulePath = "") {
+	$moduleFilePath	= "$PSScriptRoot\ThirdPartyModules\"
+	if ($modulePath.length -gt 0) {
+		$moduleFilePath = Join-Path -Path $moduleFilePath -ChildPath $modulePath
+	}
+	$moduleFilePath = Join-Path -Path $moduleFilePath -ChildPath "$moduleName.psm1"
+	return (Test-Path $moduleFilePath);
 }
 
 

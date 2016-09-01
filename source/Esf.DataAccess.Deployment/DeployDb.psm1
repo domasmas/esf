@@ -19,8 +19,7 @@ function DeployDb($deployDbOutputDir) {
 	StartMongoDbServerInSeparateProcess
 	cd $PSScriptRoot
 	Import-Module $PSScriptRoot\UpgradeDb.psm1	
-	$deployDbOutputFileName = "$deployDbOutputDir\deployDbOutput.txt"
-	& UpgradeDb *>&1 | Out-File $deployDbOutputFileName
+	& UpgradeDb
 
 	RunEsfNUnitDeploymentTests $deployDbOutputDir
 }

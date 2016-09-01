@@ -32,7 +32,7 @@ function GetPSScriptRootPath($pathRelativeToProject) {
 }
 
 function ImportPester() {
-	if (-Not (IsThirdPartyModuleInstalled "Pester")) {
+	if (-Not (IsThirdPartyModuleInstalled "Pester" "Pester-3.4.3")) {
 		DownloadModuleZipFile "Pester" "https://github.com/pester/Pester/archive/3.4.3.zip"
 		UnzipFile $PSScriptRoot\ThirdPartyModules\Pester.zip $PSScriptRoot\ThirdPartyModules
 	}
