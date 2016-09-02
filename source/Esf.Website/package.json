@@ -6,6 +6,7 @@
     "typings": "typings",
     "gulp": "gulp"
   },
+  "private": true,
   "license": "MIT",
   "dependencies": {
     "@angular/common": "2.0.0-rc.4",
