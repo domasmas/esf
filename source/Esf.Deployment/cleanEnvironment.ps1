@@ -4,6 +4,12 @@ function EnsurePathIsRemoved($path) {
     }
 }
 
+function EnsureDirectoryExists($directoryPath) {
+    if (-Not (Test-Path $directoryPath)) {
+        New-Item -ItemType Directory $directoryPath
+    }
+}
+
 function EnsureBinPathsAreRemoved($esfRootPath) {    
     EnsurePathIsRemoved "$esfRootPath\bin\Esf.DataAccess"
     EnsurePathIsRemoved "$esfRootPath\bin\Esf.DataAccess.DeploymentTests"
@@ -49,25 +55,35 @@ function CleanIIS() {
     }
 }
 
-function CleanEnvironment($databasePath, $esfRootPath) {
+function CleanEnvironment($databasePath, $esfRootPath, $cleanEnvironmentOutput) {
+    Write-Output "Start cleaning ESF deployment"
+
     EnsurePathIsRemoved $databasePath
     EnsureBinPathsAreRemoved $esfRootPath
     EnsureNugetPackagesAreRemoved $esfRootPath
-    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.DataAccess\node_modules"
+    
+    EnsureDirectoryExists $cleanEnvironmentOutput
+
+    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.DataAccess\node_modules" | Out-File $cleanEnvironmentOutput\dataAccess_node_modules_removed.txt
     EnsurePathIsRemoved "$esfRootPath\source\Esf.DataAccess\upgradeOutput"
 
     EnsurePathIsRemoved "$esfRootPath\source\Esf.Deployment\DeploymentOutput"
     EnsurePathIsRemoved "$esfRootPath\source\Esf.Deployment\ThirdPartyModules"
 
-    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\wwwroot"
-    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\node_modules"
-    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\typings"
+    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\wwwroot" | Out-File $cleanEnvironmentOutput\website_wwwroot_removed.txt
+    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\node_modules" | Out-File $cleanEnvironmentOutput\website_node_modules_removed.txt
+    EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\typings" | Out-File $cleanEnvironmentOutput\website_typings_removed.txt
 
     GitCleanEsf $esfRootPath
 
     CleanIIS
+
+    Write-Output "Cleaning ESF deployment finished."
+
+    Write-Output "To check cleaning logs go to: $CleanEnvironmentOutput"
 }
 
 $esfRootPath = Resolve-Path "$PSScriptRoot\..\..\"
 $databasePath = "C:\Databases\EsFiddle"
-CleanEnvironment $databasePath $esfRootPath
+$cleanEnvironmentOutput = Resolve-Path "$esfRootPath\..\CleanEnvironmentOutput"
+CleanEnvironment $databasePath $esfRootPath $cleanEnvironmentOutput
