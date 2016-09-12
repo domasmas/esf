@@ -49,10 +49,16 @@ function DeployWebsiteAndWebApi() {
 	$webApiPath = GetPSScriptRootPath($webApiDeploymentConfig.DeploymentPath)
 	$websitePath = GetPSScriptRootPath($websiteDeploymentConfig.DeploymentPath)
 	CreateWebsite "esf.WebApi" $webApiDeploymentConfig.Port $webApiPath 
-	CreateWebsite "esf.Website" $websiteDeploymentCOnfig.Port $websitePath
-
-	$unitTestsPath = "$PSScriptRoot\DeployToIss.tests.ps1"
-	ImportPester
-	Invoke-Pester -Script @{ Path = $unitTestsPath}
+	CreateWebsite "esf.Website" $websiteDeploymentCOnfig.Port $websitePath	
 }
-Export-ModuleMember -Function DeployWebsiteAndWebApi
+
+function RunDeployWebsiteAndWebApiTests() {
+	$deploymentTestsPath = "$PSScriptRoot\DeployToIss.tests.ps1"
+	ImportPester
+	$pesterResult = (Invoke-Pester -Script @{ Path = $deploymentTestsPath} -PassThru)
+	Return [PSCustomObject]@{
+		FailedTestsCount = $pesterResult.TotalCount - $pesterResult.PassedCount
+	}
+}
+
+Export-ModuleMember -Function DeployWebsiteAndWebApi, RunDeployWebsiteAndWebApiTests

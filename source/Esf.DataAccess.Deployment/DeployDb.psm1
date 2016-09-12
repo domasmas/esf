@@ -7,7 +7,16 @@ function RunEsfNUnitDeploymentTests($deployDbOutputDir) {
 	$tests = (Get-ChildItem $deploymentTestsOutputDir -Recurse -Include *Tests.dll)
 
 	# Run tests
-	& $nunit "-work" $deployDbOutputDir $tests
+	$deployDbTestsXml = "deployDb.tests.xml"
+	& $nunit "-work" $deployDbOutputDir "-result" $deployDbTestsXml $tests
+	Return [PSCustomObject]@{
+	  FailedTestsCount = (ReadNUnitFailedTestsCount $deployDbOutputDir\$deployDbTestsXml)
+	}
+}
+
+function ReadNUnitFailedTestsCount($xmlResultFilePath) {
+	$nUnitXmlResult = [xml](Get-Content $xmlResultFilePath)
+	return [int] $nUnitXmlResult."test-run".failed
 }
 
 function StartMongoDbServerInSeparateProcess() {
@@ -15,13 +24,11 @@ function StartMongoDbServerInSeparateProcess() {
 	Start-Process powershell.exe -ArgumentList "-file $mongoDbServerScriptPath" -WorkingDirectory $PSScriptRoot
 }
 
-function DeployDb($deployDbOutputDir) {
+function DeployDb() {
 	StartMongoDbServerInSeparateProcess
 	cd $PSScriptRoot
 	Import-Module $PSScriptRoot\UpgradeDb.psm1	
 	& UpgradeDb
-
-	RunEsfNUnitDeploymentTests $deployDbOutputDir
 }
 
-Export-ModuleMember -Function DeployDb
+Export-ModuleMember -Function DeployDb, RunEsfNUnitDeploymentTests

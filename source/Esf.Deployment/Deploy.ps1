@@ -34,14 +34,28 @@ function DeployEsf() {
 	Write-Progress -Activity "Esf.Website Gulp Build" -Status "Finished"
 	Import-Module $PSScriptRoot\..\Esf.DataAccess.Deployment\DeployDb.psm1
 	Write-Progress -Activity "Deploy DB" -Status "Started"
-	& DeployDb $deploymentOutput *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.output.txt
+	& DeployDb *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.output.txt
+	($deployDbTestsResult = RunEsfNUnitDeploymentTests $deploymentOutput) *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.tests.txt
+	ReportTestsResult "deploy DB tests" $deployDbTestsResult.FailedTestsCount
 	Write-Progress -Activity "Deploy DB" -Status "Finished"
 	Import-Module $PSScriptRoot\DeployToIss.psm1
 	Write-Progress -Activity "Deploy Website and web api" -Status "Started"
 	DeployWebsiteAndWebApi *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.txt
 	Write-Progress -Activity "Deploy Website and web api" -Status "Finished"
+	($deployWebsiteAndWebApiTestsResult = RunDeployWebsiteAndWebApiTests) *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.tests.txt
+	ReportTestsResult "website and web api tests" $deployWebsiteAndWebApiTestsResult.FailedTestsCount
+		
 	Write-Output "Deployment finished. To check if it is successful go to:"
 	Write-Output $deploymentOutput
+}
+
+function ReportTestsResult($message, $testsFailedCount) {
+	if ($testsFailedCount -eq 0) {
+		Write-Host -ForegroundColor Green "All $message succeeded"
+	}
+	if ($testsFailedCount -gt 0) {
+		Write-Host -ForegroundColor Red "$message failed"
+	}
 }
 
 Clear-Host
