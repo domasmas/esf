@@ -63,7 +63,7 @@ function CleanEnvironment($databasePath, $esfRootPath, $cleanEnvironmentOutput) 
     EnsureNugetPackagesAreRemoved $esfRootPath
     
     EnsureDirectoryExists $cleanEnvironmentOutput
-
+    $cleanEnvironmentOutput = Resolve-Path $cleanEnvironmentOutput
     EnsureLongPathIsRemoved "$esfRootPath\source\Esf.DataAccess\node_modules" | Out-File $cleanEnvironmentOutput\dataAccess_node_modules_removed.txt
     EnsurePathIsRemoved "$esfRootPath\source\Esf.DataAccess\upgradeOutput"
 
@@ -85,5 +85,5 @@ function CleanEnvironment($databasePath, $esfRootPath, $cleanEnvironmentOutput) 
 
 $esfRootPath = Resolve-Path "$PSScriptRoot\..\..\"
 $databasePath = "C:\Databases\EsFiddle"
-$cleanEnvironmentOutput = Resolve-Path "$esfRootPath\..\CleanEnvironmentOutput"
+$cleanEnvironmentOutput = "$esfRootPath\..\CleanEnvironmentOutput"
 CleanEnvironment $databasePath $esfRootPath $cleanEnvironmentOutput
