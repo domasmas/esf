@@ -1,4 +1,5 @@
 function StartMongoDbServer($mongoDbServerDirectory, $esFiddleDbPath) {
+	Clear-Host
 	Write-Host -ForegroundColor Yellow "Starting Mongo DB Server for ES Fiddle"
     $mongoDbServer = $mongoDbServerDirectory + "mongod.exe"
 	if (-Not (Test-Path -Path $esFiddleDbPath)) {
