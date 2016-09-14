@@ -13,7 +13,7 @@ var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var cleanCSS = require('gulp-clean-css');
 var gulpConcatCss = require('gulp-concat-css');
-
+var karmaServer = require('karma').Server;
 
 var WWW_ROOT = './wwwroot';
 var APP_DESTINATION = WWW_ROOT + '/app';
@@ -201,5 +201,12 @@ gulp.task('project-clean',
             callback
         );
     });
+
+gulp.task('tests-run-tdd', function (done) {
+    new karmaServer({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: false
+    }, done).start();
+});
 
 gulp.task('default', ['build']);
