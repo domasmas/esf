@@ -9,5 +9,14 @@
     "experimentalDecorators": true,
     "removeComments": false,
     "noImplicitAny": true
+  },
+  "filesGlob": [
+    "App/**/*.ts",
+    "typings/**/*.d.ts"
+  ],
+  "meta": {
+    "typescript": {
+      "exports": "ts"
+    }
   }
 }

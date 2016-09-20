@@ -2,6 +2,11 @@
 	"version": "1.0.0",
 	"name": "esf.dataAccess",
   "private": true,
+  "scripts": {
+    "gulp": "gulp"
+  },
+  "dependencies": {
+  },
   "devDependencies": {
     "typescript": "1.8.10",
     "gulp": "3.9.1",

@@ -4,4 +4,3 @@
 
 npm install
 npm install --dev
-typings install

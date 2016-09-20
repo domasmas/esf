@@ -1,8 +1,4 @@
 ﻿using Esf.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Esf.Domain
@@ -19,14 +15,15 @@ namespace Esf.Domain
 
         public async Task<EsState> CreateState()
         {
-            var newEsState = (await _statesRepository.FindEsStates(s => s.StateUrl == Guid.Empty)).FirstOrDefault();
+            //var newEsState = (await _statesRepository.FindEsStates(s => s.StateUrl == Guid.Empty)).FirstOrDefault();
+            EsState newEsState = null;
             if (newEsState == null)
             {
-                newEsState = new EsState()
+                newEsState = new EsState
                 {
-                    Documents = new List<string>() { "Doc1", "Doc2" },
-                    Query = "New Query",
-                    Mapping = "Mapping"                
+                    Documents =  "[{\"prop1\":\"value1\"}, {\"prop1\":\"value1\"}]" ,
+                    Query = "{\"prop1\":\"value1\"}",
+                    Mapping = "{\"prop1\":\"value1\"}"
                 };
                 await _statesRepository.InsertEsState(newEsState);
             }

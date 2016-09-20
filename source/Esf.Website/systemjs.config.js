@@ -10,7 +10,11 @@
         'zonejs': 'wwwroot/lib/zone.js',
         'reflect-metadata': 'wwwroot/lib/reflect-metadata',
         'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
-        '@angular': 'wwwroot/lib'
+        '@angular': 'wwwroot/lib',
+        'ng2-ace-editor': 'node_modules/ng2-ace-editor',
+        'brace': 'node_modules/brace',
+        'w3c-blob': 'node_modules/w3c-blob',
+        'buffer': 'node_modules/buffer-shims'
     };
 
     var packages = {
@@ -18,7 +22,11 @@
         'rxjs': { defaultExtension: 'js' },
         'zonejs': { main: 'zone', defaultExtension: 'js' },
         'reflect-metadata': { main: 'Reflect', defaultExtension: 'js' },
-        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' }
+        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
+        'ng2-ace-editor': { format: 'cjs', main: 'index.js', defaultExtension: 'js' },
+        'w3c-blob': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
+        'brace': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
+        'buffer': { format: 'cjs', defaultExtension: 'js', main: 'index.js' }
     };
 
     var ngPackageNames = [
@@ -47,8 +55,10 @@
     ngPackageNames.forEach(setPackageConfig);
 
     System.config({
-        baseURL: '/',
         map: map,
-        packages: packages
+        packages: packages,
+        paths: {
+            underscore: './node_modules/brace/index.js'
+        }
     });
 })(this);
