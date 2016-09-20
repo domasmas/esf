@@ -74,7 +74,7 @@ namespace Esf.DataAccess.Tests
             Func<int> getEsStatesRepositoryCount = () => (esStatesRepository.FindEsStates((esState) => true)).Result.Count; 
             int initialEsStatesCount = getEsStatesRepositoryCount();
             var testData1 = new EsStateBuilder().SetQuery("query1").SetMapping("mapping").SetStateUrl(Guid.NewGuid())
-                    .SetDocuments("doc1", "doc2").Build();
+                    .SetDocuments("doc1, doc2").Build();
 
             var insertedState = await esStatesRepository.InsertEsState(testData1);
 

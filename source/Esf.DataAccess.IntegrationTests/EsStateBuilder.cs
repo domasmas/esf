@@ -32,6 +32,12 @@ namespace Esf.DataAccess.Tests
             return this;
         }
 
+        public EsStateBuilder SetDocuments(string documents)
+        {
+            _esState.Documents = documents;
+            return this;
+        }
+
         private EsState _esState;
 
         public EsState Build()
