@@ -32,9 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="DeploymentOutput\" />
-  </ItemGroup>
-  <ItemGroup>
+    <Compile Include="CleanEnvironment.ps1" />
     <Compile Include="Esf.Website.GulpBuild.psm1" />
     <Compile Include="MsBuild.psm1" />
     <Compile Include="Deploy.ps1" />
