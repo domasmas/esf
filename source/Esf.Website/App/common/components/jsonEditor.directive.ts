@@ -1,0 +1,81 @@
+﻿/// <reference path="../../../typings/globals/ace/index.d.ts" />
+
+// Based on https://github.com/fxmontigny/ng2-ace-editor/blob/master/src/index.ts
+// Migrate to NPM package instead, once they have fixed their type definitions
+
+import { Directive, EventEmitter, Output, ElementRef, Input } from '@angular/core';
+import 'brace';
+import 'brace/theme/monokai';
+import 'brace/mode/html';
+import 'brace/theme/chrome';
+import 'brace/mode/json';
+ 
+declare var ace: AceAjax.Ace;
+ 
+@Directive({
+    selector: '[json-editor]',
+    outputs: ['textChange']
+}) 
+export class JsonEditorDirective {
+    @Output('textChange') textChange = new EventEmitter();
+
+    _readOnly: boolean = false; 
+    editor: AceAjax.Editor;
+    oldText: string;
+
+    constructor(elementRef: ElementRef) {
+        let el = elementRef.nativeElement;
+        this.editor = ace["edit"](el);
+        this.init();
+        this.initEvents();
+    }
+
+    init() {
+        this.editor.setTheme('ace/theme/chrome');
+        this.editor.getSession().setMode('ace/mode/json');
+        this.editor.setReadOnly(this._readOnly);
+        this.editor.$blockScrolling = Infinity;
+    }
+
+    initEvents() {
+        this.editor.on('change', () => {
+            if (this._readOnly)
+                return;
+
+            let newVal = this.editor.getValue();
+            if (newVal === this.oldText) return;
+            if (typeof this.oldText !== 'undefined') {
+                this.textChange.emit(newVal);
+            }
+
+            this.oldText = newVal;
+            this.text = newVal;
+        });
+    }
+
+    @Input() set readOnly(readOnly: boolean) {
+        this._readOnly = readOnly;
+        this.editor.setReadOnly(readOnly);
+        if (readOnly) {
+            this.editor.setOptions({
+                highlightActiveLine: false,
+                highlightGutterLine: false
+            });
+            this.editor.renderer.hideCursor();
+        }
+    }
+
+    @Input() set text(text: string) {
+        if (text == null)
+            text = "";
+
+        if (typeof text != 'string')
+            text = String(text);
+
+        if (text == this.oldText)
+            return;
+
+        this.editor.setValue(text);
+        this.editor.clearSelection();
+    }
+}
