@@ -48,15 +48,7 @@
     "jasmine-core": "^2.5.1",
     "karma": "^1.3.0",
     "karma-chrome-launcher": "^2.0.0",
-    "karma-jasmine": "^1.0.2",<<<<<<< .mine
-    "karma": "^1.3.0",
-    "karma-chrome-launcher": "^2.0.0",
     "karma-jasmine": "^1.0.2",
-=======
-
-
-
->>>>>>> .theirs
     "ntypescript": "^1.201606180105.1",
     "run-sequence": "^1.2.1",
     "systemjs-builder": "^0.15.23",
