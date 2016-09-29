@@ -22,6 +22,8 @@ var LIBRARIES_DESTINATION = WWW_ROOT + '/lib';
 var RELEASE_JS_DESTINATION = WWW_ROOT + '/release/js';
 var RELEASE_CSS_DESTINATION = WWW_ROOT + '/release/css';
 
+var protractor = require('gulp-protractor').protractor;
+
 gulp.task('clean:app',
     function() {
         return gulp.src(APP_DESTINATION, { read: false })
@@ -216,5 +218,16 @@ gulp.task('tests-run-tdd', function (done) {
         singleRun: false
     }, done).start();
 });
+
+gulp.task('e2etests-run', function () {
+    gulp.src([APP_DESTINATION + '/endToEndTests/**/*.js'])
+    .pipe(protractor({
+        configFile: "protractor.config.js",
+        args: ['--baseUrl', 'http://localhost:4444']
+    }))
+    .on('error', function(e) { throw e });
+});
+var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
+gulp.task('e2etests-startWebDriver', webdriver_standalone);
 
 gulp.task('default', ['build']);

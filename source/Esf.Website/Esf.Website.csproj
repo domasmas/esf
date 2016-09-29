@@ -157,6 +157,7 @@
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
     <Content Include="App\esfState\esfState.component.html" />
+    <Content Include="protractor.config.js" />
     <Content Include="SetupEnvironment.ps1" />
     <None Include="systemjs.config.js" />
     <Content Include="Web.config">
@@ -186,10 +187,13 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="App\endToEndTests\todo.spec.ts" />
     <TypeScriptCompile Include="App\common\components\jsonEditor.directive.ts" />
     <TypeScriptCompile Include="App\common\components\app.component.ts" />
     <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
+    <TypeScriptCompile Include="App\esfState\esfState.component.spec.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.component.ts" />
+    <TypeScriptCompile Include="App\esfState\esfState.service.spec.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.service.ts" />
     <TypeScriptCompile Include="App\main.ts" />
     <TypeScriptCompile Include="App\app.routes.ts" />
