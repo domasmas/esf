@@ -2,11 +2,11 @@
   "name": "esf",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "typings install && webdriver-manager update",
+    "postinstall": "typings install && npm run setupProtractor",
+    "setupProtractor": "webdriver-manager update",
     "typings": "typings",
     "tsc": "tsc",
-    "gulp": "gulp",
-    "webdriver-manager": "webdriver-manager"
+    "gulp": "gulp"
   },
   "private": true,
   "license": "MIT",
