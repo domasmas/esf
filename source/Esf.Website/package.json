@@ -2,7 +2,7 @@
   "name": "esf",
   "version": "1.0.0",
   "scripts": {
-    "postinstall": "typings install",
+    "postinstall": "typings install && webdriver-manager update",
     "typings": "typings",
     "tsc": "tsc",
     "gulp": "gulp",
