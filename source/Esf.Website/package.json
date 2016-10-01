@@ -31,10 +31,9 @@
     "zone.js": "^0.6.12",
     "w3c-blob": "^0.0.1",
     "buffer-shims": "^1.0.0",
-    "ng2-ace-editor": "0.0.13"
+    "brace": "^0.8.0"
   },
   "devDependencies": {
-    "brace": "^0.8.0",
     "concurrently": "^2.0.0",
     "gulp-clean": "^0.3.2",
     "gulp-clean-css": "^2.0.10",
