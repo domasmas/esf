@@ -3,7 +3,6 @@
 var gulp = require('gulp');
 var tsc = require('gulp-typescript');
 var tscConfig = require('./tsconfig.json');
-var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
 var sourcemaps = require('gulp-sourcemaps');
 var systemjsBuilder = require('systemjs-builder');
 var concat = require('gulp-concat');
@@ -18,6 +17,7 @@ var WWW_ROOT = './wwwroot';
 var APP_DESTINATION = WWW_ROOT + '/app';
 var CONTENT_DESTINATION = WWW_ROOT + '/content';
 var LIBRARIES_DESTINATION = WWW_ROOT + '/lib';
+var END_TO_END_TESTS_DESTINATION = WWW_ROOT + '/endToEndTests';
 
 var RELEASE_JS_DESTINATION = WWW_ROOT + '/release/js';
 var RELEASE_CSS_DESTINATION = WWW_ROOT + '/release/css';
@@ -42,9 +42,9 @@ gulp.task('clean:content',
             .pipe(clean({ force: true }));
     });
 
-gulp.task('compile:ts',
-    function() {
-        var sourceTsFiles = [
+gulp.task('compile:tsApp',
+    function () {
+        var sourceAppTsFiles = [
             './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
             './node_modules/ng2-ace-editor/**/*.ts',
@@ -52,15 +52,32 @@ gulp.task('compile:ts',
             './typings/**/*.d.ts'
         ];
 
+        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
         var tsResult = gulp
-            .src(sourceTsFiles)
+            .src(sourceAppTsFiles)
             .pipe(sourcemaps.init())
             .pipe(tsc(tsProject))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(APP_DESTINATION));
-
         return tsResult;
     });
+
+gulp.task('compile:tsEndToEndTests',
+    function() {
+        var sourceEndToEndTsFiles = [
+            './endToEndTests/**/*.ts',
+            './typings/**/*.d.ts'];
+        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+        var tsEndToEndResult = gulp
+            .src(sourceEndToEndTsFiles)
+            .pipe(sourcemaps.init())
+            .pipe(tsc(tsProject))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest(END_TO_END_TESTS_DESTINATION));
+
+        return tsEndToEndResult;
+    });
+gulp.task('compile:ts', ['compile:tsApp', 'compile:tsEndToEndTests']);
 
 gulp.task('copy:vendor', function () {
     var one = gulp.src([
@@ -175,7 +192,7 @@ gulp.task('watch:modules',
 
 gulp.task('watch:ts',
     function () {
-        gulp.watch(['./App/**/*.ts', './App/*.ts'], ['compile:ts']);
+        gulp.watch(['./App/**/*.ts', './App/*.ts', './endToEndTests/**/*.ts'], ['compile:ts']);
     });
 
 gulp.task('watch', ['watch:less', 'watch:ts']);
@@ -220,12 +237,15 @@ gulp.task('tests-run-tdd', function (done) {
 });
 
 gulp.task('e2etests-run', function () {
-    gulp.src([APP_DESTINATION + '/endToEndTests/**/*.js'])
+    gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
     .pipe(protractor({
         configFile: "protractor.config.js",
         args: ['--baseUrl', 'http://localhost:4444']
     }))
-    .on('error', function(e) { throw e });
+    .on('error', function (e) {
+        console.dir(e);
+        throw e;
+    });
 });
 var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
 gulp.task('e2etests-startWebDriver', webdriver_standalone);
