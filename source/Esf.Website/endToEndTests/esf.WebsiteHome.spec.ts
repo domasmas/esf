@@ -40,5 +40,47 @@ describe('Given Esf.Website home page', function () {
             expect(esfHome.hasSaveCommand()).toBe(true);
         });
     });
+
+    describe('initial state', () => {
+        beforeAll(() => {
+            esfHome.navigate();
+        });
+        beforeEach(() => {
+            browser.ignoreSynchronization = true;//workaround need to fix this
+        });
+        afterEach(() => {
+            browser.ignoreSynchronization = false;//workaround need to fix this
+        });
+
+        it('should have initial mapping state', () => {
+
+        });
+
+        it('should have initial query state', () => {
+
+        });
+
+        it('should have initial documents state', () => {
+
+        });
+
+        it('should have empty result state', () => {
+
+        });
+    });
+
+    describe('save state', () => {
+        beforeAll(() => {
+            esfHome.navigate();
+        });
+        beforeEach(() => {
+            browser.ignoreSynchronization = true;//workaround need to fix this
+        });
+        afterEach(() => {
+            browser.ignoreSynchronization = false;//workaround need to fix this
+        });
+
+
+    });
 });
 

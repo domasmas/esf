@@ -187,7 +187,6 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="endToEndTests\esf.WebsiteHomePage.spec.ts" />
     <TypeScriptCompile Include="App\common\components\jsonEditor.directive.ts" />
     <TypeScriptCompile Include="App\common\components\app.component.ts" />
     <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
@@ -197,7 +196,8 @@
     <TypeScriptCompile Include="App\esfState\esfState.service.ts" />
     <TypeScriptCompile Include="App\main.ts" />
     <TypeScriptCompile Include="App\app.routes.ts" />
-    <TypeScriptCompile Include="endToEndTests\esf.WebsiteHomePage.pageObject.ts" />
+    <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.pageObject.ts" />
+    <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.spec.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

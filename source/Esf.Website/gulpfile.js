@@ -236,7 +236,7 @@ gulp.task('tests-run-tdd', function (done) {
     }, done).start();
 });
 
-gulp.task('e2etests-run', function () {
+gulp.task('e2etests:run', function () {
     gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
     .pipe(protractor({
         configFile: "protractor.config.js",
@@ -247,7 +247,19 @@ gulp.task('e2etests-run', function () {
         throw e;
     });
 });
+gulp.task('e2etests:debugRun', function () {
+    gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
+    .pipe(protractor({
+        configFile: "protractor.config.js",
+        args: ['--baseUrl', 'http://localhost:4444'],
+        debug: true
+    }))
+    .on('error', function (e) {
+        console.dir(e);
+        throw e;
+    });
+});
 var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
-gulp.task('e2etests-startWebDriver', webdriver_standalone);
+gulp.task('e2etests:startWebDriver', webdriver_standalone);
 
 gulp.task('default', ['build']);
