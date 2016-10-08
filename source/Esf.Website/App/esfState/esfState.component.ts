@@ -120,7 +120,7 @@ export class EsfQueryRunner {
     queryResult: string;
 
     constructor(private esfStateService: EsfStateService) {
-        this.queryResult = 'Query Result Value';
+        this.queryResult = '';
     }
 
     public run(): void {
