@@ -1,15 +1,17 @@
-﻿import { esfHome } from './esf.WebsiteHome.pageObject';
+﻿import { EsfHome } from './esf.WebsiteHome.pageObject';
 
 describe('Given Esf.Website home page', function () {
     describe('when navigating to it', function () {
+        var esfHome: EsfHome;
         beforeAll(() => {
+            esfHome = new EsfHome(browser);
             esfHome.navigate();
         });
         beforeEach(() => {
             browser.ignoreSynchronization = true;//workaround need to fix this
         });
         afterEach(() => {
-            browser.ignoreSynchronization = false;//workaround need to fix this
+            browser.ignoreSynchronization = false;//workaround need to fix this            
         });
 
         it('should have title Elasticsearch Fiddler', () => {
@@ -42,7 +44,9 @@ describe('Given Esf.Website home page', function () {
     });
 
     describe('initial state', () => {
+        var esfHome: EsfHome;
         beforeAll(() => {
+            esfHome = new EsfHome(browser);
             esfHome.navigate();
         });
         beforeEach(() => {
@@ -73,8 +77,10 @@ describe('Given Esf.Website home page', function () {
         });
     });
 
-    describe('save state', () => {
+    describe('persist state', () => {
+        var esfHome: EsfHome;        
         beforeAll(() => {
+            esfHome = new EsfHome(browser);
             esfHome.navigate();
         });
         beforeEach(() => {
@@ -84,7 +90,53 @@ describe('Given Esf.Website home page', function () {
             browser.ignoreSynchronization = false;//workaround need to fix this
         });
 
+        it('should be able to change the initial state and save it', () => {        
+            var mapping: string = '{"item2", "value of item1", "extraProp" : 55}';   
+            esfHome.setMappingSectionContent(mapping);
 
+            var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+            esfHome.setDocumentsSectionContent(documents);
+
+            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            esfHome.setQuerySectionContent(query);
+
+            expect(esfHome.getMappingSectionContent()).toEqual(mapping); 
+            expect(esfHome.getDocumentsSectionContent()).toEqual(documents);
+            expect(esfHome.getQuerySectionContent()).toEqual(query);
+            expect(esfHome.isUrlOfExistingState()).toBe(false);
+
+            esfHome.executeSaveCommand();
+            expect(esfHome.isUrlOfExistingState()).toBe(true);
+        });
+
+        it('should be able to view a saved state in new browser', () => {
+           var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+            esfHome.setDocumentsSectionContent(documents);
+            esfHome.executeSaveCommand();
+            esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
+                expect(esfHome2.getDocumentsSectionContent()).toEqual(documents);
+                expect(esfHome.isUrlOfExistingState()).toBe(true);
+                esfHome2.quitBrowser();
+            });             
+        });
+
+        it('should be able to change a saved state and save it', () => {
+            var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+            esfHome.setDocumentsSectionContent(documents);
+            esfHome.executeSaveCommand();
+            esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
+                var furtherChangedDocuments: string = '[ {"prop1":"value44 changed"}, {"something": "val"}]';
+                esfHome2.setDocumentsSectionContent(furtherChangedDocuments);                
+                esfHome2.executeSaveCommand();
+                esfHome2.navigateToCurrentUrlWithNewBrowser().then((esfHome3: EsfHome) => {
+                    expect(esfHome2.getDocumentsSectionContent()).toEqual(furtherChangedDocuments);
+                    expect(esfHome3.getDocumentsSectionContent()).toEqual(furtherChangedDocuments);
+                                        
+                    esfHome2.quitBrowser();
+                    esfHome3.quitBrowser();
+                });  
+            });  
+        }); 
     });
 });
 
