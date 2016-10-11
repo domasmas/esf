@@ -17,7 +17,7 @@ function DeployEsf() {
 	$esfSolution = Resolve-Path "$PSScriptRoot\..\Esf.sln"
 	$deploymentOutput = "$PSScriptRoot\DeploymentOutput"
 	EnsureDeploymentOutputExists $deploymentOutput
-
+	
 	RestoreNugetPackages $esfSolution *>&1 | Out-File $deploymentOutput\EsfNugetPackagesRestore.txt
 	$esfDeploymentSolution = Resolve-Path "$PSScriptRoot\..\Esf.Deployment.sln"
 	RestoreNugetPackages $esfDeploymentSolution *>&1 | Out-File $deploymentOutput\EsfDeploymentNugetPackagesRestore.txt
@@ -44,9 +44,18 @@ function DeployEsf() {
 	Write-Progress -Activity "Deploy Website and web api" -Status "Finished"
 	($deployWebsiteAndWebApiTestsResult = RunDeployWebsiteAndWebApiTests) *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.tests.txt
 	ReportTestsResult "website and web api tests" $deployWebsiteAndWebApiTestsResult.FailedTestsCount
-		
+	
+	Import-Module $PSScriptRoot\DeployToIss.psm1
+	Write-Progress -Activity "Deploy Website and web api" -Status "Started"
+	DeployWebsiteAndWebApi *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.txt
+	Write-Progress -Activity "Deploy Website and web api" -Status "Finished"
+	
 	Write-Output "Deployment finished. To check if it is successful go to:"
 	Write-Output $deploymentOutput
+	
+	If ($deployWebsiteAndWebApiTestsResult.FailedTestsCount -eq 0) { 
+		OpenWebsite 
+	}
 }
 
 function ReportTestsResult($message, $testsFailedCount) {
@@ -56,6 +65,11 @@ function ReportTestsResult($message, $testsFailedCount) {
 	if ($testsFailedCount -gt 0) {
 		Write-Host -ForegroundColor Red "$message failed"
 	}
+}
+
+function OpenWebsite() {
+	$port = $((Get-Content "$PSScriptRoot\esfWebsite.config.json") -join "`n" | ConvertFrom-Json).Port
+	start "http://localhost:$port"
 }
 
 Clear-Host

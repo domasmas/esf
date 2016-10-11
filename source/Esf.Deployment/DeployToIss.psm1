@@ -40,6 +40,9 @@ function ImportPester() {
 }
 
 function DeployWebsiteAndWebApi() {
+	$websiteName = "esf.Website"
+	$apiName = "esf.WebApi"
+
 	Import-Module $PSScriptRoot\Permissions.psm1
 	CheckForElevatedPermissions
 	ImportWebAministrationModule
@@ -48,8 +51,11 @@ function DeployWebsiteAndWebApi() {
 	$webApiDeploymentConfig = GetDeploymentConfig "$PSScriptRoot\esfWebApi.config.json"
 	$webApiPath = GetPSScriptRootPath($webApiDeploymentConfig.DeploymentPath)
 	$websitePath = GetPSScriptRootPath($websiteDeploymentConfig.DeploymentPath)
-	CreateWebsite "esf.WebApi" $webApiDeploymentConfig.Port $webApiPath 
-	CreateWebsite "esf.Website" $websiteDeploymentCOnfig.Port $websitePath	
+	CreateWebsite $apiName $webApiDeploymentConfig.Port $webApiPath 
+	CreateWebsite $websiteName $websiteDeploymentCOnfig.Port $websitePath	
+		
+	SetPermissions "$PSScriptRoot\$($webApiDeploymentConfig.DeploymentPath)" $apiName
+	SetPermissions "$PSScriptRoot\$($websiteDeploymentConfig.DeploymentPath)" $websiteName
 }
 
 function RunDeployWebsiteAndWebApiTests() {
@@ -59,6 +65,15 @@ function RunDeployWebsiteAndWebApiTests() {
 	Return [PSCustomObject]@{
 		FailedTestsCount = $pesterResult.TotalCount - $pesterResult.PassedCount
 	}
+}
+
+function SetPermissions($path, $appPoolName) {
+	$Acl = Get-Acl $path
+	$Ar = New-Object  system.security.accesscontrol.filesystemaccessrule("IIS AppPool\$appPoolName","FullControl","ObjectInherit,ContainerInherit","None","Allow")
+	$Ar2 = New-Object  system.security.accesscontrol.filesystemaccessrule("IUSR","FullControl","ObjectInherit,ContainerInherit","None","Allow")
+	$Acl.SetAccessRule($Ar)
+	$Acl.SetAccessRule($Ar2)
+	Set-Acl $path  $Acl
 }
 
 Export-ModuleMember -Function DeployWebsiteAndWebApi, RunDeployWebsiteAndWebApiTests
