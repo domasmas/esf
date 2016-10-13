@@ -18,6 +18,9 @@ function DeployEsf() {
 	$deploymentOutput = "$PSScriptRoot\DeploymentOutput"
 	EnsureDeploymentOutputExists $deploymentOutput
 	
+	Write-Progress -Activity "Prerequisites" -Status "Started"
+	TestPrerequisites $deploymentOutput
+	Write-Progress -Activity "Prerequisites" -Status "Finished"
 	RestoreNugetPackages $esfSolution *>&1 | Out-File $deploymentOutput\EsfNugetPackagesRestore.txt
 	$esfDeploymentSolution = Resolve-Path "$PSScriptRoot\..\Esf.Deployment.sln"
 	RestoreNugetPackages $esfDeploymentSolution *>&1 | Out-File $deploymentOutput\EsfDeploymentNugetPackagesRestore.txt
@@ -70,6 +73,12 @@ function ReportTestsResult($message, $testsFailedCount) {
 function OpenWebsite() {
 	$port = $((Get-Content "$PSScriptRoot\esfWebsite.config.json") -join "`n" | ConvertFrom-Json).Port
 	start "http://localhost:$port"
+}
+
+function TestPrerequisites($deploymentOutput) {
+	Import-Module $PSScriptRoot\PesterSuite.psm1
+	$preqequisitesTestsResult = (RunPesterSuite $PSScriptRoot\Prerequisites.tests.ps1) *>&1 |  Out-File $deploymentOutput\DeployDB.tests.txt
+	ReportTestsResult "environment prerequisites tests" $preqequisitesTestsResult.FailedTestsCount
 }
 
 Clear-Host
