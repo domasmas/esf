@@ -77,7 +77,7 @@ function OpenWebsite() {
 
 function TestPrerequisites($deploymentOutput) {
 	Import-Module $PSScriptRoot\PesterSuite.psm1
-	$preqequisitesTestsResult = (RunPesterSuite $PSScriptRoot\Prerequisites.tests.ps1) *>&1 |  Out-File $deploymentOutput\DeployDB.tests.txt
+	$preqequisitesTestsResult = (RunPesterSuite $PSScriptRoot\Prerequisites.tests.ps1) *>&1 |  Out-File $deploymentOutput\prerequisites.tests.txt	
 	ReportTestsResult "environment prerequisites tests" $preqequisitesTestsResult.FailedTestsCount
 }
 
