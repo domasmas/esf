@@ -1,8 +1,7 @@
-﻿/// <reference path="../../../typings/globals/ace/index.d.ts" />
-
-// Based on https://github.com/fxmontigny/ng2-ace-editor/blob/master/src/index.ts
+﻿// Based on https://github.com/fxmontigny/ng2-ace-editor
 // Migrate to NPM package instead, once they have fixed their type definitions
 
+import { AceEditorDirective } from 'ng2-ace-editor';
 import { Directive, EventEmitter, Output, ElementRef, Input } from '@angular/core';
 import 'brace';
 import 'brace/theme/monokai';

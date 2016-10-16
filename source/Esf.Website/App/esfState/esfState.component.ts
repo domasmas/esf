@@ -1,14 +1,13 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, EsfStateDto } from "./esfState.service";
-import { HTTP_PROVIDERS, Response} from '@angular/http';
+import { Http, Response} from '@angular/http';
 import { JsonEditorDirective } from '../common/components/jsonEditor.directive';
 
 @
 Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService, HTTP_PROVIDERS],
-    directives: [JsonEditorDirective]
+    providers: [EsfStateService, JsonEditorDirective]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfState;
