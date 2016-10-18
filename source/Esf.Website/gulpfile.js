@@ -12,7 +12,8 @@ var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var cleanCSS = require('gulp-clean-css');
 var gulpConcatCss = require('gulp-concat-css');
-var merge = require('merge-stream');var karmaServer = require('karma').Server;
+var merge = require('merge-stream');
+var karmaServer = require('karma').Server;
 var WWW_ROOT = './wwwroot';
 var APP_DESTINATION = WWW_ROOT + '/app';
 var CONTENT_DESTINATION = WWW_ROOT + '/content';
@@ -240,7 +241,7 @@ gulp.task('e2etests:run', function () {
     gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
     .pipe(protractor({
         configFile: "protractor.config.js",
-        args: ['--baseUrl', 'http://localhost:4444']
+        args: ['--baseUrl', 'http://localhost:4444', '--no-stackTrace']
     }))
     .on('error', function (e) {
         console.dir(e);
