@@ -1,7 +1,9 @@
-﻿import Promise = webdriver.promise.Promise;
+﻿/// <reference types="selenium-webdriver" />
+import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder } from 'protractor';
+import { promise as webDriverPromise }  from 'selenium-webdriver';
 
 export class EsfHome {
-    constructor(private browserInstance: protractor.Protractor) {
+    constructor(private browserInstance: ProtractorBrowser) {
     }
 
     navigate(): void {
@@ -12,9 +14,9 @@ export class EsfHome {
         this.browserInstance.get(url);
     }
 
-    navigateToCurrentUrlWithNewBrowser(): Promise<EsfHome> {
+    navigateToCurrentUrlWithNewBrowser(): webDriverPromise.Promise<EsfHome> {
         var esfHome2 = new EsfHome(browser.forkNewDriverInstance());
-        var deferredResult = protractor.promise.defer<EsfHome>();
+        var deferredResult = webDriverPromise.defer<EsfHome>();
         this.getCurrentUrl().then((url) => {  
             esfHome2.browserInstance.ignoreSynchronization = false;          
             esfHome2.navigateToUrl(url);  
@@ -94,7 +96,7 @@ export class EsfHome {
         return resultSection.isPresent();
     }
 
-    private getSaveCommandElement(): protractor.ElementFinder {
+    private getSaveCommandElement(): ElementFinder {
         return this.browserInstance.element(by.css('.save-command'));
     }
 

@@ -50,7 +50,7 @@ gulp.task('compile:tsApp',
             './node_modules/@types/**/*.d.ts'
         ];
 
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsResult = gulp
             .src(sourceAppTsFiles)
             .pipe(sourcemaps.init())
@@ -66,7 +66,7 @@ gulp.task('compile:tsEndToEndTests',
             './endToEndTests/**/*.ts',
             './node_modules/@types/**/*.d.ts'
         ];
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsEndToEndResult = gulp
             .src(sourceEndToEndTsFiles)
             .pipe(sourcemaps.init())
