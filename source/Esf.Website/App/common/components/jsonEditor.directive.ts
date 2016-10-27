@@ -1,30 +1,25 @@
-﻿/// <reference path="../../../typings/globals/ace/index.d.ts" />
+﻿/// <reference path="../../../node_modules/@types/ace/index.d.ts" />
 
-// Based on https://github.com/fxmontigny/ng2-ace-editor/blob/master/src/index.ts
+// Based on https://github.com/fxmontigny/ng2-ace-editor
 // Migrate to NPM package instead, once they have fixed their type definitions
-
-import { Directive, EventEmitter, Output, ElementRef, Input } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
 import 'brace';
 import 'brace/theme/monokai';
-import 'brace/mode/html';
-import 'brace/theme/chrome';
 import 'brace/mode/json';
- 
-declare var ace: AceAjax.Ace;
- 
+import 'brace/theme/chrome';
+
 @Directive({
-    selector: '[json-editor]',
-    outputs: ['textChange']
+    selector: '[json-editor]'
 }) 
 export class JsonEditorDirective {
-    @Output('textChange') textChange = new EventEmitter();
+    @Output() textChange = new EventEmitter();
 
     _readOnly: boolean = false; 
-    editor: AceAjax.Editor;
+    editor: any;
     oldText: string;
 
     constructor(elementRef: ElementRef) {
-        let el = elementRef.nativeElement;
+        let el = elementRef.nativeElement;        
         this.editor = ace["edit"](el);
         this.init();
         this.initEvents();

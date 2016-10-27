@@ -1,4 +1,5 @@
 ﻿import { EsfHome } from './esf.WebsiteHome.pageObject';
+import { protractor, browser } from 'protractor';
 
 describe('Given Esf.Website home page', function () {
     describe('when navigating to it', function () {

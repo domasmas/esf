@@ -48,16 +48,14 @@ gulp.task('compile:tsApp',
         var sourceAppTsFiles = [
             './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
-            './node_modules/ng2-ace-editor/**/*.ts',
-            './node_modules/ng2-ace-editor/**/*.d.ts',
-            './typings/**/*.d.ts'
+            './node_modules/@types/**/*.d.ts'
         ];
 
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsResult = gulp
             .src(sourceAppTsFiles)
             .pipe(sourcemaps.init())
-            .pipe(tsc(tsProject))
+            .pipe(tsProject())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(APP_DESTINATION));
         return tsResult;
@@ -67,12 +65,13 @@ gulp.task('compile:tsEndToEndTests',
     function() {
         var sourceEndToEndTsFiles = [
             './endToEndTests/**/*.ts',
-            './typings/**/*.d.ts'];
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+            './node_modules/@types/**/*.d.ts'
+        ];
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsEndToEndResult = gulp
             .src(sourceEndToEndTsFiles)
             .pipe(sourcemaps.init())
-            .pipe(tsc(tsProject))
+            .pipe(tsProject())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(END_TO_END_TESTS_DESTINATION));
 
@@ -81,7 +80,7 @@ gulp.task('compile:tsEndToEndTests',
 gulp.task('compile:ts', ['compile:tsApp', 'compile:tsEndToEndTests']);
 
 gulp.task('copy:vendor', function () {
-    var one = gulp.src([
+    return gulp.src([
             'node_modules/rxjs/**/*',
             'node_modules/observable/*',
             'node_modules/reflect-metadata/Reflect.js',
@@ -89,13 +88,6 @@ gulp.task('copy:vendor', function () {
             'node_modules/bootstrap-less/js/*.js'
         ])
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
-
-    var two = gulp.src([
-            'node_modules/ng2-ace-editor/*.js'
-        ])
-        .pipe(gulp.dest(LIBRARIES_DESTINATION + '/ng2-ace-editor/'));
-
-    return merge(one, two);
 });
 
 gulp.task('bundle:vendor', function () {

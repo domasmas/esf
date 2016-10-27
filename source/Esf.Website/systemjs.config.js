@@ -6,15 +6,14 @@
 
     var map = {
         'app': 'wwwroot/app',
-        'rxjs': 'wwwroot/lib',
-        'zonejs': 'wwwroot/lib/zone.js',
-        'reflect-metadata': 'wwwroot/lib/reflect-metadata',
-        'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
-        '@angular': 'wwwroot/lib',
-        'ng2-ace-editor': 'node_modules/ng2-ace-editor',
-        'brace': 'node_modules/brace',
+        'rxjs': 'node_modules/rxjs',
+        'zonejs': 'node_modules/zone.js/dist',
+        'reflect-metadata': 'node_modules/reflect-metadata',
+        'angular-in-memory-web-api': 'node_modules/angular-in-memory-web-api',
+        '@angular': 'node_modules/@angular',
         'w3c-blob': 'node_modules/w3c-blob',
-        'buffer': 'node_modules/buffer-shims'
+        'buffer': 'node_modules/buffer-shims',
+        'brace': 'node_modules/brace'
     };
 
     var packages = {
@@ -22,11 +21,12 @@
         'rxjs': { defaultExtension: 'js' },
         'zonejs': { main: 'zone', defaultExtension: 'js' },
         'reflect-metadata': { main: 'Reflect', defaultExtension: 'js' },
-        'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
-        'ng2-ace-editor': { format: 'cjs', main: 'index.js', defaultExtension: 'js' },
+        'angular-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
         'w3c-blob': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
-        'brace': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
-        'buffer': { format: 'cjs', defaultExtension: 'js', main: 'index.js' }
+        'buffer': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
+        'brace': {
+            format: 'cjs', defaultExtension: 'js', main: 'index.js'
+        }
     };
 
     var ngPackageNames = [
@@ -58,7 +58,8 @@
         map: map,
         packages: packages,
         paths: {
-            underscore: './node_modules/brace/index.js'
+            'brace/theme/*': './node_modules/brace/theme/*.js',
+            'brace/mode/*': './node_modules/brace/mode/*.js'
         }
     });
 })(this);

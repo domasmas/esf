@@ -1,14 +1,12 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, EsfStateDto } from "./esfState.service";
-import { HTTP_PROVIDERS, Response} from '@angular/http';
-import { JsonEditorDirective } from '../common/components/jsonEditor.directive';
+import { Http, Response} from '@angular/http';
 
 @
 Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService, HTTP_PROVIDERS],
-    directives: [JsonEditorDirective]
+    providers: [EsfStateService]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfState;
@@ -40,6 +38,10 @@ export class EsFiddlerComponent implements OnInit {
                 this.getStateById(id);
             }
         }); 
+    }
+
+    setMapping($event: string) {
+        this.state.mapping = $event;
     }
 
     private getInitialState(): void {
