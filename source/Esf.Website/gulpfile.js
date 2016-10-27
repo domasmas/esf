@@ -222,7 +222,7 @@ gulp.task('project-clean',
         );
     });
 
-gulp.task('tests-run-tdd', function (done) {
+gulp.task('unit-tests:run-tdd', function (done) {
     new karmaServer({
         configFile: __dirname + '/karma.conf.js',
         singleRun: false

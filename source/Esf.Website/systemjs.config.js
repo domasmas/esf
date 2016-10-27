@@ -6,14 +6,14 @@
 
     var map = {
         'app': 'wwwroot/app',
-        'rxjs': 'node_modules/rxjs',
-        'zonejs': 'node_modules/zone.js/dist',
-        'reflect-metadata': 'node_modules/reflect-metadata',
-        'angular-in-memory-web-api': 'node_modules/angular-in-memory-web-api',
-        '@angular': 'node_modules/@angular',
-        'w3c-blob': 'node_modules/w3c-blob',
-        'buffer': 'node_modules/buffer-shims',
-        'brace': 'node_modules/brace'
+        'rxjs': 'npm:rxjs',
+        'zonejs': 'npm:zone.js/dist',
+        'reflect-metadata': 'npm:reflect-metadata',
+        'angular-in-memory-web-api': 'npm:angular-in-memory-web-api',
+        '@angular': 'npm:@angular',
+        'w3c-blob': 'npm:w3c-blob',
+        'buffer': 'npm:buffer-shims',
+        'brace': 'npm:brace'
     };
 
     var packages = {
@@ -47,7 +47,7 @@
     }
     // Bundled (~40 requests):
     function packUmd(pkgName) {
-        packages['@angular/' + pkgName] = { main: '/bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
+        packages['@angular/' + pkgName] = { main: 'bundles/' + pkgName + '.umd.js', defaultExtension: 'js' };
     }
     // Most environments should use UMD; some (Karma) need the individual index files
     var setPackageConfig = System.packageWithIndex ? packIndex : packUmd;
@@ -58,8 +58,9 @@
         map: map,
         packages: packages,
         paths: {
-            'brace/theme/*': './node_modules/brace/theme/*.js',
-            'brace/mode/*': './node_modules/brace/mode/*.js'
+            'npm:': 'node_modules/',
+            'brace/theme/*': 'npm:brace/theme/*.js',
+            'brace/mode/*': 'npm:brace/mode/*.js'
         }
     });
 })(this);

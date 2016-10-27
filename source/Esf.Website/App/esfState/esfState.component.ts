@@ -1,7 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, EsfStateDto } from "./esfState.service";
-import { Http, Response} from '@angular/http';
 
 @
 Component({
