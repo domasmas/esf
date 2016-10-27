@@ -157,6 +157,7 @@
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
     <Content Include="App\esfState\esfState.component.html" />
+    <Content Include="karma.conf.js" />
     <Content Include="protractor.config.js" />
     <Content Include="SetupEnvironment.ps1" />
     <None Include="systemjs.config.js" />
