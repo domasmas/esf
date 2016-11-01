@@ -12,7 +12,8 @@ var clean = require('gulp-clean');
 var runSequence = require('run-sequence');
 var cleanCSS = require('gulp-clean-css');
 var gulpConcatCss = require('gulp-concat-css');
-var merge = require('merge-stream');var karmaServer = require('karma').Server;
+var merge = require('merge-stream');
+var karmaServer = require('karma').Server;
 var WWW_ROOT = './wwwroot';
 var APP_DESTINATION = WWW_ROOT + '/app';
 var CONTENT_DESTINATION = WWW_ROOT + '/content';
@@ -47,16 +48,14 @@ gulp.task('compile:tsApp',
         var sourceAppTsFiles = [
             './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
-            './node_modules/ng2-ace-editor/**/*.ts',
-            './node_modules/ng2-ace-editor/**/*.d.ts',
-            './typings/**/*.d.ts'
+            './node_modules/@types/**/*.d.ts'
         ];
 
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsResult = gulp
             .src(sourceAppTsFiles)
             .pipe(sourcemaps.init())
-            .pipe(tsc(tsProject))
+            .pipe(tsProject())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(APP_DESTINATION));
         return tsResult;
@@ -66,12 +65,13 @@ gulp.task('compile:tsEndToEndTests',
     function() {
         var sourceEndToEndTsFiles = [
             './endToEndTests/**/*.ts',
-            './typings/**/*.d.ts'];
-        var tsProject = tsc.createProject('tsconfig.json', { typescript: require('typescript') });
+            './node_modules/@types/**/*.d.ts'
+        ];
+        var tsProject = tsc.createProject('tsconfig.json');
         var tsEndToEndResult = gulp
             .src(sourceEndToEndTsFiles)
             .pipe(sourcemaps.init())
-            .pipe(tsc(tsProject))
+            .pipe(tsProject())
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest(END_TO_END_TESTS_DESTINATION));
 
@@ -80,7 +80,7 @@ gulp.task('compile:tsEndToEndTests',
 gulp.task('compile:ts', ['compile:tsApp', 'compile:tsEndToEndTests']);
 
 gulp.task('copy:vendor', function () {
-    var one = gulp.src([
+    return gulp.src([
             'node_modules/rxjs/**/*',
             'node_modules/observable/*',
             'node_modules/reflect-metadata/Reflect.js',
@@ -88,13 +88,6 @@ gulp.task('copy:vendor', function () {
             'node_modules/bootstrap-less/js/*.js'
         ])
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
-
-    var two = gulp.src([
-            'node_modules/ng2-ace-editor/*.js'
-        ])
-        .pipe(gulp.dest(LIBRARIES_DESTINATION + '/ng2-ace-editor/'));
-
-    return merge(one, two);
 });
 
 gulp.task('bundle:vendor', function () {
@@ -229,7 +222,7 @@ gulp.task('project-clean',
         );
     });
 
-gulp.task('tests-run-tdd', function (done) {
+gulp.task('unit-tests:run-tdd', function (done) {
     new karmaServer({
         configFile: __dirname + '/karma.conf.js',
         singleRun: false
@@ -240,7 +233,7 @@ gulp.task('e2etests:run', function () {
     gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
     .pipe(protractor({
         configFile: "protractor.config.js",
-        args: ['--baseUrl', 'http://localhost:4444']
+        args: ['--baseUrl', 'http://localhost:4444', '--no-stackTrace']
     }))
     .on('error', function (e) {
         console.dir(e);
