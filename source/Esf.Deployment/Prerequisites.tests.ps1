@@ -36,7 +36,7 @@
 		}
 
 		function IsMsiPackageInstalled($msiDisplayName, $majorVersion = "*", $minorVersion = "*", $displayVersion = "*") {
-			return (GetMsiInstalledPackage $msiDisplayName $majorVersion $minorVersion $displayVersion).Length -gt 0
+			return [bool] (GetMsiInstalledPackage $msiDisplayName $majorVersion $minorVersion $displayVersion)
 		}
 
 		It "Checks Visual Studio 2015 Update 3" {
