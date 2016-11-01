@@ -14,6 +14,7 @@
         'w3c-blob': 'npm:w3c-blob',
         'buffer': 'npm:buffer-shims',
         'brace': 'npm:brace'
+        'jquery': 'node_modules/jquery/dist/jquery.min.js'
     };
 
     var packages = {
