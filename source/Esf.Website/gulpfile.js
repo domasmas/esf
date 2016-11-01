@@ -48,7 +48,8 @@ gulp.task('compile:tsApp',
         var sourceAppTsFiles = [
             './App/**/*.ts',
             './node_modules/@angular/**/*.d.ts',
-            './node_modules/@types/**/*.d.ts'
+            './node_modules/@types/**/*.d.ts',
+            './Scripts/typings/**/*.d.ts'
         ];
 
         var tsProject = tsc.createProject('tsconfig.json');
@@ -65,7 +66,8 @@ gulp.task('compile:tsEndToEndTests',
     function() {
         var sourceEndToEndTsFiles = [
             './endToEndTests/**/*.ts',
-            './node_modules/@types/**/*.d.ts'
+            './node_modules/@types/**/*.d.ts',
+            './Scripts/typings/**/*.d.ts'
         ];
         var tsProject = tsc.createProject('tsconfig.json');
         var tsEndToEndResult = gulp

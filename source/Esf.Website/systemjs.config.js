@@ -13,7 +13,8 @@
         '@angular': 'node_modules/@angular',
         'w3c-blob': 'node_modules/w3c-blob',
         'buffer': 'node_modules/buffer-shims',
-        'brace': 'node_modules/brace'
+        'brace': 'node_modules/brace',
+        'jquery': 'node_modules/jquery/dist/jquery.min.js'
     };
 
     var packages = {
