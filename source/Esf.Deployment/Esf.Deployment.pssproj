@@ -42,6 +42,7 @@
     <Compile Include="DeployToIss.psm1" />
     <Compile Include="Permissions.psm1" />
     <Compile Include="PsModule.psm1" />
+    <Compile Include="SetupDevEnvironment.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="esfWebsite.config.json" />
