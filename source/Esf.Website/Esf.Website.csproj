@@ -179,8 +179,6 @@
   <ItemGroup>
     <Folder Include="App\common\services\" />
     <Folder Include="App\common\styles\" />
-    <Folder Include="Content\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

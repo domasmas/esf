@@ -5,6 +5,7 @@ import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
+import 'jquery';
 
 class EsfStateServiceStub {
     private stateObserver: BehaviorSubject<EsfStateDto>;
@@ -97,4 +98,9 @@ describe('esfState.component', function () {
         fixture.componentInstance.state.mapping = 'some query';
         fixture.detectChanges();
     });
+
+	it('should work jquery', function() {
+		var jqueryElem: JQuery = $('body script');
+		expect(jqueryElem.is('[type="text/javascript"]')).toBe(true);
+	});
 });
