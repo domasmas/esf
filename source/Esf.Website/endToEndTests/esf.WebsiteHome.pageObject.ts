@@ -53,7 +53,7 @@ export class EsfHome {
     private setSectionContent(sectionCss: string, content: string): void {
         var mappingInputElement = this.browserInstance.element(by.css(`${sectionCss} .ace_text-input`));
         //delete input
-        mappingInputElement.sendKeys(protractor.Key.CONTROL, 'а');
+        mappingInputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
         mappingInputElement.sendKeys(protractor.Key.DELETE);
         //provide new input
         mappingInputElement.sendKeys(content);

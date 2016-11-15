@@ -92,10 +92,10 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to change the initial state and save it', () => {        
-            var mapping: string = '{"item2", "value of item1", "extraProp" : 55}';   
+            var mapping: string = '{"item2", "", "extraProp" : 55}';   
             esfHome.setMappingSectionContent(mapping);
 
-            var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
             esfHome.setDocumentsSectionContent(documents);
 
             var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
@@ -107,11 +107,13 @@ describe('Given Esf.Website home page', function () {
             expect(esfHome.isUrlOfExistingState()).toBe(false);
 
             esfHome.executeSaveCommand();
+            browser.waitForAngular();
+
             expect(esfHome.isUrlOfExistingState()).toBe(true);
         });
 
         it('should be able to view a saved state in new browser', () => {
-           var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+           var documents: string = '[ {"prop1":"v"}, {"som": "my"}]';
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
@@ -122,11 +124,11 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to change a saved state and save it', () => {
-            var documents: string = '[ {"prop1":"value1"}, {"something else": "my value"}]';
+            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
-                var furtherChangedDocuments: string = '[ {"prop1":"value44 changed"}, {"something": "val"}]';
+                var furtherChangedDocuments: string = '[ {"prop1":"value44"}, {"s": "val"}]';
                 esfHome2.setDocumentsSectionContent(furtherChangedDocuments);                
                 esfHome2.executeSaveCommand();
                 esfHome2.navigateToCurrentUrlWithNewBrowser().then((esfHome3: EsfHome) => {
