@@ -4,7 +4,7 @@ import { EsfStateService, EsfStateDto } from './esfState.service';
 import { Observable, BehaviorSubject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { By } from '@angular/platform-browser';
-import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
 import 'jquery';
 
 class EsfStateServiceStub {
@@ -53,54 +53,151 @@ class ActivatedRouteStub {
 })
 export class JsonEditorDirectiveStub {
     @Output() textChange = new EventEmitter();
-    
+    static instances: JsonEditorDirectiveStub[] = [];
+    static resetInstances(): void {
+        JsonEditorDirectiveStub.instances = [];
+    }
     constructor() {
-    }    
+        this.textSpy = jasmine.createSpy('text');
+        this.readOnlySpy = jasmine.createSpy('readOnly');
+        JsonEditorDirectiveStub.instances.push(this);
+    }
+
+    ngOnInit() {
+    }
+
+    textSpy: jasmine.Spy;
+    readOnlySpy: jasmine.Spy;
 
     @Input() set readOnly(readOnly: boolean) {
-        console.log('@input readOnly ' + readOnly);
+        this.readOnlySpy(readOnly);
     }
 
     @Input() set text(text: string) {
-        console.log('@input text ' + text);
+        this.textSpy(text);
     }
 }
+class EsFiddlerComponentFixture {
+    public stateService: EsfStateServiceStub;
+    public activatedRoute: ActivatedRouteStub;
+    public routerStub: RouterStub;
 
-describe('esfState.component', function () {
-    var stateService: EsfStateServiceStub;
-    var activatedRoute: ActivatedRouteStub;
-    var routerStub: RouterStub;
-
-    beforeEach(
-        async(() => {
-            stateService = new EsfStateServiceStub();
-            activatedRoute = new ActivatedRouteStub();
-            routerStub = new RouterStub();
-            TestBed.configureTestingModule({
-                declarations: [EsFiddlerComponent, JsonEditorDirectiveStub],
-                providers: [{ provide: EsfStateService, useValue: stateService },
-                { provide: ActivatedRoute, useValue: activatedRoute },
-                { provide: Router, useValue: routerStub }]
-            }).overrideComponent(EsFiddlerComponent, {
-                set: {
-                    providers: [{ provide: EsfStateService, useValue: stateService }]
-                }
-            })
+    configureComponent(): void {
+        this.stateService = new EsfStateServiceStub();
+        this.activatedRoute = new ActivatedRouteStub();
+        this.routerStub = new RouterStub();
+        JsonEditorDirectiveStub.resetInstances();
+        TestBed.configureTestingModule({
+            declarations: [EsFiddlerComponent, JsonEditorDirectiveStub],
+            providers: [{ provide: EsfStateService, useValue: this.stateService },
+            { provide: ActivatedRoute, useValue: this.activatedRoute },
+            { provide: Router, useValue: this.routerStub }]
+        }).overrideComponent(EsFiddlerComponent, {
+            set: {
+                providers: [{ provide: EsfStateService, useValue: this.stateService }]
+            }
+        })
             .compileComponents();
-        }));
+    }
 
-    it('should compile Esf State component with stubbed out dependencies', function () {
-        var fixture = TestBed.createComponent(EsFiddlerComponent);
-        fixture.detectChanges();
-        expect(fixture.componentInstance.state).toEqual(stateService.initialState);
-        var test = fixture.debugElement.query(By.css('.mapping-editor'));
-        var test2 = fixture.debugElement.query(By.css('.run-command'));
-        fixture.componentInstance.state.mapping = 'some query';
-        fixture.detectChanges();
+    createComponent(): void {
+        this._fixture = TestBed.createComponent(EsFiddlerComponent);
+    }
+
+    public get fixture(): ComponentFixture<EsFiddlerComponent> {
+        return this._fixture;
+    }
+
+    private _fixture: ComponentFixture<EsFiddlerComponent>;
+
+    public get instance(): EsFiddlerComponent {
+        if (this.fixture) {
+            return this.fixture.componentInstance;
+        }
+        else {
+            throw Error('EsFiddlerComponent fixture does not exist'); 
+        }
+    }
+
+    public getMappingEditorElement(): DebugElement {
+        return this.fixture.debugElement.query(By.css('.mapping-editor'));
+    }
+
+    public getRunCommandElement(): DebugElement {
+        return  this.fixture.debugElement.query(By.css('.run-command'));
+    }
+
+    public getMappingJsonEditor(): JsonEditorDirectiveStub {
+        return JsonEditorDirectiveStub.instances[0];
+    }
+
+    public getDocumentsJsonEditor(): JsonEditorDirectiveStub {
+        return JsonEditorDirectiveStub.instances[1];
+    }
+
+    public getQueryJsonEditor(): JsonEditorDirectiveStub {
+        return JsonEditorDirectiveStub.instances[2]
+    }
+
+    public getQueryResult(): JsonEditorDirectiveStub {
+        return JsonEditorDirectiveStub.instances[3];
+    }
+
+    public getInitialQueryResult(): string {
+        return '';
+    }
+}
+describe('esfState.component', function () {
+    var esfComponent = new EsFiddlerComponentFixture();
+
+    beforeEach(async(() => {
+        esfComponent.configureComponent();
+    }));
+
+    it('should display the initial state when navigated to states/new', function () {
+        //given
+        esfComponent.createComponent();
+        esfComponent.fixture.detectChanges();
+        //then
+        var newInitialState = esfComponent.stateService.initialState;
+
+        var mappingEditor = esfComponent.getMappingJsonEditor()
+        expect(mappingEditor.textSpy).toHaveBeenCalledWith(newInitialState.mapping);
+        expect(mappingEditor.readOnlySpy).not.toHaveBeenCalled();
+
+        var documentEditor = esfComponent.getDocumentsJsonEditor();
+        expect(documentEditor.textSpy).toHaveBeenCalledWith(newInitialState.documents);
+        expect(documentEditor.readOnlySpy).not.toHaveBeenCalled();
+
+        var queryEditor = esfComponent.getQueryJsonEditor();
+        expect(queryEditor.textSpy).toHaveBeenCalledWith(newInitialState.query);
+        expect(queryEditor.readOnlySpy).not.toHaveBeenCalled();
+
+        var queryResult = esfComponent.getQueryResult();
+        expect(queryResult.textSpy).toHaveBeenCalledWith(esfComponent.getInitialQueryResult());
+        expect(queryResult.readOnlySpy).toHaveBeenCalledWith(true);
     });
 
-	it('should work jquery', function() {
-		var jqueryElem: JQuery = $('body script');
-		expect(jqueryElem.is('[type="text/javascript"]')).toBe(true);
-	});
+    //it('should display saved state when navigated to states/GUID');
+
+    //it('should allow changing Mapping as json formatted text');
+
+    //it('should allow changing Documents as json formatted text');
+
+    //it('should allow changing Query as json formatted text');
+
+    //describe('save state', function () {
+    //    it('should allow valid state to be saved');
+
+    //    it('should prevent saving invalid state');
+
+    //    it('should valid save state to backend');
+
+    //    it('should redirect to saved state route on successfully saving to backend');
+
+    //    it('should error if not successfully saved to backend');
+    //});
+
+    //it('should run query and display stubbed result');
+
 });
