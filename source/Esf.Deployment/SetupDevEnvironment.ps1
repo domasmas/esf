@@ -16,12 +16,19 @@ function AddRunAsAdminFlagToShortcut($ShortcutPath) {
 	[System.IO.File]::WriteAllBytes($ShortcutPath, $bytes)
 }
 
-function GetShortcutFilePath($ShortcutName) {	
-	if (-not (Test-Path $PSScriptRoot\DevEnvironment)) {
-		New-Item $PSScriptRoot\DevEnvironment -type Directory
+function GetShortcutFilePath($ShortcutName) {		
+    $desktopPath = [Environment]::GetFolderPath("Desktop")
+    $outputPath = "$desktopPath\DevEnvironment"
+    if (-not (Test-Path $outputPath)) {        
+		New-Item $outputPath -type Directory | Out-Null #need Out-Null to create directory before using it
 	}
-	$OutputDirectory = Resolve-Path $PSScriptRoot\DevEnvironment
-	Return "$OutputDirectory\$shortcutName.lnk"
+	Return "$outputPath\$shortcutName.lnk"
+}
+
+function CreateStartEsfMongoShellShortcut() {
+	$Command = Resolve-Path "$PSScriptRoot\..\Esf.DataAccess.Deployment\StartMongoShell.ps1"
+	$OutputFilePath = GetShortcutFilePath "StartEsfMongoShell"
+	CreatePowershellCommandShortcut $command $OutputFilePath
 }
 
 function CreateStartEsfMongoServerShortcut() {
@@ -45,9 +52,10 @@ function CreateDeployShortcut() {
 function CreateCleanEnvironmentShortcut() {
 	$Command = Resolve-Path "$PSScriptRoot\..\Esf.Deployment\CleanEnvironment.ps1"
 	$OutputFilePath = GetShortcutFilePath "CleanEnvironment"
-	CreatePowershellCommandShortcut $command $OutputFilePath
+	CreatePowershellCommandShortcut $command $OutputFilePath $true
 }
 
+CreateStartEsfMongoShellShortcut
 CreateStartEsfMongoServerShortcut
 CreateCdEsfWebsiteShortcut
 CreateDeployShortcut
