@@ -10,36 +10,36 @@ export class EsfStateService {
     constructor(private http: Http) {
         
     }
-    getInitialState(): Observable<EsfStateDto> {
+    getInitialState(): Observable<ExistingEsfStateDto> {
         var url = `${EsfStateService.serviceUrl}/states/new`;
         return this.http.get(url).map((res: Response) => {
             var result = res.json();
-            return <EsfStateDto>result;
+            return <ExistingEsfStateDto>result;
         }, (error: Error) => {
             return error;
         });
     }
 
-    createNewVersion(state: EsfStateDto): Observable<EsfStateDto> {
+    createNewVersion(state: EsfStateDto): Observable<ExistingEsfStateDto> {
         let url = `${EsfStateService.serviceUrl}/states`;
         let body = JSON.stringify(state);
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers });
 
-        return this.http.put(url, body, options).map((res: Response) => {
+        return this.http.post(url, body, options).map((res: Response) => {
             var result = res.json();
-            return <EsfStateDto>result;
+            return <ExistingEsfStateDto>result;
         }, (error: Error) => {
             return error;
         });
     }
 
-    getState(id: string): Observable<EsfStateDto> {
-        let url = `${EsfStateService.serviceUrl}/states/?id=${id}`;
+    getState(stateUrl: string): Observable<ExistingEsfStateDto> {
+        let url = `${EsfStateService.serviceUrl}/states/?stateUrl=${stateUrl}`;
 
         return this.http.get(url).map((res: Response) => {
             var result = res.json();
-            return <EsfStateDto>result;
+            return <ExistingEsfStateDto>result;
         }, (error: Error) => {
             return error;
         });        
@@ -50,5 +50,9 @@ export class EsfStateDto {
     mapping: string;
     documents: string;
     query: string;
-    id: string;
+}
+
+export class ExistingEsfStateDto {
+    state: EsfStateDto;
+    stateUrl: string;
 }

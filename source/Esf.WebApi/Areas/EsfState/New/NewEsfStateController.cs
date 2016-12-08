@@ -9,23 +9,12 @@ namespace Esf.WebApi.Areas.EsfState.New
     public class NewEsfStateController : ApiController
     {
         [Route("")]
-        public async Task<EsfStateDto> Get()
+        public async Task<ExistingEsfStateDto> Get()
         {
             var newStateFactory = new NewEsfStateFactory();
-            EsState newState = await newStateFactory.CreateState();
-
-            return new EsfStateDto
-            {
-                Documents = newState.Documents,
-                Mapping = newState.Mapping,
-                Query = newState.Query
-            };
+            EsState newState = await newStateFactory.GetNewState();
+            return EsfStateConverter.From(newState);
         }
 
-        [Route("")]
-        public void Post([FromBody]EsfStateDto value)
-        {
-
-        }
     }
 }

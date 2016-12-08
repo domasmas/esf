@@ -34,6 +34,11 @@ namespace Esf.DataAccess
             return await EsStatesCollection.Find(filter).ToListAsync();
         }
 
+        public async Task<EsState> FindEsState(Expression<Func<EsState, bool>> filter)
+        {
+            return await EsStatesCollection.Find(filter).FirstOrDefaultAsync();
+        }
+
         public async Task<EsState> InsertEsState(EsState state)
         {
             await EsStatesCollection.InsertOneAsync(state);

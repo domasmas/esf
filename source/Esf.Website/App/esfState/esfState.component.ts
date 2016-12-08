@@ -1,6 +1,6 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EsfStateService, EsfStateDto } from "./esfState.service";
+import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
 
 @
 Component({
@@ -8,9 +8,9 @@ Component({
     providers: [EsfStateService]
 })
 export class EsFiddlerComponent implements OnInit {
-    state: EsfState;
+    state: EsfStateDto;
     queryRunner: EsfQueryRunner;
-    lastSavedState: EsfState;
+    lastSavedState: EsfStateDto;
     private sub: any;
 
     constructor(
@@ -18,23 +18,22 @@ export class EsFiddlerComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router
     ) {
-        this.state = new EsfState();
+        this.state = new EsfStateDto();
         this.state = {
             documents: null,
             mapping: null,
             query: null,
-            id: null
         };
         this.queryRunner = new EsfQueryRunner(null);
     }
 
     ngOnInit() {
         this.sub = this.route.params.subscribe(params => {
-            let id = params['id'];
-            if (id == null) {
+            let stateUrl = params['stateUrl'];
+            if (stateUrl == null) {
                 this.getInitialState();
             } else {
-                this.getStateById(id);
+                this.getStateByUrl(stateUrl);
             }
         }); 
     }
@@ -46,27 +45,17 @@ export class EsFiddlerComponent implements OnInit {
     private getInitialState(): void {
         this.esfStateService
             .getInitialState()
-            .subscribe((state: EsfStateDto) => {
-                this.state = {
-                    documents: state.documents,
-                    mapping: state.mapping,
-                    query: state.query,
-                    id: state.id
-                };
+            .subscribe((state: ExistingEsfStateDto) => {
+                this.state = state.state;
         }, (error: Error) => {
             console.error(error);
         });        
     }
 
-    private getStateById(id: string): void {
-        this.esfStateService.getState(id)
-            .subscribe((state: EsfStateDto) => {
-                this.state = {
-                    documents: state.documents,
-                    mapping: state.mapping,
-                    query: state.query,
-                    id: state.id
-                };
+    private getStateByUrl(stateUrl: string): void {
+        this.esfStateService.getState(stateUrl)
+            .subscribe((state: ExistingEsfStateDto) => {
+                this.state = state.state;
                 this.lastSavedState = this.copy(this.state);
             });        
     }
@@ -77,15 +66,10 @@ export class EsFiddlerComponent implements OnInit {
         }
         this.esfStateService
             .createNewVersion(this.state)
-            .subscribe((state: EsfStateDto) => {
-                this.state = {
-                    documents: state.documents,
-                    mapping: state.mapping,
-                    query: state.query,
-                    id: state.id
-                };
+            .subscribe((state: ExistingEsfStateDto) => {
+                this.state = state.state;
                 this.lastSavedState = this.copy(this.state);
-                this.router.navigate(['/state', state.id]);
+                this.router.navigate(['/state', state.stateUrl]);
         }, (error: Error) => {
             console.error(error);
         });
@@ -108,13 +92,6 @@ export class EsFiddlerComponent implements OnInit {
     private copy(source: any): any {
         return JSON.parse(JSON.stringify(source));
     }
-}
-
-export class EsfState {
-    mapping: string;
-    query: string;
-    documents: string;
-    id: string;
 }
 
 export class EsfQueryRunner {

@@ -1,7 +1,7 @@
 ﻿import { ComponentFixture, TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
 import { BaseRequestOptions, ResponseOptionsArgs, Http, Response, Request, ResponseOptions, ResponseType, Headers } from '@angular/http';
 import { MockBackend, MockConnection } from '@angular/http/testing';
-import { EsfStateService, EsfStateDto } from './esfState.service';
+import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
 
 class RequestResponsePair {
     expectedRequest: {
@@ -57,11 +57,13 @@ describe('esfState.service', function () {
     });
 
     it('should be able to the initial state', function () {
-        var expectedState = {
-            "mapping": { "mappingKey": "value" },
-            "query": { "queryKey": "value" },
-            "documents": [{ "doc1": 1 }, { "doc2": 2 }],
-            "id": "0"
+        var expectedState: ExistingEsfStateDto = {
+            state: <EsfStateDto> {
+                mapping: "{ \"mappingKey\": \"value\" }",
+                query: "{ \"queryKey\": \"value\" }",
+                documents: "[{ \"doc1\": 1 }, { \"doc2\": 2 }]"
+            },
+            stateUrl: '00000000-0000-0000-0000-000000000000'
         };
         serviceFixture.configureResponses({
             expectedRequest: {
@@ -69,18 +71,21 @@ describe('esfState.service', function () {
             },
             response: { status: 200, body: expectedState }
         });
-        serviceFixture.esfStateService.getInitialState().subscribe((actualState: EsfStateDto) => {
+        serviceFixture.esfStateService.getInitialState().subscribe((actualState: ExistingEsfStateDto) => {
             expect(actualState).toEqual(expectedState);
         });
     });
 
-    it('should be able to creat new version state', function () {
-        var httpResponseState = {
-            mapping: { "mappingKeyModified": "value modified" },
-            query: { "queryKey": "value" },
-            documents: [{ "doc1": 55 }],
-            "id": "1"
+    it('should be able to create new version state', function () {
+        var httpResponseState: ExistingEsfStateDto = {
+            state: <EsfStateDto>{
+                mapping: "{ \"mappingKeyModified\": \"value\" }",
+                query: "{ \"queryKey\": \"value\" }",
+                documents: "[{ \"doc1\": 1 }]"
+            },
+            stateUrl: '12345678-0000-0000-0000-000000000000'
         };
+
         serviceFixture.configureResponses({
             expectedRequest: {
                 url: '/states',
@@ -93,30 +98,31 @@ describe('esfState.service', function () {
         var newEsfState: EsfStateDto = {
             mapping: "{ \"mappingKeyModified\": \"value modified\" }",
             query: "{ \"queryKey\": \"value\" }",
-            documents: "[{ \"doc1\": 55 }]",
-            id: null
+            documents: "[{ \"doc1\": 55 }]"
         };
-        serviceFixture.esfStateService.createNewVersion(newEsfState).subscribe((actualState: EsfStateDto) => {
+        serviceFixture.esfStateService.createNewVersion(newEsfState).subscribe((actualState: ExistingEsfStateDto) => {
             expect(actualState).toEqual(httpResponseState);
         });
     });
 
     it('should be able to get existing state by id GUID', function () {
         var existingStateGuid: string = 'DDC4133A-6706-4267-A32A-89F844AB27C4';        
-        var httpResponseState = {
-            mapping: { "mappingKeyModified": "value modified" },
-            query: { "queryKey": "value" },
-            documents: [{ "doc1": 55 }],
-            id: existingStateGuid
+        var httpResponseState: ExistingEsfStateDto = {
+            state: <EsfStateDto>{
+                mapping: "{ \"mappingKeyModified\": \"value\" }",
+                query: "{ \"queryKey\": \"value\" }",
+                documents: "[{ \"doc1\": 1 }]"
+            },
+            stateUrl: existingStateGuid
         };
         serviceFixture.configureResponses({
             expectedRequest: {
-                url: `/states/${existingStateGuid}`
+                url: `/states/?stateUrl=${existingStateGuid}`
             },
             response: { status: 200, body: httpResponseState }
         });
 
-        serviceFixture.esfStateService.getState(existingStateGuid).subscribe((actualState: EsfStateDto) => {
+        serviceFixture.esfStateService.getState(existingStateGuid).subscribe((actualState: ExistingEsfStateDto) => {
             expect(actualState).toEqual(httpResponseState);
         });
     });

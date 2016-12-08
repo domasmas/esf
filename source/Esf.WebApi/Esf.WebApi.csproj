@@ -157,6 +157,8 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\EsfState\EsfStateController.cs" />
+    <Compile Include="Areas\EsfState\EsfStateConverter.cs" />
+    <Compile Include="Areas\EsfState\ExistingEsfStateDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateDto.cs" />
     <Compile Include="Areas\EsfState\New\NewEsfStateController.cs" />
     <Compile Include="Global.asax.cs">

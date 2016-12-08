@@ -6,7 +6,7 @@ import { ModuleWithProviders } from '@angular/core';
 
 export const AppRoutes: Routes = [
     { path: '', component: EsFiddlerComponent, pathMatch: 'full' },
-    { path: 'state/:id', component: EsFiddlerComponent },
+    { path: 'state/:stateUrl', component: EsFiddlerComponent },
     { path: '**', component: PageNotFoundComponent }
 ];
 

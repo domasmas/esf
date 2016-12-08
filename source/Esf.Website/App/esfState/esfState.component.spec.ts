@@ -1,6 +1,6 @@
 ﻿import { ComponentFixture, TestBed, async } from '@angular/core/testing';
-import { EsFiddlerComponent , EsfState} from './esfState.component';
-import { EsfStateService, EsfStateDto } from './esfState.service';
+import { EsFiddlerComponent } from './esfState.component';
+import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { By } from '@angular/platform-browser';
@@ -12,20 +12,22 @@ class EsfStateServiceStub {
 
     getInitialStateSpy: jasmine.Spy = jasmine.createSpy('getInitialState');
 
-    getInitialState(): Observable<EsfStateDto> {
+    getInitialState(): Observable<ExistingEsfStateDto> {
         this.getInitialStateSpy();
-        return new BehaviorSubject<EsfStateDto>(this.initialState).asObservable();
+        return new BehaviorSubject<ExistingEsfStateDto>(this.initialState).asObservable();
     }
 
     createNewVersionSpy: jasmine.Spy = jasmine.createSpy('createNewVersionSpy');
+    createNewVersionReturnValueUrlState: string = '12345678-0000-0000-0000-000000000000';
 
-    createNewVersion(state: EsfStateDto): Observable<EsfStateDto> {
+    createNewVersion(state: EsfStateDto): Observable<ExistingEsfStateDto> {
         try {
-            this.createNewVersionSpy(state);
-            return new BehaviorSubject<EsfStateDto>(state).asObservable();
+            this.createNewVersionSpy(state);   
+            var existingStubState = this.getExistingStubbedState(this.createNewVersionReturnValueUrlState, state);         
+            return new BehaviorSubject<ExistingEsfStateDto>(existingStubState).asObservable();
         }
         catch (e) {
-            var subject = new Subject<EsfStateDto>();
+            var subject = new Subject<ExistingEsfStateDto>();
             subject.error(e);
             return subject.asObservable();
         }
@@ -33,18 +35,24 @@ class EsfStateServiceStub {
 
     getStateSpy: jasmine.Spy = jasmine.createSpy('getState');
 
-    getStubbedState(id: string): EsfState {
+    getExistingStubbedState(stateUrl: string, state: EsfStateDto): ExistingEsfStateDto {
         var savedState = {
-            id: id,
-            documents: '[ { "savedDocument" : 44 } ]',
-            mapping: '{ "savedMapping": "value" }',
-            query: '{ "savedQuery": "some saved query" }'
+            stateUrl: stateUrl,
+            state: state
         };
         return savedState;
     }
-    getState(id: string): Observable<EsfStateDto> {
-        this.getStateSpy(id);
-        return new BehaviorSubject<EsfStateDto>(this.getStubbedState(id)).asObservable();
+
+    getStubbedState(stateUrl: string): ExistingEsfStateDto {
+        return this.getExistingStubbedState(stateUrl, {
+            documents: '[ { "savedDocument" : 44 } ]',
+            mapping: '{ "savedMapping": "value" }',
+            query: '{ "savedQuery": "some saved query" }'
+        });
+    }
+    getState(stateUrl: string): Observable<ExistingEsfStateDto> {
+        this.getStateSpy(stateUrl);
+        return new BehaviorSubject<ExistingEsfStateDto>(this.getStubbedState(stateUrl)).asObservable();
     }
 }
 
@@ -61,9 +69,9 @@ class RouterStub {
 }
 
 class ActivatedRouteStub {
-    private createStateParams(id: string) {
+    private createStateParams(stateUrl: string) {
         return {
-            'id': id
+            'stateUrl': stateUrl
         };
     } 
 
@@ -73,8 +81,8 @@ class ActivatedRouteStub {
 
     private paramsObserver = new BehaviorSubject<Params>(this.createNewStateParams());
 
-    nextExistingStateParams(id: string) {
-        this.paramsObserver.next(this.createStateParams(id));
+    nextExistingStateParams(stateUrl: string) {
+        this.paramsObserver.next(this.createStateParams(stateUrl));
     }
 
     nextNewStateParams() {
@@ -213,7 +221,7 @@ describe('esfState.component', function () {
         //given
         esfComponent.createComponent();
         //then
-        var newInitialState = esfComponent.stateService.initialState;
+        var newInitialState = esfComponent.stateService.initialState.state;
 
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(newInitialState.mapping);
@@ -232,14 +240,14 @@ describe('esfState.component', function () {
         expect(queryResult.readOnlySpy).toHaveBeenCalledWith(true);
     });
 
-    it('should display saved state when navigated to states/c1a5b76f-f08a-45cc-996b-c3f22ff00241', function () {
+    it('should display saved state when navigated to existing stateUrl c1a5b76f-f08a-45cc-996b-c3f22ff00241', function () {
         //given
-        const existingStateId = 'c1a5b76f-f08a-45cc-996b-c3f22ff00241';
-        esfComponent.activatedRoute.nextExistingStateParams(existingStateId);
+        const existingStateUrl = 'c1a5b76f-f08a-45cc-996b-c3f22ff00241';
+        esfComponent.activatedRoute.nextExistingStateParams(existingStateUrl);
         esfComponent.createComponent();
         //then
-        expect(esfComponent.stateService.getStateSpy).toHaveBeenCalledWith(existingStateId);
-        var expectedSavedState = esfComponent.stateService.getStubbedState(existingStateId);
+        expect(esfComponent.stateService.getStateSpy).toHaveBeenCalledWith(existingStateUrl);
+        var expectedSavedState = esfComponent.stateService.getStubbedState(existingStateUrl).state;
 
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(expectedSavedState.mapping);
@@ -301,7 +309,6 @@ describe('esfState.component', function () {
             //when
             var changedDocument = '[ {"savedDocument" : 66}, {"anotherDoc": "value"} ]';
             esfComponent.getDocumentsJsonEditor().textChange.emit(changedDocument);
-            esfComponent.instance.state.id = '16DC5986-5877-4695-AA16-E1A7DC076D8C';;
             esfComponent.fixture.detectChanges();
             esfComponent.saveCommand();
             //then
@@ -326,12 +333,11 @@ describe('esfState.component', function () {
             //when
             var changedDocument = '[ {"savedDocument" : 66}, {"anotherDoc": "value"} ]';
             esfComponent.getDocumentsJsonEditor().textChange.emit(changedDocument);
-            var expectedStateId = '16DC5986-5877-4695-AA16-E1A7DC076D8C';
-            esfComponent.instance.state.id = expectedStateId;
             esfComponent.fixture.detectChanges();
             esfComponent.saveCommand();
             //then
-            expect(esfComponent.routerStub.navigateSpy).toHaveBeenCalledWith(esfComponent.routerStub.getExistingStateNavigationCommand(expectedStateId));
+            var expectedStateUrl = esfComponent.stateService.createNewVersionReturnValueUrlState;
+            expect(esfComponent.routerStub.navigateSpy).toHaveBeenCalledWith(esfComponent.routerStub.getExistingStateNavigationCommand(expectedStateUrl));
         });
 
         it('should log error to console when state service throws error on saving state', function () {

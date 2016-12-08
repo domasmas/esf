@@ -15,35 +15,24 @@ namespace Esf.WebApi.Areas.EsfState
             var databaseClient = new EsDatabaseClient();
             this.stateRepository = new EsStatesRepository(databaseClient.Database);
         }
-
-        // GET: api/EsfState/5
+        
         [HttpGet]
         [Route("")]
-        public async Task<EsState> Get(string id)
+        public async Task<ExistingEsfStateDto> Get(string stateUrl)
         {
-            return await this.stateRepository.GetEsState(id);
+            Guid parsedStateUrl = Guid.Parse(stateUrl);
+            EsState storedState = await this.stateRepository.FindEsState((state) => state.StateUrl == parsedStateUrl);
+            return EsfStateConverter.From(storedState);
         }
-
-        // POST: api/EsfState
+        
         [HttpPost]
         [Route("")]
-        public async void Post([FromBody]EsfStateDto state)
+        public async Task<ExistingEsfStateDto> Post([FromBody]EsfStateDto state)
         {
-            await this.stateRepository.InsertEsState(EsfStateDto.ToDomainObject(state));
+            var newEsState = EsfStateConverter.FromNew(state);
+            return EsfStateConverter.From(await this.stateRepository.InsertEsState(newEsState));
         }
-
-        // PUT: api/EsfState/5
-        [HttpPut]
-        [Route("")]
-        public async Task<EsfStateDto> Put([FromBody]EsfStateDto newState)
-        {
-            var esState = EsfStateDto.ToDomainObject(newState);
-            esState.Id = Guid.NewGuid().ToString();
-            var newEsState = await this.stateRepository.InsertEsState(esState);
-            return EsfStateDto.FromDomainObject(newEsState);
-        }
-
-        // DELETE: api/EsfState/5
+        
         [HttpDelete]
         [Route("")]
         public async void Delete(string id)
