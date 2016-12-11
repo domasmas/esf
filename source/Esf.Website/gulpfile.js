@@ -231,6 +231,13 @@ gulp.task('unit-tests:run-tdd', function (done) {
     }, done).start();
 });
 
+gulp.task('unit-tests:single-run', function (done) {
+    new karmaServer({
+        configFile: __dirname + '/karma.conf.js',
+        singleRun: true
+    }, done).start();
+});
+
 gulp.task('e2etests:run', function () {
     gulp.src([END_TO_END_TESTS_DESTINATION + '/**/*.spec.js'])
     .pipe(protractor({
@@ -239,7 +246,7 @@ gulp.task('e2etests:run', function () {
     }))
     .on('error', function (e) {
         console.dir(e);
-        throw e;
+        process.exit(1);
     });
 });
 gulp.task('e2etests:debugRun', function () {

@@ -55,8 +55,15 @@ function CreateCleanEnvironmentShortcut() {
 	CreatePowershellCommandShortcut $command $OutputFilePath $true
 }
 
+function RunTestsShortcut() {
+	$Command = Resolve-Path "$PSScriptRoot\..\Esf.Deployment\RunTests.ps1"
+	$OutputFilePath = GetShortcutFilePath "RunTests"
+	CreatePowershellCommandShortcut $command $OutputFilePath
+}
+
 CreateStartEsfMongoShellShortcut
 CreateStartEsfMongoServerShortcut
 CreateCdEsfWebsiteShortcut
 CreateDeployShortcut
 CreateCleanEnvironmentShortcut
+RunTestsShortcut
