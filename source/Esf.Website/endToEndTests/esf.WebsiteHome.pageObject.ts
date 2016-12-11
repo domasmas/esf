@@ -125,32 +125,31 @@ export class EsfHome {
             el.setAttribute('id', key);
             el.setAttribute('style', 'position:fixed;z-index:10000;top:0;left:0');
             document.getElementsByTagName('body')[0].appendChild(el);
-        }, key).then(function () {
+        }, key).then(() => {
             browserInstance.ignoreSynchronization = false;
             var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_content`));
             browserInstance.ignoreSynchronization = true;
             return inputElement.getText();
-            }).then(function (text: string) {
+        }).then((text: string) => {
 
-                // If field is empty already, CTRL+C won't work, return empty string
-                if (text === '') {
-                    return text;
-                }
+            // If field is empty already, CTRL+C won't work, return empty string
+            if (text === '') {
+                return text;
+            }
 
-                // Workaround to retrieve a whole text from the editor
-                browserInstance.ignoreSynchronization = false;
-                var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_text-input`));
-                browserInstance.ignoreSynchronization = true;
+            // Workaround to retrieve a whole text from the editor
+            browserInstance.ignoreSynchronization = false;
+            var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_text-input`));
+            browserInstance.ignoreSynchronization = true;
 
-                inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
-                inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "c"));
+            inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
+            inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "c"));
 
-                var tempElement = browserInstance.element(by.id(key));
-                tempElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "v"));
+            var tempElement = browserInstance.element(by.id(key));
+            tempElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "v"));
 
-                return tempElement.getAttribute('value');
-
-        }).then(function (text: any) {
+            return tempElement.getAttribute('value');
+        }).then((text: string) => {
             return text;
         });
     }
