@@ -1,5 +1,5 @@
 ﻿/// <reference types="selenium-webdriver" />
-import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder } from 'protractor';
+import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder, element } from 'protractor';
 import { promise as webDriverPromise }  from 'selenium-webdriver';
 
 export class EsfHome {
@@ -46,8 +46,7 @@ export class EsfHome {
     }
 
     getMappingSectionContent(): Promise<string> {
-        var mappingContentElement = this.browserInstance.element(by.css('.mapping-editor .ace_content'));
-        return mappingContentElement.getText();
+        return this.getSectionText('.mapping-editor');
     }
     
     private setSectionContent(sectionCss: string, content: string): void {
@@ -69,8 +68,7 @@ export class EsfHome {
     }
 
     getQuerySectionContent(): Promise<string> {
-        var queryContentElement = this.browserInstance.element(by.css('.query-editor .ace_content'));
-        return queryContentElement.getText();
+        return this.getSectionText('.query-editor');
     }
 
     setQuerySectionContent(content: string): void {
@@ -83,8 +81,7 @@ export class EsfHome {
     }
 
     getDocumentsSectionContent(): Promise<string> {
-        var documentsContentElement = this.browserInstance.element(by.css('.documents-editor .ace_content'));
-        return documentsContentElement.getText();
+        return this.getSectionText('.documents-editor');
     }
 
     setDocumentsSectionContent(content: string): void {
@@ -114,10 +111,48 @@ export class EsfHome {
         return runCommand.isPresent();
     }
 
-
     getResultContent(): Promise<string> {
-        var resultElement = this.browserInstance.element(by.css('.result-viewer .ace_content'));
-        return resultElement.getText();
+        return this.getSectionText('.result-viewer');
+    }
+
+    private getSectionText(sectionClass: string): Promise<string> {
+        let browserInstance = this.browserInstance;
+        let key = 'tempTextInput' + Math.random();
+
+        return browserInstance.executeScript((args: any) => {
+            var key = args;
+            var el = document.createElement('textarea');
+            el.setAttribute('id', key);
+            el.setAttribute('style', 'position:fixed;z-index:10000;top:0;left:0');
+            document.getElementsByTagName('body')[0].appendChild(el);
+        }, key).then(function () {
+            browserInstance.ignoreSynchronization = false;
+            var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_content`));
+            browserInstance.ignoreSynchronization = true;
+            return inputElement.getText();
+            }).then(function (text: string) {
+
+                // If field is empty already, CTRL+C won't work, return empty string
+                if (text === '') {
+                    return text;
+                }
+
+                // Workaround to retrieve a whole text from the editor
+                browserInstance.ignoreSynchronization = false;
+                var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_text-input`));
+                browserInstance.ignoreSynchronization = true;
+
+                inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
+                inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "c"));
+
+                var tempElement = browserInstance.element(by.id(key));
+                tempElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "v"));
+
+                return tempElement.getAttribute('value');
+
+        }).then(function (text: any) {
+            return text;
+        });
     }
 
     isUrlOfExistingState(): Promise<boolean> {
