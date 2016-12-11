@@ -3,9 +3,13 @@ function GetWebsiteProject() {
 	return $esfWebsiteProjectPath
 }
 
+function GetTestsOutputDir() {
+    Return "$PSScriptRoot\TestsOutput"
+}
+
 function RunEsfWebsiteGulpTask($gulpTaskName, $outputLogFileName, $errorsLogFileName) {
     $esfWebsiteProjectPath = GetWebsiteProject
-    $testsOutputDir = "$PSScriptRoot\TestsOutput"
+    $testsOutputDir = GetTestsOutputDir
     if (-Not (Test-Path $testsOutputDir)) {
 		New-Item -ItemType Directory $testsOutputDir
 	}
@@ -18,7 +22,7 @@ function RunWebsiteUnitTests() {
 }
 
 function RunWebsiteE2ETests() {
-    Return (RunEsfWebsiteGulpTask "e2etests:startServerAndRunTests" "e2eTests-output" "e2eTests-errors") 
+    Return (RunEsfWebsiteGulpTask "e2etests:startServerAndRunTests" "e2eTests-output" "e2eTests-errors")
 }
 
 function ReportTestsResult($message, $testsErrorCode) {
@@ -39,3 +43,5 @@ Write-Progress -Activity "End to end tests" -Status "Started"
 $e2etestsOutput = RunWebsiteE2ETests 
 Write-Progress -Activity "End to end tests" -Status "Finished"
 ReportTestsResult "End to end tests" $e2etestsOutput.ExitCode
+Write-Host "You can check the output from the tests in:"
+Write-Host (GetTestsOutputDir) 
