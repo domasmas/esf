@@ -7,14 +7,41 @@ function GetTestsOutputDir() {
     Return "$PSScriptRoot\TestsOutput"
 }
 
+function WriteStreamToTextFile([string] $fileName, [System.IO.StreamReader] $inputStream) {
+    [System.IO.StreamWriter] $streamWriter = [System.IO.File]::CreateText($fileName)
+    try {
+    while (-Not ($inputStream.EndOfStream)) {
+            $outputLine = $inputStream.ReadLine()
+            $streamWriter.WriteLine($outputLine);
+        }
+    }
+    finally {
+        $streamWriter.Dispose();
+    }
+}
+
 function RunEsfWebsiteGulpTask($gulpTaskName, $outputLogFileName, $errorsLogFileName) {
     $esfWebsiteProjectPath = GetWebsiteProject
     $testsOutputDir = GetTestsOutputDir
     if (-Not (Test-Path $testsOutputDir)) {
 		New-Item -ItemType Directory $testsOutputDir
 	}
-	$result = Start-Process -WorkingDirectory $esfWebsiteProjectPath -FilePath "npm" -ArgumentList "run gulp $gulpTaskName" -Wait -PassThru -RedirectStandardError "$testsOutputDir\$errorsLogFileName.txt" -RedirectStandardOutput "$testsOutputDir\$outputLogFileName.txt"
-    Return $result 
+	$processInfo = New-Object System.Diagnostics.ProcessStartInfo
+	$processInfo.FileName = "powershell.exe"
+	$processInfo.WorkingDirectory = $esfWebsiteProjectPath
+	$processInfo.Arguments = "-executionpolicy unrestricted npm run gulp $gulpTaskName"
+	$processInfo.RedirectStandardError = $true
+	$processInfo.RedirectStandardOutput = $true
+	$processInfo.UseShellExecute = $false
+
+	$process = New-Object System.Diagnostics.Process
+	$process.StartInfo = $processInfo
+	$process.Start()
+	$process.WaitForExit()
+    WriteStreamToTextFile "$testsOutputDir\$outputLogFileName.txt" $process.StandardOutput
+    WriteStreamToTextFile "$testsOutputDir\$errorsLogFileName.txt" $process.StandardError
+    
+    Return $process 
 }
 
 function RunWebsiteUnitTests() {
@@ -43,5 +70,6 @@ Write-Progress -Activity "End to end tests" -Status "Started"
 $e2etestsOutput = RunWebsiteE2ETests 
 Write-Progress -Activity "End to end tests" -Status "Finished"
 ReportTestsResult "End to end tests" $e2etestsOutput.ExitCode
+
 Write-Host "You can check the output from the tests in:"
 Write-Host (GetTestsOutputDir) 
