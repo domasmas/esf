@@ -112,6 +112,51 @@ describe('Given Esf.Website home page', function () {
             expect(esfHome.isUrlOfExistingState()).toBe(true);
         });
 
+        it('should not change URL if parameters havent changed', () => {
+            var mapping: string = '{"item2", "", "extraProp" : 55}';
+            esfHome.setMappingSectionContent(mapping);
+
+            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            esfHome.setDocumentsSectionContent(documents);
+
+            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            esfHome.setQuerySectionContent(query);
+
+            esfHome.executeSaveCommand();
+            browser.waitForAngular();
+
+            browser.getCurrentUrl().then((url1: string) => {
+                esfHome.executeSaveCommand();
+                browser.waitForAngular();
+
+                expect(browser.getCurrentUrl()).toEqual(url1);
+            });
+        });
+
+        it('should change URL if parameters have changed', () => {
+            var mapping: string = '{"item2", "", "extraProp" : 55}';
+            esfHome.setMappingSectionContent(mapping);
+
+            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            esfHome.setDocumentsSectionContent(documents);
+
+            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            esfHome.setQuerySectionContent(query);
+
+            esfHome.executeSaveCommand();
+            browser.waitForAngular();
+
+            browser.getCurrentUrl().then((url1: string) => {
+                var query: string = '{ somethingMoreSpecial: "New Property Value"}';
+                esfHome.setQuerySectionContent(query);
+
+                esfHome.executeSaveCommand();
+                browser.waitForAngular();
+
+                expect(browser.getCurrentUrl()).not.toEqual(url1);
+            });
+        });
+
         it('should be able to view a saved state in new browser', () => {
            var documents: string = '[ {"prop1":"v"}, {"som": "my"}]';
             esfHome.setDocumentsSectionContent(documents);
@@ -128,7 +173,7 @@ describe('Given Esf.Website home page', function () {
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
-                var furtherChangedDocuments: string = '[ {"prop1":"value44"}, {"s": "val"}]';
+                var furtherChangedDocuments: string = '[ {"prop1":"value44"}, {"very long key property": "value of some kind"}]';
                 esfHome2.setDocumentsSectionContent(furtherChangedDocuments);                
                 esfHome2.executeSaveCommand();
                 esfHome2.navigateToCurrentUrlWithNewBrowser().then((esfHome3: EsfHome) => {
