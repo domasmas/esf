@@ -1,6 +1,6 @@
 ﻿/// <reference path='./mongodb.d.ts' />
 module upgradeFramework {
-    export const EmptyGuid: string = '00000000-0000-0000-0000-000000000000';
+    export const EmptyGuid: string = '00000000000000000000000000000000';
     export const DbName: string = 'esFiddle';
 
     export class UpgradeScriptAuditor {

@@ -59,17 +59,17 @@ describe('Given Esf.Website home page', function () {
 
         it('should have initial mapping state', () => {
             var mappingContent = esfHome.getMappingSectionContent();
-            expect(mappingContent).toEqual('{"prop1":"value1"}');
+            expect(mappingContent).toEqual('{"mappingProperty1": "mappingValue1"}');
         });
 
         it('should have initial query state', () => {
             var queryContent = esfHome.getQuerySectionContent();
-            expect(queryContent).toEqual('{"prop1":"value1"}');
+            expect(queryContent).toEqual('{"queryProperty1": "queryValue1"}');
         });
 
         it('should have initial documents state', () => {
             var documentsContent = esfHome.getDocumentsSectionContent();
-            expect(documentsContent).toEqual('[{"prop1":"value1"}, {"prop1":"value1"}]');
+            expect(documentsContent).toEqual('[{"prop1": "value1"}, {"prop2": "value2"}]');
         });
 
         it('should have empty result state', () => {

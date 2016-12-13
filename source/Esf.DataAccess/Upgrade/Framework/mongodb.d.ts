@@ -18,3 +18,5 @@ declare interface IMongoCursor {
     next(): Object;
     toArray(): Object[];
 }
+
+declare var UUID: (val: string) => any;
