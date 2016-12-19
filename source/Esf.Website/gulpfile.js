@@ -264,6 +264,4 @@ gulp.task('e2etests:debugRun', function () {
 var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
 gulp.task('e2etests:startWebDriver', webdriver_standalone);
 
-gulp.task('e2etests:startServerAndRunTests', ['e2etests:startWebDriver', 'e2etests:run']);
-
 gulp.task('default', ['build']);

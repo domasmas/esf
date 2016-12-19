@@ -20,7 +20,7 @@ function WriteStreamToTextFile([string] $fileName, [System.IO.StreamReader] $inp
     }
 }
 
-function RunEsfWebsiteGulpTask($gulpTaskName, $outputLogFileName, $errorsLogFileName) {
+function RunEsfWebsiteGulpTask($gulpTaskName, $redirectOutput = $false, $logFileName = "", $waitForExit = $true) {
     $esfWebsiteProjectPath = GetWebsiteProject
     $testsOutputDir = GetTestsOutputDir
     if (-Not (Test-Path $testsOutputDir)) {
@@ -30,26 +30,33 @@ function RunEsfWebsiteGulpTask($gulpTaskName, $outputLogFileName, $errorsLogFile
 	$processInfo.FileName = "powershell.exe"
 	$processInfo.WorkingDirectory = $esfWebsiteProjectPath
 	$processInfo.Arguments = "-executionpolicy unrestricted npm run gulp $gulpTaskName"
-	$processInfo.RedirectStandardError = $true
-	$processInfo.RedirectStandardOutput = $true
+    if ($redirectOutput -eq $true) {
+	    $processInfo.RedirectStandardError = $true
+	    $processInfo.RedirectStandardOutput = $true
+    }
 	$processInfo.UseShellExecute = $false
 
 	$process = New-Object System.Diagnostics.Process
 	$process.StartInfo = $processInfo
 	$process.Start()
-	$process.WaitForExit()
-    WriteStreamToTextFile "$testsOutputDir\$outputLogFileName.txt" $process.StandardOutput
-    WriteStreamToTextFile "$testsOutputDir\$errorsLogFileName.txt" $process.StandardError
+    if ($waitForExit -eq $true) { 
+	    $process.WaitForExit()
+    }
+    if ($redirectOutput -eq $true) {
+        WriteStreamToTextFile "$testsOutputDir\$logFileName-output.txt" $process.StandardOutput
+        WriteStreamToTextFile "$testsOutputDir\$logFileName-errors.txt" $process.StandardError
+    }
     
     Return $process 
 }
 
 function RunWebsiteUnitTests() {
-    Return (RunEsfWebsiteGulpTask "unit-tests:single-run" "unitTests-output" "unitTests-errors") 
+    Return (RunEsfWebsiteGulpTask "unit-tests:single-run" $true "unitTests") 
 }
 
 function RunWebsiteE2ETests() {
-    Return (RunEsfWebsiteGulpTask "e2etests:startServerAndRunTests" "e2eTests-output" "e2eTests-errors")
+    RunEsfWebsiteGulpTask "e2etests:startWebDriver" $false "" $false
+    Return (RunEsfWebsiteGulpTask "e2etests:run" $true "e2eTests")
 }
 
 function ReportTestsResult($message, $testsErrorCode) {
