@@ -92,13 +92,13 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to change the initial state and save it', () => {        
-            var mapping: string = '{"item2", "", "extraProp" : 55}';   
+            var mapping: string = '{"p1": 55}';   
             esfHome.setMappingSectionContent(mapping);
 
-            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            var documents: string = '[{"p1": "v1"}, {"p2": "v2"}]';
             esfHome.setDocumentsSectionContent(documents);
 
-            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            var query: string = '{ p1: "v1" }';
             esfHome.setQuerySectionContent(query);
 
             expect(esfHome.getMappingSectionContent()).toEqual(mapping); 
@@ -113,13 +113,13 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should not change URL if parameters havent changed', () => {
-            var mapping: string = '{"item2", "", "extraProp" : 55}';
+            var mapping: string = '{"p1": 55}';
             esfHome.setMappingSectionContent(mapping);
 
-            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            var documents: string = '[ {"p1": "v1"}, {"p2": "v2"} ]';
             esfHome.setDocumentsSectionContent(documents);
 
-            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            var query: string = '{ p1: "v1"}';
             esfHome.setQuerySectionContent(query);
 
             esfHome.executeSaveCommand();
@@ -134,20 +134,20 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should change URL if parameters have changed', () => {
-            var mapping: string = '{"item2", "", "extraProp" : 55}';
+            var mapping: string = '{"p1": 55}';
             esfHome.setMappingSectionContent(mapping);
 
-            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            var documents: string = '[ {"p1": "v1"}, {"p1": "v1"} ]';
             esfHome.setDocumentsSectionContent(documents);
 
-            var query: string = '{ somethingMoreSpecial: "Tadaa!"}';
+            var query: string = '{ p1: "v1!"}';
             esfHome.setQuerySectionContent(query);
 
             esfHome.executeSaveCommand();
             browser.waitForAngular();
 
             browser.getCurrentUrl().then((url1: string) => {
-                var query: string = '{ somethingMoreSpecial: "New Property Value"}';
+                var query: string = '{ p2: "v2"}';
                 esfHome.setQuerySectionContent(query);
 
                 esfHome.executeSaveCommand();
@@ -158,7 +158,7 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to view a saved state in new browser', () => {
-           var documents: string = '[ {"prop1":"v"}, {"som": "my"}]';
+           var documents: string = '[ {"p1": "v1"}, {"p2": "v2"} ]';
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
@@ -169,11 +169,11 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to change a saved state and save it', () => {
-            var documents: string = '[ {"prop1":"value1"}, {"s": "my"}]';
+            var documents: string = '[ {"p1": "v1"} ]';
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
-                var furtherChangedDocuments: string = '[ {"prop1":"value44"}, {"very long key property": "value of some kind"}]';
+                var furtherChangedDocuments: string = '[ {"p2": "v2"} ]';
                 esfHome2.setDocumentsSectionContent(furtherChangedDocuments);                
                 esfHome2.executeSaveCommand();
                 esfHome2.navigateToCurrentUrlWithNewBrowser().then((esfHome3: EsfHome) => {
