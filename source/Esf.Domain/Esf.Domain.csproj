@@ -65,6 +65,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -73,7 +74,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ElasticsearchSession.cs" />
     <Compile Include="ElasticSearchRunner.cs" />
+    <Compile Include="UniqueNameResolver.cs" />
+    <Compile Include="EsfHttpClient.cs" />
     <Compile Include="Helpers\JSON.cs" />
     <Compile Include="NewEsfStateFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
