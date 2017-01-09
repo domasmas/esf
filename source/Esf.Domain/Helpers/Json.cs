@@ -5,12 +5,14 @@ namespace Esf.Domain.Helpers
 {
     public static class JSON
     {
-        public static string Serialize(object @object)
+        public static string Serialize(object @object, bool format = false)
         {
-            return JsonConvert.SerializeObject(@object, new JsonSerializerSettings
-            {
-                ContractResolver = new CamelCasePropertyNamesContractResolver()
-            });
+            return JsonConvert.SerializeObject(@object, 
+                format ? Formatting.Indented : Formatting.None,
+                new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                });
         }
 
         public static T Deserialize<T>(string value)
@@ -19,6 +21,11 @@ namespace Esf.Domain.Helpers
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver()
             });
+        }
+
+        public static string EnsureSingleLine(string content)
+        {
+            return JsonConvert.SerializeObject(Deserialize<dynamic>(content), Formatting.None);
         }
     }
 }

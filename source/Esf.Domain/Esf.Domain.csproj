@@ -75,7 +75,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElasticsearchSession.cs" />
-    <Compile Include="ElasticSearchRunner.cs" />
     <Compile Include="UniqueNameResolver.cs" />
     <Compile Include="EsfHttpClient.cs" />
     <Compile Include="Helpers\JSON.cs" />

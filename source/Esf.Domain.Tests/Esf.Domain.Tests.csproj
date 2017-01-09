@@ -93,7 +93,6 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ElasticsearchSessionTests.cs" />
-    <Compile Include="ElasticSearchRunnerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

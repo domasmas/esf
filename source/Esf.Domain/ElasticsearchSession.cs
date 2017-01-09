@@ -1,25 +1,22 @@
 ﻿using Esf.Domain.Helpers;
 using Nest;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Esf.Domain
 {
     public interface IElasticsearchSession
     {
-        Task<bool> CreateIndex();
-        Task<bool> CreateMapping(dynamic mappingObject);
-        Task<bool> InsertDocuments(dynamic[] documents);
-        Task<ISearchResponse<dynamic>> RunQuery(dynamic query);
+        Task<bool> CreateMapping(string mappingObject);
+        Task<bool> InsertDocuments(params string[] documents);
+        Task<string> RunQuery(string query);
         void Cleanup();
     }
 
     public class ElasticsearchSession : IElasticsearchSession, IDisposable
     {
         private readonly ElasticClient _elasticClient;
-        private readonly IEsfHttpClient _httpClient;
         private readonly IUniqueNameResolver _uniqueNameResolver;
         private readonly string _indexName;
         private readonly string _typeName;
@@ -29,65 +26,67 @@ namespace Esf.Domain
 
         public ElasticsearchSession(
             ElasticClient elasticClient, 
-            IEsfHttpClient httpClient, 
             IUniqueNameResolver uniqueNameResolver)
         {
             _elasticClient = elasticClient;
-            _httpClient = httpClient;
             _uniqueNameResolver = uniqueNameResolver;
-            _indexName = uniqueNameResolver.GetUniqueName("index_");
-            _typeName = uniqueNameResolver.GetUniqueName("type_");
+            _indexName = uniqueNameResolver.GetUniqueName();
+            _typeName = uniqueNameResolver.GetUniqueName();
         }
 
-        public async Task<bool> CreateIndex()
+        public async Task<bool> CreateMapping(string mappingObject)
         {
             if (_indexCreated)
                 return true;
 
-            var response = await _elasticClient.CreateIndexAsync(new IndexName() { Name = _indexName });
-            _indexCreated = response.Acknowledged;
+            var response = await _elasticClient.LowLevel.IndexAsync<string>(_indexName, _typeName, mappingObject);
+            var responseBody = response.Body;
 
-            return response.Acknowledged;
+            _indexCreated = true;
+
+            return true;
         }
 
-        public async Task<bool> CreateMapping(dynamic mappingObject)
+        public async Task<bool> InsertDocuments(params string[] documents)
         {
-            if (_mappingCreated)
-                return true;
+            StringBuilder bulkBody = new StringBuilder();
 
-            var serializedBody = JSON.Serialize(mappingObject);
-            var httpResponse = await _httpClient.Put(serializedBody, _indexName, "_mapping", _typeName);
-            var httpResponseObject = JSON.Deserialize<dynamic>(httpResponse);
-            _mappingCreated = httpResponseObject.acknowledged;
-
-            return httpResponseObject.acknowledged;
-        }
-
-        public Task<bool> InsertDocuments(dynamic[] documents)
-        {
-            List<dynamic> httpResponses = new List<dynamic>();
-
-            var tasks = documents.Select(async d =>
+            foreach (string source in documents)
             {
-                var httpResponse = await _httpClient.Put(JSON.Serialize(d), _indexName, _typeName, Guid.NewGuid().ToString() + "?refresh=wait_for");
-                httpResponses.Add(JSON.Deserialize<dynamic>(httpResponse));
-                return Task.FromResult(true);
-            });
+                var actionObject = new
+                {
+                    create = new
+                    {
+                        _index = _indexName,
+                        _type = _typeName,
+                        _id = Guid.NewGuid().ToString()
+                    }
+                };
 
-            Task.WaitAll(tasks.ToArray());
+                var action = JSON.Serialize(actionObject);
 
-            return Task.FromResult(httpResponses.All(r => r.created));
+                bulkBody.AppendLine(action);
+                bulkBody.AppendLine(JSON.EnsureSingleLine(source));
+                bulkBody.AppendLine();
+            }
+
+            var response = await _elasticClient.LowLevel.BulkPutAsync<string>(_indexName, 
+                _typeName, 
+                bulkBody.ToString(), 
+                x => x.Refresh(Elasticsearch.Net.Refresh.WaitFor));
+
+            return response.Body != null;
         }
 
-        public async Task<ISearchResponse<dynamic>> RunQuery(dynamic query)
+        public async Task<string> RunQuery(string query)
         {
-            var serializedQuery = JSON.Serialize(query);
-
-            return await _elasticClient.SearchAsync<dynamic>(
+            var response = await _elasticClient.SearchAsync<dynamic>(
                 s => s.Index(_indexName)
                       .Type(_typeName)
-                      .Query(q => q.Raw(serializedQuery))
+                      .Query(q => q.Raw(query))
             );
+
+            return JSON.Serialize(response.Documents);
         }
 
         public void Cleanup()
@@ -95,6 +94,7 @@ namespace Esf.Domain
             if (_indexCreated)
             {
                 _elasticClient.DeleteIndex(new DeleteIndexRequest(_indexName));
+                _indexCreated = false;
             }
         }
 

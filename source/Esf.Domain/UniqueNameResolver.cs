@@ -4,14 +4,14 @@ namespace Esf.Domain
 {
     public interface IUniqueNameResolver
     {
-        string GetUniqueName(string prefix = null, string suffix = null);
+        string GetUniqueName();
     }
 
     public class UniqueNameResolver : IUniqueNameResolver
     {
-        public string GetUniqueName(string prefix = null, string suffix = null)
+        public string GetUniqueName()
         {
-            return $"{prefix??""}{Guid.NewGuid().ToString()}{suffix}";
+            return Guid.NewGuid().ToString();
         }
     }
 }

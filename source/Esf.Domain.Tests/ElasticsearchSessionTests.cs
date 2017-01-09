@@ -3,7 +3,6 @@ using Moq;
 using Nest;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Esf.Domain.Tests
@@ -14,50 +13,62 @@ namespace Esf.Domain.Tests
         [Test]
         public void MatchQueryWithSingleMatch()
         {
-            var mapping = JSON.Deserialize<dynamic>(@"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}");
-            var documents = JSON.Deserialize<dynamic[]>(@"[{""message"": ""The quick brown fox jumps over the lazy dog""}]");
-            var query = JSON.Deserialize<dynamic>(@"{""match"": {""message"": ""fox""}}");
+            const string message = "The quick brown fox jumps over the lazy dog";
 
-            var queryResult = RunSearchQuery(mapping, documents, query);
+            var mapping = @"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}";
 
-            Assert.AreEqual(1, queryResult.Documents.Count);
-            Assert.AreEqual(documents[0].message, ((IEnumerable<dynamic>)queryResult.Documents).First().message);
+            var documents = new[] {
+                $"{{\"message\": \"{message}\"}}"
+            };
+
+            var query = @"{""match"": {""message"": ""fox""}}";
+
+            var resultString = RunSearchQuery(mapping, documents, query);
+            var resultDocuments = JSON.Deserialize<dynamic[]>(resultString);
+
+            Assert.AreEqual(1, resultDocuments.Count());
+            Assert.AreEqual(message, resultDocuments[0].message.ToString());
         }
 
         [Test]
         public void MatchQueryWithMultipleMatch()
         {
-            var mapping = JSON.Deserialize<dynamic>(@"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}");
-            var documents = JSON.Deserialize<dynamic[]>(
-                @"[
-                    {""message"": ""The quick brown fox jumps over the lazy dog""},
-                    {""message"": ""The fox changes his fur but not his habits""}
-                  ]"
-            );
-            var query = JSON.Deserialize<dynamic>(@"{""match"": {""message"": ""fox""}}");
+            const string message1 = "The quick brown fox jumps over the lazy dog";
+            const string message2 = "The fox changes his fur but not his habits";
 
-            var queryResult = RunSearchQuery(mapping, documents, query);
+            var mapping = @"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}";
 
-            Assert.AreEqual(2, queryResult.Documents.Count);
-            Assert.IsTrue(((IEnumerable<dynamic>)queryResult.Documents).Any(d => d.message == documents[0].message));
-            Assert.IsTrue(((IEnumerable<dynamic>)queryResult.Documents).Any(d => d.message == documents[1].message));
+            var documents = new[] {
+                $"{{\"message\": \"{message1}\"}}",
+                $"{{\"message\": \"{message2}\"}}"
+            };
+
+            var query = @"{""match"": {""message"": ""fox""}}";
+
+            var resultString = RunSearchQuery(mapping, documents, query);
+            var resultDocuments = JSON.Deserialize<dynamic[]>(resultString);
+
+            Assert.AreEqual(2, resultDocuments.Count());
+            Assert.IsTrue(resultDocuments.Any(d => d.message == message1));
+            Assert.IsTrue(resultDocuments.Any(d => d.message == message2));
         }
 
         [Test]
         public void NoMatch()
         {
-            var mapping = JSON.Deserialize<dynamic>(@"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}");
-            var documents = JSON.Deserialize<dynamic[]>(
-                @"[
-                    {""message"": ""The quick brown fox jumps over the lazy dog""},
-                    {""message"": ""The fox changes his fur but not his habits""}
-                  ]"
-            );
-            var query = JSON.Deserialize<dynamic>(@"{""match"": {""message"": ""lion""}}");
+            var mapping = @"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}";
 
-            var queryResult = RunSearchQuery(mapping, documents, query);
+            var documents = new[] {
+                @"{""message"": ""The quick brown fox jumps over the lazy dog""}",
+                @"{""message"": ""The fox changes his fur but not his habits""}"
+            };
 
-            Assert.AreEqual(0, queryResult.Documents.Count);
+            var query = @"{""match"": {""message"": ""lion""}}";
+
+            var resultString = RunSearchQuery(mapping, documents, query);
+            var resultDocuments = JSON.Deserialize<dynamic[]>(resultString);
+
+            Assert.AreEqual(0, resultDocuments.Count());
         }
 
         [Test]
@@ -65,27 +76,24 @@ namespace Esf.Domain.Tests
         {
             string indexAndTypeName = $"index_{Guid.NewGuid().ToString()}";
 
-            var mapping = JSON.Deserialize<dynamic>(@"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}");
-            var documents = JSON.Deserialize<dynamic[]>(@"[{""message"": ""The quick brown fox jumps over the lazy dog""}]");
-            var query = JSON.Deserialize<dynamic>(@"{""match"": {""message"": ""fox""}}");
+            var mapping = @"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}";
+            var documents = @"[{""message"": ""The quick brown fox jumps over the lazy dog""}]";
+            var query = @"{""match"": {""message"": ""fox""}}";
 
             var esUri = new Uri("http://localhost:9200");
             var esClient = new ElasticClient(esUri);
-            var esfHttpClient = new EsfHttpClient(esUri);
 
             var uniqueNameResolverMock = new Mock<IUniqueNameResolver>();
-            uniqueNameResolverMock.Setup(r => r.GetUniqueName(It.IsAny<string>(), It.IsAny<string>())).Returns(indexAndTypeName);
+            uniqueNameResolverMock.Setup(r => r.GetUniqueName()).Returns(indexAndTypeName);
 
-            using (var session = new ElasticsearchSession(esClient, esfHttpClient, uniqueNameResolverMock.Object))
+            using (var session = new ElasticsearchSession(esClient, uniqueNameResolverMock.Object))
             {
-                var indexCreated = session.CreateIndex().Result;
                 var mappingCreated = session.CreateMapping(mapping).Result;
                 var documentsCreated = session.InsertDocuments(documents).Result;
 
                 var indexExistsResponse = esClient.IndexExists(new IndexExistsRequest(indexAndTypeName));
                 Assert.IsTrue(indexExistsResponse.Exists);
 
-                Assert.IsTrue(indexCreated);
                 Assert.IsTrue(mappingCreated);
                 Assert.IsTrue(documentsCreated);
             }
@@ -94,21 +102,18 @@ namespace Esf.Domain.Tests
             Assert.IsFalse(indexExistsResponse2.Exists);
         }
 
-        private ISearchResponse<dynamic> RunSearchQuery(dynamic mapping, dynamic documents, dynamic query)
+        private string RunSearchQuery(string mapping, string[] documents, string query)
         {
             var esUri = new Uri("http://localhost:9200");
             var esClient = new ElasticClient(esUri);
-            var esfHttpClient = new EsfHttpClient(esUri);
             var uniqueNameResolver = new UniqueNameResolver();
 
-            using (var session = new ElasticsearchSession(esClient, esfHttpClient, uniqueNameResolver))
+            using (var session = new ElasticsearchSession(esClient, uniqueNameResolver))
             {
-                var indexCreated = session.CreateIndex().Result;
                 var mappingCreated = session.CreateMapping(mapping).Result;
                 var documentsCreated = session.InsertDocuments(documents).Result;
-                var queryResult = (ISearchResponse<dynamic>)session.RunQuery(query).Result;
+                var queryResult = session.RunQuery(query).Result;
 
-                Assert.IsTrue(indexCreated);
                 Assert.IsTrue(mappingCreated);
                 Assert.IsTrue(documentsCreated);
 
