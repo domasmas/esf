@@ -3,16 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>6CAFC0C6-A428-4d30-A9F9-700E829FEA51</ProjectGuid>
+    <ProjectGuid>{99e7eb60-7e96-4f47-ba93-7b22b225dca1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>MyApplication</RootNamespace>
     <AssemblyName>MyApplication</AssemblyName>
-    <Name>Esf.deployment</Name>
-    <ProjectHome />
-    <StartupFile>
-    </StartupFile>
-    <WorkingDirectory>
-    </WorkingDirectory>
+    <Name>Esf.QueryRunnerDeployment</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -32,23 +27,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="CleanEnvironment.ps1" />
-    <Compile Include="PesterSuite.psm1" />
-    <Compile Include="Prerequisites.tests.ps1" />
-    <Compile Include="Esf.Website.GulpBuild.psm1" />
-    <Compile Include="MsBuild.psm1" />
-    <Compile Include="Deploy.ps1" />
-    <Compile Include="esfWebApi.config.json" />
-    <Compile Include="DeployToIss.tests.ps1" />
-    <Compile Include="DeployToIss.psm1" />
-    <Compile Include="Permissions.psm1" />
-    <Compile Include="PsModule.psm1" />
-    <Compile Include="RunTests.ps1" />
-    <Compile Include="SetupDevEnvironment.ps1" />
-    <Compile Include="StartEsfServices.ps1" />
+    <Folder Include="ElasticSearchConfig\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="esfWebsite.config.json" />
+    <Compile Include="ElasticSearchConfig\elasticsearch.yml" />
+    <Compile Include="ElasticSearchConfig\log4j2.properties" />
+    <Compile Include="Esf.QueryRunner.Config.json" />
+    <Compile Include="Esf.QueryRunnerDeployment.psm1" />
+    <Compile Include="Esf.QueryRunnerDeployment.tests.ps1" />
+    <Compile Include="StartEsfQueryRunner.ps1" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

@@ -42,20 +42,20 @@
 		It "Checks Visual Studio 2015 Update 3" {
 			$msiName = "*Visual Studio 2015 Update 3*"
 			$majorVersion = "14"
-			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be True
+			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
 		It "Checks Java 8 redistributable" {
 			$msiName = "*Java*"
 			$majorVersion = "8"
-			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be True
+			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
 		It "Checks Typescript 2.0" {
 			$msiName = "TypeScript*"
 			$majorVersion = "2"
 			$minorVersion = "0"
-			(IsMsiPackageInstalled $msiName $majorVersion $minorVersion) | Should Be True
+			(IsMsiPackageInstalled $msiName $majorVersion $minorVersion) | Should Be $true
 		}
 
 	}
