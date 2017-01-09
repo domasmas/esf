@@ -31,4 +31,4 @@ function DeployDb() {
 	& UpgradeDb
 }
 
-Export-ModuleMember -Function DeployDb, RunEsfNUnitDeploymentTests
+Export-ModuleMember -Function DeployDb, StartMongoDbServerInSeparateProcess, RunEsfNUnitDeploymentTests

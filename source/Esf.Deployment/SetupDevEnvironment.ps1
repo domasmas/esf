@@ -31,9 +31,9 @@ function CreateStartEsfMongoShellShortcut() {
 	CreatePowershellCommandShortcut $command $OutputFilePath
 }
 
-function CreateStartEsfMongoServerShortcut() {
-	$Command = Resolve-Path "$PSScriptRoot\..\Esf.DataAccess.Deployment\StartEsfMongoServer.ps1"
-	$OutputFilePath = GetShortcutFilePath "StartEsfMongoServer"
+function CreateStartEsfServicesShortcut() {
+	$Command = Resolve-Path "$PSScriptRoot\StartEsfServices.ps1"
+	$OutputFilePath = GetShortcutFilePath "StartEsfServices"
 	CreatePowershellCommandShortcut $command $OutputFilePath
 }
 
@@ -62,7 +62,7 @@ function RunTestsShortcut() {
 }
 
 CreateStartEsfMongoShellShortcut
-CreateStartEsfMongoServerShortcut
+CreateStartEsfServicesShortcut
 CreateCdEsfWebsiteShortcut
 CreateDeployShortcut
 CreateCleanEnvironmentShortcut
