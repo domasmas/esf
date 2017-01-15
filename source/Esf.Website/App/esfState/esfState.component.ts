@@ -1,11 +1,11 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
-
+import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
 @
 Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService]
+    providers: [EsfStateService, EsfQueryRunnerService]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfStateDto;
@@ -16,7 +16,8 @@ export class EsFiddlerComponent implements OnInit {
     constructor(
         private esfStateService: EsfStateService,
         private route: ActivatedRoute,
-        private router: Router
+        private router: Router,
+        private queryRunnerService: EsfQueryRunnerService
     ) {
         this.state = new EsfStateDto();
         this.state = {
@@ -24,7 +25,7 @@ export class EsFiddlerComponent implements OnInit {
             mapping: null,
             query: null,
         };
-        this.queryRunner = new EsfQueryRunner(null);
+        this.queryRunner = new EsfQueryRunner(queryRunnerService);
     }
 
     ngOnInit() {
@@ -96,12 +97,37 @@ export class EsFiddlerComponent implements OnInit {
 
 export class EsfQueryRunner {
     queryResult: string;
+    queryError: string; 
 
-    constructor(private esfStateService: EsfStateService) {
+    constructor(private queryRunnerService: IEsfQueryRunnerService) {
         this.queryResult = '';
+        this.queryError = '';
     }
 
-    public run(): void {
-        this.queryResult = 'Query was run';
+    public run(state: EsfStateDto): void {   
+        var serializedDocs: string[];
+        try {
+            var documents: Object[] = JSON.parse(state.documents);
+            serializedDocs = documents.map((doc: any): string => JSON.stringify(doc));
+            if (!(serializedDocs instanceof Array)) {
+                this.queryResult = '';
+                this.queryError = 'The documents are not an array.';
+                return;
+            }
+        }
+        catch (error) {
+            this.queryResult = '';
+            this.queryError = 'The documents are not an array with JSON objects.' + JSON.stringify(error);
+            return;
+        }
+        
+        this.queryResult = 'Elastic Search is running Query. Wait for results...';
+        this.queryError = '';
+        this.queryRunnerService.runSearchQuery(state.mapping, serializedDocs, state.query).subscribe((queryResult: string) => {
+            this.queryResult = queryResult;
+        }, (error: Error) => {
+            this.queryResult = '';
+            this.queryError = JSON.stringify(error);
+        });
     }
 } 

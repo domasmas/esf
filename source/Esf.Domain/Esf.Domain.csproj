@@ -75,8 +75,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ElasticsearchSession.cs" />
+    <Compile Include="ElasticsearchSessionFactory.cs" />
+    <Compile Include="EsfQueryRunner.cs" />
+    <Compile Include="IElasticsearchSession.cs" />
+    <Compile Include="IElasticsearchSessionFactory.cs" />
+    <Compile Include="IEsfQueryRunner.cs" />
+    <Compile Include="QueryRunnerException.cs" />
     <Compile Include="UniqueNameResolver.cs" />
-    <Compile Include="EsfHttpClient.cs" />
     <Compile Include="Helpers\JSON.cs" />
     <Compile Include="NewEsfStateFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

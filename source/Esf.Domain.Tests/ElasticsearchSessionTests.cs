@@ -78,7 +78,6 @@ namespace Esf.Domain.Tests
 
             var mapping = @"{""properties"": {""message"": {""type"": ""string"", ""store"": true}}}";
             var documents = @"[{""message"": ""The quick brown fox jumps over the lazy dog""}]";
-            var query = @"{""match"": {""message"": ""fox""}}";
 
             var esUri = new Uri("http://localhost:9200");
             var esClient = new ElasticClient(esUri);
@@ -107,18 +106,9 @@ namespace Esf.Domain.Tests
             var esUri = new Uri("http://localhost:9200");
             var esClient = new ElasticClient(esUri);
             var uniqueNameResolver = new UniqueNameResolver();
-
-            using (var session = new ElasticsearchSession(esClient, uniqueNameResolver))
-            {
-                var mappingCreated = session.CreateMapping(mapping).Result;
-                var documentsCreated = session.InsertDocuments(documents).Result;
-                var queryResult = session.RunQuery(query).Result;
-
-                Assert.IsTrue(mappingCreated);
-                Assert.IsTrue(documentsCreated);
-
-                return queryResult;
-            }
+            var elasticsearchFactory = new ElasticsearchSessionFactory(esClient, uniqueNameResolver);
+            var esfQueryRunner = new EsfQueryRunner(elasticsearchFactory);
+            return esfQueryRunner.Run(mapping, documents, query).Result;
         }
     }
 }

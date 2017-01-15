@@ -3,6 +3,7 @@ import { EsFiddlerComponent } from './esfState.component';
 import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
+import { IEsfQueryRunnerService, EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service'
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
 import 'jquery';
@@ -121,21 +122,34 @@ export class JsonEditorDirectiveStub {
         this.textSpy(text);
     }
 }
+
+class EsfQueryRunnerServiceStub implements IEsfQueryRunnerService {
+    static StubbedRunResult: string = `{ "message": "message with fox" }`;
+    runSearchQuery(mapping: string, documents: string[], query: string): Observable<string> {
+        return new BehaviorSubject<string>(EsfQueryRunnerServiceStub.StubbedRunResult);
+    }
+}
+
 class EsFiddlerComponentFixture {
     public stateService: EsfStateServiceStub;
     public activatedRoute: ActivatedRouteStub;
     public routerStub: RouterStub;
+    private queryRunnerService: EsfQueryRunnerServiceStub;
 
     configureComponent(): void {
         this.stateService = new EsfStateServiceStub();
         this.activatedRoute = new ActivatedRouteStub();
         this.routerStub = new RouterStub();
+        this.queryRunnerService = new EsfQueryRunnerServiceStub();
+
         JsonEditorDirectiveStub.resetInstances();
         TestBed.configureTestingModule({
             declarations: [EsFiddlerComponent, JsonEditorDirectiveStub],
             providers: [{ provide: EsfStateService, useValue: this.stateService },
             { provide: ActivatedRoute, useValue: this.activatedRoute },
-            { provide: Router, useValue: this.routerStub }]
+            { provide: Router, useValue: this.routerStub },
+            { provide: EsfQueryRunnerService, useValue: this.queryRunnerService }
+            ]
         }).overrideComponent(EsFiddlerComponent, {
             set: {
                 providers: [{ provide: EsfStateService, useValue: this.stateService }]
@@ -197,7 +211,7 @@ class EsFiddlerComponentFixture {
     }
 
     public getStubbedQueryRunResult(): string {
-        return 'Query was run';
+        return EsfQueryRunnerServiceStub.StubbedRunResult;
     }
 
     public runQueryCommand(): void {

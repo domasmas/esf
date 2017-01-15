@@ -9,9 +9,9 @@ if (!auditor.isUpgradePerformed()) {
 
     db.esStates.insert({
         StateUrl: UUID(upgradeFramework.EmptyGuid),
-        Documents: '[{"prop1": "value1"}, {"prop2": "value2"}]',
-        Mapping: '{"mappingProperty1": "mappingValue1"}',
-        Query: '{"queryProperty1": "queryValue1"}'
+        Documents: '[{ "message": "very good message" }, { "message": "message with fox" }]',
+        Mapping: '{"properties": {"message": {"type": "string", "store": true}}}',
+        Query: '{"match": {"message": "fox"}}'
     });
     auditor.auditAction('populated initial esState');
 

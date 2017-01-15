@@ -1,52 +1,22 @@
-﻿import { ComponentFixture, TestBed, async, inject, fakeAsync, tick } from '@angular/core/testing';
-import { BaseRequestOptions, ResponseOptionsArgs, Http, Response, Request, ResponseOptions, ResponseType, Headers } from '@angular/http';
-import { MockBackend, MockConnection } from '@angular/http/testing';
+﻿import { TestBed, inject } from '@angular/core/testing';
+import { Headers } from '@angular/http';
 import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
-
-class RequestResponsePair {
-    expectedRequest: {
-        url: string;
-        headers?: Headers;
-        body?: Object;
-    }
-    response: ResponseOptionsArgs;
-}
+import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
 
 class EsfStateServiceFixture {
-    private http: Http;
-    private mockBackend: MockBackend;
+    private mockHttp: MockHttpFixture;
     esfStateService: EsfStateService;
 
     constructor() {
         TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: Http, useFactory: (backend: MockBackend, options: BaseRequestOptions) => {
-                        return new Http(backend, options);
-                    }, deps: [MockBackend, BaseRequestOptions]
-                },
-                EsfStateService, MockBackend, BaseRequestOptions]
+            providers: [EsfStateService].concat(MockHttpFixture.getModuleProviders())
         });
+        this.mockHttp = new MockHttpFixture('http://localhost:40081');
         this.esfStateService = TestBed.get(EsfStateService);
-        this.mockBackend = TestBed.get(MockBackend);
-        this.http = TestBed.get(Http);
-        this.hostUrl = 'http://localhost:40081';
     }
-
-    private hostUrl: string;
-
-    private getFullUrl(relativeUrl: string): string {
-        return this.hostUrl.concat(relativeUrl);
-    }
-
-    configureResponses(...requestResponsePairs: RequestResponsePair[]) {
-        var index = 0;
-        this.mockBackend.connections.subscribe((connection: MockConnection) => {
-            var pair: RequestResponsePair = requestResponsePairs[index];
-            index++;
-            expect(connection.request.url).toEqual(this.getFullUrl(pair.expectedRequest.url));
-            connection.mockRespond(new Response(new ResponseOptions(pair.response)));                        
-        });
+    
+    configureResponse(requestResponsePair: RequestResponsePair) {
+        return this.mockHttp.configureResponses(requestResponsePair);
     }
 }
 
@@ -65,7 +35,7 @@ describe('esfState.service', function () {
             },
             stateUrl: '00000000-0000-0000-0000-000000000000'
         };
-        serviceFixture.configureResponses({
+        serviceFixture.configureResponse({
             expectedRequest: {
                 url: '/states/new'
             },
@@ -86,7 +56,7 @@ describe('esfState.service', function () {
             stateUrl: '12345678-0000-0000-0000-000000000000'
         };
 
-        serviceFixture.configureResponses({
+        serviceFixture.configureResponse({
             expectedRequest: {
                 url: '/states',
                 headers: new Headers({ 'Content-Type': 'application/json' }),
@@ -115,7 +85,7 @@ describe('esfState.service', function () {
             },
             stateUrl: existingStateGuid
         };
-        serviceFixture.configureResponses({
+        serviceFixture.configureResponse({
             expectedRequest: {
                 url: `/states/?stateUrl=${existingStateGuid}`
             },

@@ -6,12 +6,11 @@ import { EsFiddlerComponent } from './esfState/esfState.component';
 import { AppRoutesModule } from './app.routes';
 import { HttpModule } from '@angular/http';
 import { JsonEditorDirective } from './common/components/jsonEditor.directive';
-
 @NgModule({
     imports: [BrowserModule,
         AppRoutesModule,
         HttpModule],
-    declarations: [AppComponent, PageNotFoundComponent, EsFiddlerComponent, JsonEditorDirective ],
+    declarations: [AppComponent, PageNotFoundComponent, EsFiddlerComponent, JsonEditorDirective],
     bootstrap: [AppComponent]
 })
 export class AppModule { }
