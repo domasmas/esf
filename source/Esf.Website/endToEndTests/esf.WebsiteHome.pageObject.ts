@@ -116,42 +116,7 @@ export class EsfHome {
     }
 
     private getSectionText(sectionClass: string): Promise<string> {
-        let browserInstance = this.browserInstance;
-        let key = 'tempTextInput' + Math.random();
-
-        return browserInstance.executeScript((args: any) => {
-            var key = args;
-            var el = document.createElement('textarea');
-            el.setAttribute('id', key);
-            el.setAttribute('style', 'position:fixed;z-index:10000;top:0;left:0');
-            document.getElementsByTagName('body')[0].appendChild(el);
-        }, key).then(() => {
-            browserInstance.ignoreSynchronization = false;
-            var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_content`));
-            browserInstance.ignoreSynchronization = true;
-            return inputElement.getText();
-        }).then((text: string) => {
-
-            // If field is empty already, CTRL+C won't work, return empty string
-            if (text === '') {
-                return text;
-            }
-
-            // Workaround to retrieve a whole text from the editor
-            browserInstance.ignoreSynchronization = false;
-            var inputElement = browserInstance.element(by.css(`${sectionClass} .ace_text-input`));
-            browserInstance.ignoreSynchronization = true;
-
-            inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "a"));
-            inputElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "c"));
-
-            var tempElement = browserInstance.element(by.id(key));
-            tempElement.sendKeys(protractor.Key.chord(protractor.Key.CONTROL, "v"));
-
-            return tempElement.getAttribute('value');
-        }).then((text: string) => {
-            return text;
-        });
+        return this.browserInstance.element(by.css(`${sectionClass} .ace_content`)).getText();
     }
 
     isUrlOfExistingState(): Promise<boolean> {
