@@ -2,7 +2,7 @@
 
 // Based on https://github.com/fxmontigny/ng2-ace-editor
 // Migrate to NPM package instead, once they have fixed their type definitions
-import { Directive, EventEmitter, ElementRef, Input, Output } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Input, Output, NgZone } from '@angular/core';
 import 'brace';
 import 'brace/theme/monokai';
 import 'brace/mode/json';
@@ -10,18 +10,20 @@ import 'brace/theme/chrome';
 
 @Directive({
     selector: '[json-editor]'
-}) 
+})
 export class JsonEditorDirective {
     @Output() textChange = new EventEmitter();
 
-    _readOnly: boolean = false; 
+    _readOnly: boolean = false;
     editor: any;
     oldText: string;
 
-    constructor(elementRef: ElementRef) {
-        let el = elementRef.nativeElement;        
-        this.editor = ace["edit"](el);
-        this.init();
+    constructor(elementRef: ElementRef, private zone: NgZone) {
+        let el = elementRef.nativeElement;
+        zone.runOutsideAngular(() => {
+            this.editor = ace["edit"](el);
+            this.init();
+        });
         this.initEvents();
     }
 
@@ -33,31 +35,39 @@ export class JsonEditorDirective {
     }
 
     initEvents() {
-        this.editor.on('change', () => {
-            if (this._readOnly)
-                return;
+        this.zone.runOutsideAngular(() => {
+            this.editor.on('change', () => {
+                if (this._readOnly)
+                    return;
 
-            let newVal = this.editor.getValue();
-            if (newVal === this.oldText) return;
-            if (typeof this.oldText !== 'undefined') {
-                this.textChange.emit(newVal);
-            }
+                let newVal = this.editor.getValue();
 
-            this.oldText = newVal;
-            this.text = newVal;
+                this.zone.run(() => {
+                    if (newVal === this.oldText) return;
+
+                    if (typeof this.oldText !== 'undefined') {
+                        this.textChange.emit(newVal);
+                    }
+
+                    this.oldText = newVal;
+                    this.text = newVal;
+                });
+            });
         });
     }
 
     @Input() set readOnly(readOnly: boolean) {
         this._readOnly = readOnly;
-        this.editor.setReadOnly(readOnly);
-        if (readOnly) {
-            this.editor.setOptions({
-                highlightActiveLine: false,
-                highlightGutterLine: false
-            });
-            this.editor.renderer.hideCursor();
-        }
+        this.zone.runOutsideAngular(() => {
+            this.editor.setReadOnly(readOnly);
+            if (readOnly) {
+                this.editor.setOptions({
+                    highlightActiveLine: false,
+                    highlightGutterLine: false
+                });
+                this.editor.renderer.hideCursor();
+            }
+        });
     }
 
     @Input() set text(text: string) {
@@ -69,8 +79,9 @@ export class JsonEditorDirective {
 
         if (text == this.oldText)
             return;
-
-        this.editor.setValue(text);
-        this.editor.clearSelection();
+        this.zone.runOutsideAngular(() => {
+            this.editor.setValue(text);
+            this.editor.clearSelection();
+        });
     }
 }
