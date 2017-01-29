@@ -80,6 +80,7 @@
     <Compile Include="IElasticsearchSession.cs" />
     <Compile Include="IElasticsearchSessionFactory.cs" />
     <Compile Include="IEsfQueryRunner.cs" />
+    <Compile Include="INewEsfStateFactory.cs" />
     <Compile Include="QueryRunnerException.cs" />
     <Compile Include="UniqueNameResolver.cs" />
     <Compile Include="Helpers\JSON.cs" />

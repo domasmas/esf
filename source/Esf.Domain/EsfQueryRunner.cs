@@ -1,9 +1,4 @@
-﻿using Nest;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Esf.Domain
 {
@@ -23,6 +18,7 @@ namespace Esf.Domain
                 bool isMappingCreated = await session.CreateMapping(mappingObject);
                 if (!isMappingCreated)
                     throw new QueryRunnerException("Mapping is not created");
+
                 bool areDocumentsCreated = await session.InsertDocuments(documents);
                 if (!areDocumentsCreated)
                     throw new QueryRunnerException("Documents are not created");

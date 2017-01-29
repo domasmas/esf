@@ -4,14 +4,13 @@ using System.Threading.Tasks;
 
 namespace Esf.Domain
 {
-    public class NewEsfStateFactory
+    public class NewEsfStateFactory : INewEsfStateFactory
     {
-        private EsStatesRepository _statesRepository;
+        protected readonly IEsStatesRepository _statesRepository;
 
-        public NewEsfStateFactory()
+        public NewEsfStateFactory(IEsStatesRepository statesRepository)
         {
-            var databaseClient = new EsDatabaseClient();
-            _statesRepository = new EsStatesRepository(databaseClient.Database);
+            _statesRepository = statesRepository;
         }
 
         public async Task<EsState> GetNewState()

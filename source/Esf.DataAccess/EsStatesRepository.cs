@@ -8,18 +8,18 @@ namespace Esf.DataAccess
 {
     public class EsStatesRepository : IEsStatesRepository
     {
-        private IMongoDatabase _database;
+        private IEsDatabaseClient _databaseClient;
 
-        public EsStatesRepository(IMongoDatabase database)
+        public EsStatesRepository(IEsDatabaseClient databaseClient)
         {
-            _database = database;
+            _databaseClient = databaseClient;
         }
 
         private IMongoCollection<EsState> EsStatesCollection
         {
             get
             {
-                return _database.GetCollection<EsState>("esStates");
+                return _databaseClient.Database.GetCollection<EsState>("esStates");
             }
         }
         

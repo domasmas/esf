@@ -8,13 +8,18 @@ namespace Esf.WebApi.Areas.EsfState.New
     [RoutePrefix("states/new")]
     public class NewEsfStateController : ApiController
     {
-        [Route("")]
-        public async Task<ExistingEsfStateDto> Get()
+        protected readonly INewEsfStateFactory _newEsfStateFactory;
+
+        public NewEsfStateController(INewEsfStateFactory newEsfStateFactory)
         {
-            var newStateFactory = new NewEsfStateFactory();
-            EsState newState = await newStateFactory.GetNewState();
-            return EsfStateConverter.From(newState);
+            _newEsfStateFactory = newEsfStateFactory;
         }
 
+        [Route("")]
+        public async Task<ExistingEsfStateDto> Get()
+        { 
+            EsState newState = await _newEsfStateFactory.GetNewState();
+            return EsfStateConverter.From(newState);
+        }
     }
 }

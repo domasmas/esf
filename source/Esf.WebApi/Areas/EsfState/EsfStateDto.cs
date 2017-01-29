@@ -1,7 +1,4 @@
-﻿using Esf.DataAccess;
-using Esf.Domain.Helpers;
-
-namespace Esf.WebApi.Areas.EsfState
+﻿namespace Esf.WebApi.Areas.EsfState
 {
     public class EsfStateDto
     {

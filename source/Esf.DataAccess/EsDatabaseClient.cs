@@ -1,31 +1,24 @@
 ﻿using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Esf.DataAccess
 {
-    public class EsDatabaseClient
+    public class EsDatabaseClient : IEsDatabaseClient
     {
+        protected readonly IMongoDatabase _database;
+
         public EsDatabaseClient(string esFiddleConnectionString)
         {
             var mongoUrl = new MongoUrl(esFiddleConnectionString);
             var mongoClient = new MongoClient(mongoUrl);
-            Database = mongoClient.GetDatabase(mongoUrl.DatabaseName);
+            _database = mongoClient.GetDatabase(mongoUrl.DatabaseName);
         }
 
-        private static string GetEsDatabaseConnectionString()
+        public IMongoDatabase Database
         {
-            return ConfigurationManager.ConnectionStrings["EsFiddleDb"].ConnectionString;
+            get
+            {
+                return _database;
+            }
         }
-
-        public EsDatabaseClient()
-            :this(EsDatabaseClient.GetEsDatabaseConnectionString())
-        { }
-
-        public IMongoDatabase Database { get; set; }
     }
 }
