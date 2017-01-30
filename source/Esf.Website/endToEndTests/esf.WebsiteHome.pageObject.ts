@@ -99,6 +99,10 @@ export class EsfHome {
         return resultSection.isPresent();
     }
 
+    getResultSectionContent(): webDriverPromise.Promise<string> {
+        return this.getSectionText('.result-viewer');
+    }
+
     private getSaveCommandElement(): ElementFinder {
         return this.browserInstance.element(by.css('.save-command'));
     }
@@ -114,9 +118,19 @@ export class EsfHome {
         });
     }
     
+    executeRunCommand(): webDriverPromise.Promise<void> {
+        var runCommandElement = this.getRunCommandElement();
+        return runCommandElement.click().then(() => {
+            this.browserInstance.sleep(2000); //workaround for "Error while waiting for Protractor to sync"
+        });
+    }
+
+    private getRunCommandElement(): ElementFinder {
+        return this.browserInstance.element(by.css('.run-command'));
+    }
+
     hasRunCommand(): webDriverPromise.Promise<boolean> {
-        var runCommand = this.browserInstance.element(by.css('.run-command'));
-        return runCommand.isPresent();
+        return this.getRunCommandElement().isPresent();
     }
 
     getResultContent(): webDriverPromise.Promise<string> {

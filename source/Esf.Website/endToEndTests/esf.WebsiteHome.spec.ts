@@ -64,6 +64,13 @@ describe('Given Esf.Website home page', function () {
             var resultContent = esfHome.getResultContent();
             expect(resultContent).toEqual('');
         });
+
+        it('should be able to run query', () => {
+            esfHome.executeRunCommand();
+            var resultContent = esfHome.getResultSectionContent();
+            var expectedResult: string = '[{"message":"message with fox"}]';
+            expect(resultContent).toEqual(expectedResult);
+        });
     });
 
     describe('persist state', () => {
@@ -94,6 +101,13 @@ describe('Given Esf.Website home page', function () {
                 expect(esfHome.isUrlOfExistingState()).toBe(true);
             });
 
+            it('should be able to run query', () => {
+                esfHome.executeRunCommand();
+                var resultContent = esfHome.getResultSectionContent();
+                var expectedResult: string = '[{"comment":"bad"}]';
+                expect(resultContent).toEqual(expectedResult);
+            });
+
             it('should not change URL if parameters havent changed', () => {
                 esfHome.executeSaveCommand();
 
@@ -106,7 +120,7 @@ describe('Given Esf.Website home page', function () {
 
             it('should change URL if parameters have changed', () => {
                 browser.getCurrentUrl().then((url1: string) => {
-                    var query: string = '{ "p2": "v2"}';
+                    var query: string = '{ "filter": { "term":  { "nothing": "no" }}';
                     esfHome.setQuerySectionContent(query);
                     esfHome.executeSaveCommand();
 

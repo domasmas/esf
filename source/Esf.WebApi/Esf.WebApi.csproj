@@ -183,7 +183,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\NinjectWebCommon.cs" />
+    <Compile Include="App_Start\EsfWebApiDepencencyInjection.cs" />
+    <Compile Include="App_Start\NinjectWebApiBootstrapper.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerController.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerDto.cs" />

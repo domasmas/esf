@@ -3,6 +3,7 @@ using MongoDB.Driver.Core.Clusters;
 using MongoDB.Driver.Core.Misc;
 using NUnit.Framework;
 using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
@@ -14,7 +15,7 @@ namespace Esf.DataAccess.Tests
     public class EsStatesRepositoryTests
     {
         private string mongoDbServerDirectory;
-        private IMongoDatabase _database;
+        private IEsDatabaseClient _database;
 
         [OneTimeSetUp]
         public void Init()
@@ -31,7 +32,8 @@ namespace Esf.DataAccess.Tests
         [SetUp]
         public void Setup()
         {
-            _database = new EsDatabaseClient().Database;
+            string esFiddleConnectionString = ConfigurationManager.ConnectionStrings["EsFiddleDb"].ConnectionString;
+            _database = new EsDatabaseClient(esFiddleConnectionString);
         }
 
         private void SetupDbPathAndLogFile(string dbDeploymentPath)
@@ -56,9 +58,9 @@ namespace Esf.DataAccess.Tests
             DateTime timeout = DateTime.Now.Add(timeoutSpan);
             do
             {
-                if (_database.Client.Cluster.Description.State == ClusterState.Connected)
+                if (_database.Database.Client.Cluster.Description.State == ClusterState.Connected)
                 {
-                    Assert.AreEqual(_database.DatabaseNamespace.DatabaseName, "esFiddle");
+                    Assert.AreEqual(_database.Database.DatabaseNamespace.DatabaseName, "esFiddle");
                     Assert.Pass();
                 }
                 Thread.Sleep(100);
