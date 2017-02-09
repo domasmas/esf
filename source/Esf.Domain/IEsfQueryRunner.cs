@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using Elasticsearch.Net;
+using System.Threading.Tasks;
 
 namespace Esf.Domain
 {
     public interface IEsfQueryRunner
     {
-        Task<string> Run(string mappingObject, string[] documents, string query);
+        Task<EsfQuerySessionResponse> Run(string mappingObject, string[] documents, string query);
     }
 }

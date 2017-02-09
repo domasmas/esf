@@ -5,9 +5,9 @@ namespace Esf.Domain
 {
     public interface IElasticsearchSession : IDisposable
     {
-        Task<bool> CreateMapping(string mappingObject);
-        Task<bool> InsertDocuments(params string[] documents);
-        Task<string> RunQuery(string query);
+        Task<EsfCreateResourceResponse> CreateMapping(string mappingObject);
+        Task<EsfCreateResourceResponse> InsertDocuments(params string[] documents);
+        Task<EsfQueryResponse> RunQuery(string query);
         void Cleanup();
     }
 }
