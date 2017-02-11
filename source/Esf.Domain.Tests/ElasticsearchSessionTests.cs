@@ -91,9 +91,10 @@ namespace Esf.Domain.Tests
 
             var uniqueNameResolverMock = new Mock<IUniqueNameResolver>();
             uniqueNameResolverMock.Setup(r => r.GetUniqueName()).Returns(indexAndTypeName);
-            var idGenerator = new IdGenerator();
+            var idGeneratorMock = new Mock<IIdGenerator>();
+            idGeneratorMock.Setup(g => g.NextId()).Returns(1);
 
-            using (var session = new ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGenerator))
+            using (var session = new ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGeneratorMock.Object))
             {
                 var mappingCreated = session.CreateMapping(mapping).Result.IsSuccess;
                 var documentsCreated = session.InsertDocuments(documents).Result.IsSuccess;

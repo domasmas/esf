@@ -72,9 +72,8 @@
   <ItemGroup>
     <Compile Include="ElasticsearchSession.cs" />
     <Compile Include="ElasticsearchSessionFactory.cs" />
-    <Compile Include="EsfCreateResourceResponse.cs" />
     <Compile Include="EsfError.cs" />
-    <Compile Include="EsfQueryResponse.cs" />
+    <Compile Include="EsfResponse.cs" />
     <Compile Include="EsfQueryRunner.cs" />
     <Compile Include="EsfQuerySessionResponse.cs" />
     <Compile Include="IdGenerator.cs" />
@@ -83,6 +82,7 @@
     <Compile Include="IEsfQueryRunner.cs" />
     <Compile Include="IIdGenerator.cs" />
     <Compile Include="INewEsfStateFactory.cs" />
+    <Compile Include="JsonError.cs" />
     <Compile Include="QueryRunnerException.cs" />
     <Compile Include="UniqueNameResolver.cs" />
     <Compile Include="Helpers\JSON.cs" />

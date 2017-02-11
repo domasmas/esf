@@ -35,10 +35,21 @@ namespace Esf.Domain.Tests
         public dynamic[] RunQueryRaw(string mapping, string[] documents, string query)
         {
             EsfQuerySessionResponse queryResult = _esfQueryRunner.Run(mapping, documents, query).Result;
-            dynamic queryBodyObject = JSON.Deserialize<object>(queryResult.QueryResponse.SuccessJsonResult);
-            JArray hits = queryBodyObject.hits.hits;
-            dynamic[] resultDocuments = hits.Select(hit => ((dynamic)hit)._source).ToArray();
-            return resultDocuments;
+            if (queryResult.QueryResponse == null)
+                return null;
+            if (queryResult.QueryResponse.IsSuccess)
+            {
+                dynamic queryBodyObject = JSON.Deserialize<object>(queryResult.QueryResponse.SuccessJsonResult);
+                JArray hits = queryBodyObject.hits.hits;
+                dynamic[] resultDocuments = hits.Select(hit => ((dynamic)hit)._source).ToArray();
+                return resultDocuments;
+            }
+            else if (queryResult.QueryResponse.JsonValidationError != null)
+                return new[] { queryResult.QueryResponse.JsonValidationError };
+            else if (queryResult.QueryResponse.ElasticsearchError != null)
+                return new[] { queryResult.QueryResponse.ElasticsearchError };
+            else
+                return null;
         }
     }
 }

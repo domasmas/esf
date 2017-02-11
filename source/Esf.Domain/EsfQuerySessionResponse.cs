@@ -8,8 +8,8 @@ namespace Esf.Domain
 {
     public class EsfQuerySessionResponse
     {
-        public EsfCreateResourceResponse CreateMappingResponse { get; set; }
-        public EsfCreateResourceResponse CreateDocumentsResponse { get; set; }
-        public EsfQueryResponse QueryResponse { get; set; }
+        public EsfResponse CreateMappingResponse { get; set; }
+        public EsfResponse CreateDocumentsResponse { get; set; }
+        public EsfResponse QueryResponse { get; set; }
     }
 }

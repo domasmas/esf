@@ -15,20 +15,20 @@ namespace Esf.Domain
         {
             using (var session = _elasticsearchFactory.Create())
             {
-                EsfCreateResourceResponse mappingResponse = await session.CreateMapping(mappingObject);
+                EsfResponse mappingResponse = await session.CreateMapping(mappingObject);
                 if (!mappingResponse.IsSuccess)
                     return CreateResponse(mappingResponse, null, null);
 
-                EsfCreateResourceResponse documentsResponse = await session.InsertDocuments(documents);
+                EsfResponse documentsResponse = await session.InsertDocuments(documents);
                 if (!documentsResponse.IsSuccess)
                     return CreateResponse(mappingResponse, documentsResponse, null);
 
-                EsfQueryResponse queryResponse = await session.RunQuery(query);
+                EsfResponse queryResponse = await session.RunQuery(query);
                 return CreateResponse(mappingResponse, documentsResponse, queryResponse);
             }
         }
 
-        private EsfQuerySessionResponse CreateResponse(EsfCreateResourceResponse mappingResponse, EsfCreateResourceResponse documentsResponse, EsfQueryResponse queryResponse)
+        private EsfQuerySessionResponse CreateResponse(EsfResponse mappingResponse, EsfResponse documentsResponse, EsfResponse queryResponse)
         {
             return new EsfQuerySessionResponse()
             {

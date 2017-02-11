@@ -1,4 +1,5 @@
 ﻿using Elasticsearch.Net;
+using Esf.Domain.Helpers;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,49 @@ namespace Esf.Domain.Tests
         }
 
         private static ElasticsearchFixture _esfQueryRunner;
+
+        [Test]
+        public void InvalidMapppingJson()
+        {
+            var mapping = @"{""properties"": {""message"": {""type"": ""string""}, ""something"": {""}}}";
+            var documents = new string[] {};
+            var query = "";
+
+            var resultDocuments = _esfQueryRunner.RunQueryRaw(mapping, documents, query);
+            Console.WriteLine(resultDocuments);
+        }
+
+        [Test]
+        public void InvalidDocumntsJson()
+        {
+            var mapping = @"{""properties"": {""message"": {""type"": ""string""} }}";
+
+            var documents = new[] {
+                @"{""message"": ""The quick brown fox jumps over the lazy dog""}",
+                @"{""message"": The fox changes his fur but not his habits}"
+            };
+
+            var query = "";
+
+            var resultDocuments = _esfQueryRunner.RunQueryRaw(mapping, documents, query);
+            Console.WriteLine(resultDocuments);
+        }
+
+        [Test]
+        public void InvalidQueryJson()
+        {
+            var mapping = @"{""properties"": {""message"": {""type"": ""string""}}}";
+
+            var documents = new[] {
+                @"{""message"": ""The quick brown fox jumps over the lazy dog""}",
+                @"{""message"": ""The fox changes his fur but not his habits""}"
+            };
+
+            var query = @"{ ""query"" : {""match"": ""message"": ""lion""} }";
+
+            var queryResult = _esfQueryRunner.RunQueryRaw(mapping, documents, query);
+            Console.WriteLine(queryResult);
+        }
 
         [Test]
         public void MatchQueryWithSingleMatch()
@@ -70,7 +114,7 @@ namespace Esf.Domain.Tests
 
             var result = _esfQueryRunner.RunQuery(mapping, documents, query);
             Console.WriteLine(result.QueryResponse.IsSuccess);
-            Console.WriteLine(result.QueryResponse.ElasticsearchError);
+            Console.WriteLine(JSON.Serialize(result.QueryResponse.ElasticsearchError));
         }
 
         [Test]
