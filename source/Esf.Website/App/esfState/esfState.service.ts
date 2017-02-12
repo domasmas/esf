@@ -8,8 +8,8 @@ export class EsfStateService {
     private static serviceUrl: string = 'http://localhost:40081';
 
     constructor(private http: Http) {
-        
     }
+
     getInitialState(): Observable<ExistingEsfStateDto> {
         var url = `${EsfStateService.serviceUrl}/states/new`;
         return this.http.get(url).map((res: Response) => {
@@ -48,7 +48,7 @@ export class EsfStateService {
 
 export class EsfStateDto {
     mapping: string;
-    documents: string;
+    documents: string[];
     query: string;
 }
 

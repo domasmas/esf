@@ -9,7 +9,7 @@ if (!auditor.isUpgradePerformed()) {
 
     db.esStates.insert({
         StateUrl: UUID(upgradeFramework.EmptyGuid),
-        Documents: '[{ "message": "very good message" }, { "message": "message with fox" }]',
+        Documents: ['{ "message": "very good message" }', '{ "message": "message with fox" }'],
         Mapping: '{"properties": {"message": {"type": "string", "store": true}}}',
         Query: '{"match": {"message": "fox"}}'
     });

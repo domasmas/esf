@@ -1,6 +1,4 @@
-﻿using MongoDB.Driver;
-using MongoDB.Driver.Core.Clusters;
-using MongoDB.Driver.Core.Misc;
+﻿using MongoDB.Driver.Core.Clusters;
 using NUnit.Framework;
 using System;
 using System.Configuration;
@@ -76,7 +74,7 @@ namespace Esf.DataAccess.Tests
             Func<int> getEsStatesRepositoryCount = () => (esStatesRepository.FindEsStates((esState) => true)).Result.Count; 
             int initialEsStatesCount = getEsStatesRepositoryCount();
             var testData1 = new EsStateBuilder().SetQuery("query1").SetMapping("mapping").SetStateUrl(Guid.NewGuid())
-                    .SetDocuments("doc1, doc2").Build();
+                    .SetDocuments(new string[] { "doc1", "doc2" }).Build();
 
             var insertedState = await esStatesRepository.InsertEsState(testData1);
 
@@ -85,7 +83,8 @@ namespace Esf.DataAccess.Tests
             Assert.AreEqual(insertedState.Query, readState.Query);
             Assert.AreEqual(insertedState.Mapping, readState.Mapping);
             Assert.AreEqual(insertedState.StateUrl, readState.StateUrl);
-            Action<string, string> verifyInsertedEqualsRead = (string insertedDoc, string readDoc) =>
+            
+            Action<string[], string[]> verifyInsertedEqualsRead = (string[] insertedDoc, string[] readDoc) =>
             {
                 Assert.AreEqual(insertedDoc, readDoc);
             };

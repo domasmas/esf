@@ -7,7 +7,7 @@ namespace Esf.DataAccess.Tests
         public EsStateBuilder()
         {
             _esState = new EsState();
-            _esState.Documents = "";
+            _esState.Documents = new string[0];
             _esState.Mapping = "";
             _esState.Query = "";
             _esState.StateUrl = Guid.Empty;
@@ -32,7 +32,7 @@ namespace Esf.DataAccess.Tests
             return this;
         }
 
-        public EsStateBuilder SetDocuments(string documents)
+        public EsStateBuilder SetDocuments(string[] documents)
         {
             _esState.Documents = documents;
             return this;

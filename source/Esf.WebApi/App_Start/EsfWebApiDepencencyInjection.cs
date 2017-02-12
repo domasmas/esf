@@ -18,6 +18,7 @@ namespace Esf.WebApi.App_Start
             var connections = ConfigurationManager.ConnectionStrings;
 
             var esConnectionConfiguration = new ConnectionConfiguration(new Uri(connections["EsQueryRunnerDb"].ConnectionString));
+
             Kernel.Bind<IElasticLowLevelClient>()
                   .To<ElasticLowLevelClient>()
                   .WithConstructorArgument(esConnectionConfiguration);
