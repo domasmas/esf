@@ -36,7 +36,7 @@
     "@types/core-js": "^0.9.34",
     "@types/jasmine": "^2.5.35",
     "@types/node": "^6.0.45",
-    "@types/selenium-webdriver": "^2.53.33",
+    "@types/selenium-webdriver": "^2.53.39",
     "concurrently": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
@@ -57,7 +57,7 @@
     "karma-jasmine-html-reporter": "^0.2.2",
     "karma-redirect-preprocessor": "^0.1.1",
     "merge-stream": "^1.0.0",
-    "protractor": "^5.1.1",
+    "protractor": "4.0.14",
     "run-sequence": "^1.2.1",
     "systemjs-builder": "^0.15.23",
     "typescript": "^2.1.6"
