@@ -153,7 +153,6 @@
   <ItemGroup>
     <Content Include="App\common\components\app.component.html" />
     <Content Include="App\common\components\pageNotFound.component.html" />
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
     <Content Include="App\esfState\esfState.component.html" />
@@ -177,7 +176,6 @@
     <Content Include="Views\Web.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App\common\services\" />
     <Folder Include="App\common\styles\" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +188,7 @@
     <TypeScriptCompile Include="App\common\components\jsonEditor.directive.ts" />
     <TypeScriptCompile Include="App\common\components\app.component.ts" />
     <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
+    <TypeScriptCompile Include="App\common\services\esfStateValidation.service.ts" />
     <TypeScriptCompile Include="App\common\unitTests\mockHttpFixture.ts" />
     <TypeScriptCompile Include="App\esfQueryRunner\esfQueryRunner.service.spec.ts" />
     <TypeScriptCompile Include="App\esfQueryRunner\esfQueryRunner.service.ts" />

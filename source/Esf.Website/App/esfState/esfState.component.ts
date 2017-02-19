@@ -2,10 +2,11 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
 import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfStateValidationService, EsfStateValidationResult } from '../common/services/esfStateValidation.service';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService, EsfQueryRunnerService]
+    providers: [EsfStateService, EsfQueryRunnerService, EsfStateValidationService]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfStateViewModel;
@@ -17,7 +18,8 @@ export class EsFiddlerComponent implements OnInit {
         private esfStateService: EsfStateService,
         private route: ActivatedRoute,
         private router: Router,
-        private queryRunnerService: EsfQueryRunnerService
+        private queryRunnerService: EsfQueryRunnerService,
+        private stateValidationService: EsfStateValidationService
     ) {
         this.state = new EsfStateViewModel();
         this.state = {
@@ -82,8 +84,17 @@ export class EsFiddlerComponent implements OnInit {
             return false;
         }
 
-        if (!(JSON.parse(this.state.documents) instanceof Array)) {
-            alert("Documents field must be an array");
+        let validationResult = [
+            this.stateValidationService.validateMapping(this.state.mapping),
+            this.stateValidationService.validateDocuments(this.state.documents),
+            this.stateValidationService.validateQuery(this.state.query)
+        ].filter((response: EsfStateValidationResult) => response.isError)
+            .map((response: EsfStateValidationResult) => response.errorMessage)
+            .join("\n");
+
+        // TODO: show proper popover, better formatting, better text
+        if (validationResult) {
+            alert("Cannot save because of errors: " + "\n" + validationResult);
             return false;
         }
 
