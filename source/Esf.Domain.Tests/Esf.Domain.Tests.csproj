@@ -54,7 +54,6 @@
       <HintPath>..\packages\Moq.4.5.29\lib\net45\Moq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nest, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -96,9 +95,12 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Elasticsearch.cs" />
-    <Compile Include="ElasticsearchFixture.cs" />
-    <Compile Include="ElasticsearchSessionTests.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchQuery.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchErrorsInQuery.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchFixture.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchSessionTests.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchTestsBase.cs" />
+    <Compile Include="Elasticsearch\ElasticsearchInvalidJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
