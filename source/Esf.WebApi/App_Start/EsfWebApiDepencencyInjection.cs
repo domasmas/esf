@@ -5,9 +5,9 @@ using System.Linq;
 using System.Web;
 using Ninject;
 using System.Configuration;
-using Nest;
 using Esf.Domain;
 using Esf.DataAccess;
+using Elasticsearch.Net;
 
 namespace Esf.WebApi.App_Start
 {
@@ -17,12 +17,16 @@ namespace Esf.WebApi.App_Start
         {
             var connections = ConfigurationManager.ConnectionStrings;
 
-            Kernel.Bind<IElasticClient>()
-                  .To<ElasticClient>()
-                  .WithConstructorArgument(new Uri(connections["EsQueryRunnerDb"].ConnectionString));
+            var esConnectionConfiguration = new ConnectionConfiguration(new Uri(connections["EsQueryRunnerDb"].ConnectionString));
+
+            Kernel.Bind<IElasticLowLevelClient>()
+                  .To<ElasticLowLevelClient>()
+                  .WithConstructorArgument(esConnectionConfiguration);
 
             Kernel.Bind<IUniqueNameResolver>()
                   .To<UniqueNameResolver>();
+            Kernel.Bind<IIdGenerator>()
+                  .To<IdGenerator>();
 
             Kernel.Bind<IElasticsearchSessionFactory>()
                   .To<ElasticsearchSessionFactory>();

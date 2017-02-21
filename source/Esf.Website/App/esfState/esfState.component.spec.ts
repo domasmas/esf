@@ -46,7 +46,7 @@ class EsfStateServiceStub {
 
     getStubbedState(stateUrl: string): ExistingEsfStateDto {
         return this.getExistingStubbedState(stateUrl, {
-            documents: '[ { "savedDocument" : 44 } ]',
+            documents: ['{ "savedDocument": 44 }'],
             mapping: '{ "savedMapping": "value" }',
             query: '{ "savedQuery": "some saved query" }'
         });
@@ -236,13 +236,15 @@ describe('esfState.component', function () {
         esfComponent.createComponent();
         //then
         var newInitialState = esfComponent.stateService.initialState.state;
+        var documents = newInitialState.documents.map(x => JSON.parse(x));
+        var serializedDocuments = JSON.stringify(documents);
 
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(newInitialState.mapping);
         expect(mappingEditor.readOnlySpy).not.toHaveBeenCalled();
 
         var documentEditor = esfComponent.getDocumentsJsonEditor();
-        expect(documentEditor.textSpy).toHaveBeenCalledWith(newInitialState.documents);
+        expect(documentEditor.textSpy).toHaveBeenCalledWith(serializedDocuments);
         expect(documentEditor.readOnlySpy).not.toHaveBeenCalled();
 
         var queryEditor = esfComponent.getQueryJsonEditor();
@@ -263,12 +265,15 @@ describe('esfState.component', function () {
         expect(esfComponent.stateService.getStateSpy).toHaveBeenCalledWith(existingStateUrl);
         var expectedSavedState = esfComponent.stateService.getStubbedState(existingStateUrl).state;
 
+        var documents = expectedSavedState.documents.map(x => JSON.parse(x));
+        var serializedDocuments = JSON.stringify(documents);
+
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(expectedSavedState.mapping);
         expect(mappingEditor.readOnlySpy).not.toHaveBeenCalled();
 
         var documentEditor = esfComponent.getDocumentsJsonEditor();
-        expect(documentEditor.textSpy).toHaveBeenCalledWith(expectedSavedState.documents);
+        expect(documentEditor.textSpy).toHaveBeenCalledWith(serializedDocuments);
         expect(documentEditor.readOnlySpy).not.toHaveBeenCalled();
 
         var queryEditor = esfComponent.getQueryJsonEditor();
@@ -325,8 +330,10 @@ describe('esfState.component', function () {
             esfComponent.getDocumentsJsonEditor().textChange.emit(changedDocument);
             esfComponent.fixture.detectChanges();
             esfComponent.saveCommand();
+            let expectedDto = JSON.parse(JSON.stringify(esfComponent.instance.state));
+            expectedDto.documents = JSON.parse(changedDocument).map((x: Object) => JSON.stringify(x))
             //then
-            expect(esfComponent.stateService.createNewVersionSpy).toHaveBeenCalledWith(esfComponent.instance.state);
+            expect(esfComponent.stateService.createNewVersionSpy).toHaveBeenCalledWith(expectedDto);
         });
 
         it('should prevent saving non-array documents state', function () {

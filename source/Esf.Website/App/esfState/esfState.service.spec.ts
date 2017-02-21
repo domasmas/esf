@@ -31,7 +31,7 @@ describe('esfState.service', function () {
             state: <EsfStateDto> {
                 mapping: "{ \"mappingKey\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
-                documents: "[{ \"doc1\": 1 }, { \"doc2\": 2 }]"
+                documents: ['{ \"doc1\": 1 }', '{ \"doc2\": 2 }']
             },
             stateUrl: '00000000-0000-0000-0000-000000000000'
         };
@@ -51,7 +51,7 @@ describe('esfState.service', function () {
             state: <EsfStateDto>{
                 mapping: "{ \"mappingKeyModified\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
-                documents: "[{ \"doc1\": 1 }]"
+                documents: ['{ \"doc1\": 1 }']
             },
             stateUrl: '12345678-0000-0000-0000-000000000000'
         };
@@ -68,7 +68,7 @@ describe('esfState.service', function () {
         var newEsfState: EsfStateDto = {
             mapping: "{ \"mappingKeyModified\": \"value modified\" }",
             query: "{ \"queryKey\": \"value\" }",
-            documents: "[{ \"doc1\": 55 }]"
+            documents: ['{ \"doc1\": 55 }']
         };
         serviceFixture.esfStateService.createNewVersion(newEsfState).subscribe((actualState: ExistingEsfStateDto) => {
             expect(actualState).toEqual(httpResponseState);
@@ -81,7 +81,7 @@ describe('esfState.service', function () {
             state: <EsfStateDto>{
                 mapping: "{ \"mappingKeyModified\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
-                documents: "[{ \"doc1\": 1 }]"
+                documents: ['{ \"doc1\": 1 }']
             },
             stateUrl: existingStateGuid
         };

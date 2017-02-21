@@ -2,13 +2,13 @@
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
 import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
-@
-Component({
+
+@Component({
     templateUrl: '/App/esfState/esfState.component.html',
     providers: [EsfStateService, EsfQueryRunnerService]
 })
 export class EsFiddlerComponent implements OnInit {
-    state: EsfStateDto;
+    state: EsfStateViewModel;
     queryRunner: EsfQueryRunner;
     lastSavedState: EsfStateDto;
     private sub: any;
@@ -19,7 +19,7 @@ export class EsFiddlerComponent implements OnInit {
         private router: Router,
         private queryRunnerService: EsfQueryRunnerService
     ) {
-        this.state = new EsfStateDto();
+        this.state = new EsfStateViewModel();
         this.state = {
             documents: null,
             mapping: null,
@@ -47,16 +47,16 @@ export class EsFiddlerComponent implements OnInit {
         this.esfStateService
             .getInitialState()
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = state.state;
+                this.state = this.dtoToViewModel(state.state);
         }, (error: Error) => {
             console.error(error);
-        });        
+        });
     }
 
     private getStateByUrl(stateUrl: string): void {
         this.esfStateService.getState(stateUrl)
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = state.state;
+                this.state = this.dtoToViewModel(state.state);
                 this.lastSavedState = this.copy(this.state);
             });        
     }
@@ -66,9 +66,9 @@ export class EsFiddlerComponent implements OnInit {
             return;
         }
         this.esfStateService
-            .createNewVersion(this.state)
+            .createNewVersion(this.viewModelToDto(this.state))
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = state.state;
+                this.state = this.dtoToViewModel(state.state);
                 this.lastSavedState = this.copy(this.state);
                 this.router.navigate(['/state', state.stateUrl]);
         }, (error: Error) => {
@@ -93,6 +93,34 @@ export class EsFiddlerComponent implements OnInit {
     private copy(source: any): any {
         return JSON.parse(JSON.stringify(source));
     }
+
+    private dtoToViewModel(dto: EsfStateDto): EsfStateViewModel {
+        let documents: Object[] = dto.documents.map((doc: string): Object => JSON.parse(doc));
+        let serializedDocuments: string = JSON.stringify(documents);
+
+        return {
+            query: dto.query,
+            mapping: dto.mapping,
+            documents: serializedDocuments
+        };
+    }
+
+    private viewModelToDto(viewModel: EsfStateViewModel): EsfStateDto {
+        let documents: Object[] = JSON.parse(viewModel.documents);
+        let documentArray: string[] = documents.map((doc: any): string => JSON.stringify(doc));
+
+        return {
+            documents: documentArray,
+            mapping: viewModel.mapping,
+            query: viewModel.query
+        };
+    }
+}
+
+class EsfStateViewModel {
+    mapping: string;
+    documents: string;
+    query: string;
 }
 
 export class EsfQueryRunner {
@@ -104,7 +132,7 @@ export class EsfQueryRunner {
         this.queryError = '';
     }
 
-    public run(state: EsfStateDto): void {   
+    public run(state: EsfStateViewModel): void {   
         var serializedDocs: string[];
         try {
             var documents: Object[] = JSON.parse(state.documents);
@@ -130,4 +158,4 @@ export class EsfQueryRunner {
             this.queryError = JSON.stringify(error);
         });
     }
-} 
+}

@@ -55,10 +55,6 @@
       <HintPath>..\packages\MongoDB.Driver.Core.2.2.4\lib\net45\MongoDB.Driver.Core.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Nest, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
-      <HintPath>..\packages\NEST.5.0.0\lib\net46\Nest.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
@@ -76,11 +72,17 @@
   <ItemGroup>
     <Compile Include="ElasticsearchSession.cs" />
     <Compile Include="ElasticsearchSessionFactory.cs" />
+    <Compile Include="EsfError.cs" />
+    <Compile Include="EsfResponse.cs" />
     <Compile Include="EsfQueryRunner.cs" />
+    <Compile Include="EsfQuerySessionResponse.cs" />
+    <Compile Include="IdGenerator.cs" />
     <Compile Include="IElasticsearchSession.cs" />
     <Compile Include="IElasticsearchSessionFactory.cs" />
     <Compile Include="IEsfQueryRunner.cs" />
+    <Compile Include="IIdGenerator.cs" />
     <Compile Include="INewEsfStateFactory.cs" />
+    <Compile Include="JsonError.cs" />
     <Compile Include="QueryRunnerException.cs" />
     <Compile Include="UniqueNameResolver.cs" />
     <Compile Include="Helpers\JSON.cs" />

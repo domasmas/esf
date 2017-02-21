@@ -1,6 +1,4 @@
-﻿using Nest;
-
-namespace Esf.Domain
+﻿namespace Esf.Domain
 {
     public interface IElasticsearchSessionFactory
     {

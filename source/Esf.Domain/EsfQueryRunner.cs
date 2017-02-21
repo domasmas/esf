@@ -11,20 +11,31 @@ namespace Esf.Domain
             _elasticsearchFactory = elasticsearchFactory;
         }
         
-        public async Task<string> Run(string mappingObject, string[] documents, string query)
+        public async Task<EsfQuerySessionResponse> Run(string mappingObject, string[] documents, string query)
         {
             using (var session = _elasticsearchFactory.Create())
             {
-                bool isMappingCreated = await session.CreateMapping(mappingObject);
-                if (!isMappingCreated)
-                    throw new QueryRunnerException("Mapping is not created");
+                EsfResponse mappingResponse = await session.CreateMapping(mappingObject);
+                if (!mappingResponse.IsSuccess)
+                    return CreateResponse(mappingResponse, null, null);
 
-                bool areDocumentsCreated = await session.InsertDocuments(documents);
-                if (!areDocumentsCreated)
-                    throw new QueryRunnerException("Documents are not created");
+                EsfResponse documentsResponse = await session.InsertDocuments(documents);
+                if (!documentsResponse.IsSuccess)
+                    return CreateResponse(mappingResponse, documentsResponse, null);
 
-                return await session.RunQuery(query);
+                EsfResponse queryResponse = await session.RunQuery(query);
+                return CreateResponse(mappingResponse, documentsResponse, queryResponse);
             }
+        }
+
+        private EsfQuerySessionResponse CreateResponse(EsfResponse mappingResponse, EsfResponse documentsResponse, EsfResponse queryResponse)
+        {
+            return new EsfQuerySessionResponse()
+            {
+                CreateMappingResponse = mappingResponse,
+                CreateDocumentsResponse = documentsResponse,
+                QueryResponse = queryResponse
+            };
         }
     }
 }
