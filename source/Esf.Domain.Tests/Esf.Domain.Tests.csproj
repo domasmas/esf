@@ -95,12 +95,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Elasticsearch\ElasticsearchQuery.cs" />
-    <Compile Include="Elasticsearch\ElasticsearchErrorsInQuery.cs" />
+    <Compile Include="Elasticsearch\Tests\ElasticsearchQuery.cs" />
+    <Compile Include="Elasticsearch\Tests\ElasticsearchErrorsInQuery.cs" />
     <Compile Include="Elasticsearch\ElasticsearchFixture.cs" />
-    <Compile Include="Elasticsearch\ElasticsearchSessionTests.cs" />
+    <Compile Include="Elasticsearch\Tests\ElasticsearchSession.cs" />
     <Compile Include="Elasticsearch\ElasticsearchTestsBase.cs" />
-    <Compile Include="Elasticsearch\ElasticsearchInvalidJson.cs" />
+    <Compile Include="Elasticsearch\Tests\ElasticsearchInvalidJson.cs" />
+    <Compile Include="Elasticsearch\EsfQuerySessionResponseFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

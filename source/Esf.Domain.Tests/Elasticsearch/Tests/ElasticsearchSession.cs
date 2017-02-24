@@ -5,10 +5,10 @@ using NUnit.Framework;
 using System;
 using System.Linq;
 
-namespace Esf.Domain.Tests.Elasticsearch
+namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     [TestFixture]
-    public class ElasticsearchSessionTests
+    public class ElasticsearchSession
     {
         [Test]
         public void CheckSessionIndexIsDeleted()
@@ -27,7 +27,7 @@ namespace Esf.Domain.Tests.Elasticsearch
             var idGeneratorMock = new Mock<IIdGenerator>();
             idGeneratorMock.Setup(g => g.NextId()).Returns(1);
 
-            using (var session = new ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGeneratorMock.Object))
+            using (var session = new Domain.ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGeneratorMock.Object))
             {
                 var mappingCreated = session.CreateMapping(mapping).Result.IsSuccess;
                 var documentsCreated = session.InsertDocuments(documents).Result.IsSuccess;

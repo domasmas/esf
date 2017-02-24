@@ -6,9 +6,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static Esf.Domain.Tests.ElasticsearchFixture.SuccessfulQuery;
 
-namespace Esf.Domain.Tests.Elasticsearch
+namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchQuery : ElasticsearchTestsBase
     {
@@ -35,11 +34,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
-
-            Assert.IsTrue(result.QueryResponse.IsSuccess);
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);   
+                     
             Assert.AreEqual(1, successfulQuery.GetHitsCount());
 
             Assert.IsTrue(successfulQuery
@@ -71,11 +68,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.IsTrue(result.QueryResponse.IsSuccess);
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(0, successfulQuery.GetHitsCount());
         }
 
@@ -102,11 +97,10 @@ namespace Esf.Domain.Tests.Elasticsearch
                 },
                 explain = true
             };
+            
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(1, successfulQuery.GetHitsCount());
             Assert.IsTrue(successfulQuery.HasHitWith()
                                          .Explanation()
@@ -141,11 +135,10 @@ namespace Esf.Domain.Tests.Elasticsearch
                     match_all = new { }
                 }
             };
+            
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
-
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(4, successfulQuery.GetHitsCount(), "expected all documents count + mapping");
 
             Assert.IsTrue(successfulQuery
@@ -217,9 +210,8 @@ namespace Esf.Domain.Tests.Elasticsearch
                     }
                 }
             };
-
-            EsfQuerySessionResponse result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
             dynamic expectedNestedSource = new
             {
@@ -230,8 +222,7 @@ namespace Esf.Domain.Tests.Elasticsearch
                     new { first = "Alice", last = "White" }
                 }
             };
-
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
+            
             Assert.AreEqual(1, successfulQuery.GetHitsCount());
             Assert.IsTrue(successfulQuery.HasHitWith()
                                          ._source(expectedNestedSource)
@@ -274,10 +265,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(4, successfulQuery.GetHitsCount());
 
             dynamic expectedFields1 = new { calculation = new[] { 10 } };
@@ -329,10 +319,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(2, successfulQuery.GetHitsCount());
             
             Assert.IsTrue(successfulQuery.HasHitWith()
@@ -381,10 +370,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(3, successfulQuery.GetHitsCount());
 
             Assert.IsTrue(successfulQuery.HasHitWith()
@@ -431,10 +419,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.AreEqual(3, successfulQuery.GetHitsCount());
 
             Assert.IsTrue(successfulQuery.HasHitWith()
@@ -487,21 +474,19 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            EsfQuerySessionResponse result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            Assert.IsTrue(result.QueryResponse.IsSuccess);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            var successfulQueryResponse = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
-            Assert.AreEqual(3, successfulQueryResponse.GetHitsCount());
+            Assert.AreEqual(3, successfulQuery.GetHitsCount());
             
-            Assert.IsTrue(successfulQueryResponse
+            Assert.IsTrue(successfulQuery
                 .HasHitWith()
                 .PositionAt(0)
                 .sort(new dynamic[] { 1430784000000, 33, 1.0 })
                 ._source(documents[1])
                 .Build());
 
-            Assert.IsTrue(successfulQueryResponse
+            Assert.IsTrue(successfulQuery
                 .HasHitWith()
                 .PositionAt(1)
                 .sort(new dynamic[] { 1273017600000, 22, 1.0 })
@@ -546,15 +531,13 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            EsfQuerySessionResponse result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            Console.WriteLine(result.QueryResponse.IsSuccess);
-            _esfQueryRunner.LogTestRun(result.QueryResponse.SuccessJsonResult);
+            var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
+            _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
             dynamic expectedAggregations = new Dictionary<string, object>
             {
                 { "avg_age", new { value = 27.5 } }
             };
-            var successfulQuery = _esfQueryRunner.GetSuccessfulQuery(result.QueryResponse);
             Assert.IsTrue(successfulQuery.HasAggregations(expectedAggregations));
         }
     }

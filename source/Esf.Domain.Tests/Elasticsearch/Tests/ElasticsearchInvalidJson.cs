@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Esf.Domain.Tests.Elasticsearch
+namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchInvalidJson : ElasticsearchTestsBase
     {
@@ -16,7 +16,7 @@ namespace Esf.Domain.Tests.Elasticsearch
             var documents = new string[] { };
             var query = "";
 
-            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query);
+            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query).SessionResponse;
             JsonError mappingJsonValidationError = sessionResponse.CreateMappingResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(mappingJsonValidationError);
 
@@ -34,7 +34,7 @@ namespace Esf.Domain.Tests.Elasticsearch
             };
             var query = "";
 
-            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query);
+            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query).SessionResponse;
             JsonError documentsJsonValidationError = sessionResponse.CreateDocumentsResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(documentsJsonValidationError);
 
@@ -52,7 +52,7 @@ namespace Esf.Domain.Tests.Elasticsearch
             };
             var query = @"{ ""query"" : {""match"": ""message"": ""lion""} }";
 
-            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query);
+            EsfQuerySessionResponse sessionResponse = _esfQueryRunner.RunRawQuery(mapping, documents, query).SessionResponse;
             JsonError queryJsonValidationError = sessionResponse.QueryResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(queryJsonValidationError);
 

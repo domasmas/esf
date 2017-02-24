@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Esf.Domain.Tests.Elasticsearch
+namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchErrorsInQuery : ElasticsearchTestsBase
     {
@@ -29,9 +29,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            var result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            Assert.IsFalse(result.QueryResponse.IsSuccess, "expected unsuccessful QueryResponse for query with invalid operator");
-            EsfError queryElasticSearchError = result.QueryResponse.ElasticsearchError;
+            var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
+            Assert.IsFalse(queryResponse.IsSuccess, "expected unsuccessful QueryResponse for query with invalid operator");
+            EsfError queryElasticSearchError = queryResponse.ElasticsearchError;
             _esfQueryRunner.LogTestRun(queryElasticSearchError);
             Assert.AreEqual(400, queryElasticSearchError.HttpStatusCode);
             Assert.AreEqual("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", queryElasticSearchError.Error);
@@ -76,9 +76,9 @@ namespace Esf.Domain.Tests.Elasticsearch
                 }
             };
 
-            EsfQuerySessionResponse result = _esfQueryRunner.RunQuery(mapping, documents, query);
-            Assert.IsFalse(result.QueryResponse.IsSuccess, "Expected wrong sort criteria query to fail");
-            EsfError queryElasticsearchError = result.QueryResponse.ElasticsearchError;
+            var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
+            Assert.IsFalse(queryResponse.IsSuccess, "Expected wrong sort criteria query to fail");
+            EsfError queryElasticsearchError = queryResponse.ElasticsearchError;
 
             _esfQueryRunner.LogTestRun(queryElasticsearchError);
 
