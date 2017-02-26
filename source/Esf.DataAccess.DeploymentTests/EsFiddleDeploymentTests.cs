@@ -19,7 +19,8 @@ namespace Esf.DataAccess.Tests
         [SetUp]
         public void Setup()
         {
-            _database = new EsDatabaseClient().Database;
+            var connections = System.Configuration.ConfigurationManager.ConnectionStrings;
+            _database = new EsDatabaseClient(connections["EsFiddleDb"].ConnectionString).Database;
         }              
         
         [Test]
