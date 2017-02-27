@@ -19,8 +19,7 @@ export class EsfStateSaveCommandService {
 
     run(): void {
         let esfState = this.stateProvider.getState();
-
-        let validationMessage = this.validateState(esfState);
+        let validationMessage = this.stateValidationService.getValidationMessage(esfState);
 
         // TODO: show proper popover, better formatting, better message
         if (validationMessage) {
@@ -41,15 +40,6 @@ export class EsfStateSaveCommandService {
 
     canRun(): boolean {
         let esfState = this.stateProvider.getState();
-        return !!this.validateState(esfState);
-    }
-
-    private validateState(state: EsfStateViewModel): string {
-        let validationResult = this.stateValidationService.validateEsfState(state)
-            .filter((response: EsfStateValidationResult) => response.isError)
-            .map((response: EsfStateValidationResult) => response.errorMessage)
-            .join("\n");
-
-        return validationResult;
+        return !!this.stateValidationService.getValidationMessage(esfState);
     }
 }

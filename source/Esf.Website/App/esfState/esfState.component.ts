@@ -7,18 +7,22 @@ import { EsfStateDto } from '../common/models/esfStateDto';
 import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
 import { EsfStateValidationService, EsfStateValidationResult } from '../common/services/esfStateValidation.service';
 import { EsfStateProvider } from '../common/interfaces/esfStateProvider.interface';
+import { EsfStateQueryResultConsumer } from '../common/interfaces/esfStateQueryResultConsumer.interface';
 import { EsfStateSaveCommandService } from './esfStateSaveCommand.service';
+import { EsfStateRunQueryCommand } from './esfStateRunQueryCommand.service';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
     providers: [EsfStateService, EsfQueryRunnerService, EsfStateValidationService]
 })
-export class EsFiddlerComponent implements OnInit, EsfStateProvider {
-    state: EsfStateViewModel;
-    queryRunner: EsfQueryRunner;
-    lastSavedState: EsfStateDto;
+export class EsFiddlerComponent implements OnInit, EsfStateProvider, EsfStateQueryResultConsumer {
+    private state: EsfStateViewModel;
+    private lastSavedState: EsfStateDto;
     private sub: any;
     private saveCommand: EsfStateSaveCommandService;
+    private runQueryCommand: EsfStateRunQueryCommand;
+    private queryResult: string;
+    private queryError: string; 
 
     constructor(
         private esfStateService: EsfStateService,
@@ -33,8 +37,8 @@ export class EsFiddlerComponent implements OnInit, EsfStateProvider {
             mapping: null,
             query: null,
         };
-        this.queryRunner = new EsfQueryRunner(queryRunnerService);
         this.saveCommand = new EsfStateSaveCommandService(this, this.esfStateService, this.stateValidationService, this.router);
+        this.runQueryCommand = new EsfStateRunQueryCommand(this, this, this.esfStateService, this.queryRunnerService, this.stateValidationService);
     }
 
     ngOnInit() {
@@ -54,6 +58,14 @@ export class EsFiddlerComponent implements OnInit, EsfStateProvider {
 
     setState(state: EsfStateViewModel): void {
         this.state = state;
+    }
+
+    setQueryResult(result: string): void {
+        this.queryResult = result;
+    }
+
+    setQueryStatus(status: string): void {
+        this.queryError = status;
     }
 
     setMapping($event: string) {
@@ -80,42 +92,5 @@ export class EsFiddlerComponent implements OnInit, EsfStateProvider {
 
     private copy(source: any): any {
         return JSON.parse(JSON.stringify(source));
-    }
-}
-
-export class EsfQueryRunner {
-    queryResult: string;
-    queryError: string; 
-
-    constructor(private queryRunnerService: IEsfQueryRunnerService) {
-        this.queryResult = '';
-        this.queryError = '';
-    }
-
-    public run(state: EsfStateViewModel): void {   
-        var serializedDocs: string[];
-        try {
-            var documents: Object[] = JSON.parse(state.documents);
-            serializedDocs = documents.map((doc: any): string => JSON.stringify(doc));
-            if (!(serializedDocs instanceof Array)) {
-                this.queryResult = '';
-                this.queryError = 'The documents are not an array.';
-                return;
-            }
-        }
-        catch (error) {
-            this.queryResult = '';
-            this.queryError = 'The documents are not an array with JSON objects.' + JSON.stringify(error);
-            return;
-        }
-        
-        this.queryResult = 'Elastic Search is running Query. Wait for results...';
-        this.queryError = '';
-        this.queryRunnerService.runSearchQuery(state.mapping, serializedDocs, state.query).subscribe((queryResult: string) => {
-            this.queryResult = queryResult;
-        }, (error: Error) => {
-            this.queryResult = '';
-            this.queryError = JSON.stringify(error);
-        });
     }
 }

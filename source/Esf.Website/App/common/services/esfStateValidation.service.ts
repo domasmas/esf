@@ -6,6 +6,15 @@ export class EsfStateValidationService {
 
     static maxJSONLength: number = 10000;
 
+    getValidationMessage(state: EsfStateViewModel): string {
+        let validationResult = this.validateEsfState(state)
+            .filter((response: EsfStateValidationResult) => response.isError)
+            .map((response: EsfStateValidationResult) => response.errorMessage)
+            .join("\n");
+
+        return validationResult;
+    }
+
     validateEsfState(esfState: EsfStateViewModel): EsfStateValidationResult[] {
         return [
             this.validateMapping(esfState.mapping),
