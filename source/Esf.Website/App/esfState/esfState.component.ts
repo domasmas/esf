@@ -1,18 +1,24 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
+import { EsfStateViewModel } from '../common/models/esfStateViewModel';
+import { EsfStateService } from './esfState.service';
+import { ExistingEsfStateDto } from '../common/models/existingEsfStateDto';
+import { EsfStateDto } from '../common/models/esfStateDto';
 import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
 import { EsfStateValidationService, EsfStateValidationResult } from '../common/services/esfStateValidation.service';
+import { EsfStateProvider } from '../common/interfaces/esfStateProvider.interface';
+import { EsfStateSaveCommandService } from './esfStateSaveCommand.service';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
     providers: [EsfStateService, EsfQueryRunnerService, EsfStateValidationService]
 })
-export class EsFiddlerComponent implements OnInit {
+export class EsFiddlerComponent implements OnInit, EsfStateProvider {
     state: EsfStateViewModel;
     queryRunner: EsfQueryRunner;
     lastSavedState: EsfStateDto;
     private sub: any;
+    private saveCommand: EsfStateSaveCommandService;
 
     constructor(
         private esfStateService: EsfStateService,
@@ -28,6 +34,7 @@ export class EsFiddlerComponent implements OnInit {
             query: null,
         };
         this.queryRunner = new EsfQueryRunner(queryRunnerService);
+        this.saveCommand = new EsfStateSaveCommandService(this, this.esfStateService, this.stateValidationService, this.router);
     }
 
     ngOnInit() {
@@ -41,6 +48,14 @@ export class EsFiddlerComponent implements OnInit {
         }); 
     }
 
+    getState(): EsfStateViewModel {
+        return this.state;
+    }
+
+    setState(state: EsfStateViewModel): void {
+        this.state = state;
+    }
+
     setMapping($event: string) {
         this.state.mapping = $event;
     }
@@ -49,7 +64,7 @@ export class EsFiddlerComponent implements OnInit {
         this.esfStateService
             .getInitialState()
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = this.dtoToViewModel(state.state);
+                this.state = EsfStateViewModel.fromDto(state.state);
         }, (error: Error) => {
             console.error(error);
         });
@@ -58,80 +73,14 @@ export class EsFiddlerComponent implements OnInit {
     private getStateByUrl(stateUrl: string): void {
         this.esfStateService.getState(stateUrl)
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = this.dtoToViewModel(state.state);
+                this.state = EsfStateViewModel.fromDto(state.state);
                 this.lastSavedState = this.copy(this.state);
             });        
-    }
-
-    public save(): void {
-        if (!this.validateState()) {
-            return;
-        }
-        this.esfStateService
-            .createNewVersion(this.viewModelToDto(this.state))
-            .subscribe((state: ExistingEsfStateDto) => {
-                this.state = this.dtoToViewModel(state.state);
-                this.lastSavedState = this.copy(this.state);
-                this.router.navigate(['/state', state.stateUrl]);
-        }, (error: Error) => {
-            console.error(error);
-        });
-    }
-
-    private validateState(): boolean {
-        if (JSON.stringify(this.state) ===
-            JSON.stringify(this.lastSavedState)) {
-            return false;
-        }
-
-        let validationResult = [
-            this.stateValidationService.validateMapping(this.state.mapping),
-            this.stateValidationService.validateDocuments(this.state.documents),
-            this.stateValidationService.validateQuery(this.state.query)
-        ].filter((response: EsfStateValidationResult) => response.isError)
-            .map((response: EsfStateValidationResult) => response.errorMessage)
-            .join("\n");
-
-        // TODO: show proper popover, better formatting, better text
-        if (validationResult) {
-            alert("Cannot save because of errors: " + "\n" + validationResult);
-            return false;
-        }
-
-        return true;
     }
 
     private copy(source: any): any {
         return JSON.parse(JSON.stringify(source));
     }
-
-    private dtoToViewModel(dto: EsfStateDto): EsfStateViewModel {
-        let documents: Object[] = dto.documents.map((doc: string): Object => JSON.parse(doc));
-        let serializedDocuments: string = JSON.stringify(documents);
-
-        return {
-            query: dto.query,
-            mapping: dto.mapping,
-            documents: serializedDocuments
-        };
-    }
-
-    private viewModelToDto(viewModel: EsfStateViewModel): EsfStateDto {
-        let documents: Object[] = JSON.parse(viewModel.documents);
-        let documentArray: string[] = documents.map((doc: any): string => JSON.stringify(doc));
-
-        return {
-            documents: documentArray,
-            mapping: viewModel.mapping,
-            query: viewModel.query
-        };
-    }
-}
-
-class EsfStateViewModel {
-    mapping: string;
-    documents: string;
-    query: string;
 }
 
 export class EsfQueryRunner {

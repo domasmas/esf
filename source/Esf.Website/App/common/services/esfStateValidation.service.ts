@@ -1,19 +1,28 @@
 ﻿import { Injectable } from '@angular/core';
+import { EsfStateViewModel } from '../models/esfStateViewModel';
 
 @Injectable()
 export class EsfStateValidationService {
 
     static maxJSONLength: number = 10000;
 
-    validateMapping(mapping: string): EsfStateValidationResult {
+    validateEsfState(esfState: EsfStateViewModel): EsfStateValidationResult[] {
+        return [
+            this.validateMapping(esfState.mapping),
+            this.validateDocuments(esfState.documents),
+            this.validateQuery(esfState.query)
+        ].filter(r => r.isError);
+    }
+
+    private validateMapping(mapping: string): EsfStateValidationResult {
         return this.validateCommonProperties('Mapping', mapping);
     }
 
-    validateQuery(query: string): EsfStateValidationResult {
+    private validateQuery(query: string): EsfStateValidationResult {
         return this.validateCommonProperties('Query', query);
     }
 
-    validateDocuments(documents: string): EsfStateValidationResult {
+    private validateDocuments(documents: string): EsfStateValidationResult {
         let result = this.validateCommonProperties('Documents', documents);
         if (result.isError) {
             return result;
