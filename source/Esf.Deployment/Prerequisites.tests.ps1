@@ -51,10 +51,10 @@
 			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
-		It "Checks Typescript 2.0" {
+		It "Checks Typescript Tools for Visual Studio 2015 is 2.2" {
 			$msiName = "TypeScript*"
 			$majorVersion = "2"
-			$minorVersion = "0"
+			$minorVersion = "2"
 			(IsMsiPackageInstalled $msiName $majorVersion $minorVersion) | Should Be $true
 		}
 
