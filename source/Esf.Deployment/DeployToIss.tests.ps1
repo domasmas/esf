@@ -41,7 +41,7 @@ Describe "esf.WebApi deployment"  {
 
 		It "should return states/new resource" {
 			$portNumber = $esfWebApiConfig.Port
-			$NavigationHeadResponse = Invoke-WebRequest -Uri "http://localhost:$portNumber/states/new/" -Method Get
+			$NavigationHeadResponse = Invoke-WebRequest -Uri "http://localhost:$portNumber/states/new/" -Method Get -UseBasicParsing
 			$NavigationHeadResponse.StatusCode | Should Be 200
 			$NavigationHeadResponse.StatusDescription | Should Be "OK"
 		}
@@ -72,7 +72,7 @@ Describe "esf.Website IIS deployment" {
 
 		It "should be able to navigate the home page" {
 			$portNumber = $esfWebsiteConfig.Port
-			$NavigationHeadResponse = Invoke-WebRequest -Uri "http://localhost:$portNumber" -Method Head
+			$NavigationHeadResponse = Invoke-WebRequest -Uri "http://localhost:$portNumber" -Method Head -UseBasicParsing
 			$NavigationHeadResponse.StatusCode | Should Be 200
 			$NavigationHeadResponse.StatusDescription | Should Be "OK"
 		}
