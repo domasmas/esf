@@ -1,4 +1,5 @@
 {
   "mongoDbServerDirectory": "C:\\Program Files\\MongoDB\\Server\\3.2\\bin\\",
+  "mongoDbServerPort" :  "27017",
   "esFiddleDbPath": "C:\\Databases\\EsFiddle"
 }
