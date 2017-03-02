@@ -1,5 +1,6 @@
 ﻿import { EsfHome } from './esf.WebsiteHome.pageObject';
 import { protractor, browser } from 'protractor';
+import '../App/testsFramework/jasmineExtraMatchers';
 
 describe('Given Esf.Website home page', function () {
     describe('when navigating to it', function () {
@@ -47,29 +48,34 @@ describe('Given Esf.Website home page', function () {
 
         it('should have initial mapping state', () => {
             var mappingContent = esfHome.getMappingSectionContent();
-            expect(mappingContent).toEqual('{"properties": {"message": {"type": "string", "store": true}}}');
+            expect(mappingContent).toEqualAsJson({ "properties": { "message": { "type": "string", "store": true } } });
         });
 
         it('should have initial query state', () => {
             var queryContent = esfHome.getQuerySectionContent();
-            expect(queryContent).toEqual('{"match": {"message": "fox"}}');
+            expect(queryContent).toEqualAsJson({ "query": { "match": { "message": "fox" } } });
         });
 
         it('should have initial documents state', () => {
             var documentsContent = esfHome.getDocumentsSectionContent();
-            expect(documentsContent).toEqual('[{ "message": "very good message" }, { "message": "message with fox" }]');
+            expect(documentsContent).toEqualAsJson([{ "message": "very good message" }, { "message": "message with fox" }]);
         });
 
         it('should have empty result state', () => {
             var resultContent = esfHome.getResultContent();
-            expect(resultContent).toEqual('');
+            expect(resultContent).toEqualAsJson(EsfHome.emptyResultContent);
         });
 
-        it('should be able to run query', () => {
+        it('should be able to run query', (done: () => void) => {
             esfHome.executeRunCommand();
-            var resultContent = esfHome.getResultSectionContent();
-            var expectedResult: string = '[{"message":"message with fox"}]';
-            expect(resultContent).toEqual(expectedResult);
+            var resultContent = esfHome.getResultContent();
+            var expected_source = { "message": "message with fox" };
+            resultContent.then((content: any) => {
+                expect(content.hits.total).toEqual(1);
+                expect(content.hits.hits[0]._source).toEqualAsJson(expected_source);
+                done();
+            });
+
         });
     });
 
@@ -81,18 +87,18 @@ describe('Given Esf.Website home page', function () {
         });
         describe('when the initial state is changed', () => {
             beforeEach(() => {
-                var mapping: string = '{"properties": {"comment": {"type": "string"}}}';
+                var mapping = { "properties": { "comment": { "type": "string" } } };
                 esfHome.setMappingSectionContent(mapping);
 
-                var documents: string = '[ {"comment": "good"}, {"comment": "bad"} ]';
+                var documents = [ { "comment": "good" }, { "comment": "bad" } ];
                 esfHome.setDocumentsSectionContent(documents);
 
-                var query: string = '{ "match": { "comment": "bad" } }';
+                var query = { "query": { "match": { "comment": "bad" } } };
                 esfHome.setQuerySectionContent(query);
 
-                expect(esfHome.getMappingSectionContent()).toEqual(mapping);
-                expect(esfHome.getDocumentsSectionContent()).toEqual(documents);
-                expect(esfHome.getQuerySectionContent()).toEqual(query);
+                expect(esfHome.getMappingSectionContent()).toEqualAsJson(mapping);
+                expect(esfHome.getDocumentsSectionContent()).toEqualAsJson(documents);
+                expect(esfHome.getQuerySectionContent()).toEqualAsJson(query);
                 expect(esfHome.isUrlOfExistingState()).toBe(false);
             });
 
@@ -101,11 +107,15 @@ describe('Given Esf.Website home page', function () {
                 expect(esfHome.isUrlOfExistingState()).toBe(true);
             });
 
-            it('should be able to run query', () => {
+            it('should be able to run query', (done: () => void) => {
                 esfHome.executeRunCommand();
-                var resultContent = esfHome.getResultSectionContent();
-                var expectedResult: string = '[{"comment":"bad"}]';
-                expect(resultContent).toEqual(expectedResult);
+                var resultContent = esfHome.getResultContent();
+                var expected_source = { "comment": "bad" };
+                resultContent.then((content: any) => {
+                    expect(content.hits.total).toEqual(1);
+                    expect(content.hits.hits[0]._source).toEqualAsJson(expected_source);
+                    done();
+                });
             });
 
             it('should not change URL if parameters havent changed', () => {
@@ -120,7 +130,7 @@ describe('Given Esf.Website home page', function () {
 
             it('should change URL if parameters have changed', () => {
                 browser.getCurrentUrl().then((url1: string) => {
-                    var query: string = '{ "filter": { "term":  { "nothing": "no" }}';
+                    var query = { "filter": { "term": { "nothing": "no" } } };
                     esfHome.setQuerySectionContent(query);
                     esfHome.executeSaveCommand();
 
@@ -130,27 +140,27 @@ describe('Given Esf.Website home page', function () {
         });
 
         it('should be able to view a saved state in new browser', () => {
-            var documents: string = '[ {"comment": "good"}, {"comment": "bad"} ]';
+            var documents = [{ "comment": "good" }, { "comment": "bad" }];
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
-                expect(esfHome2.getDocumentsSectionContent()).toEqual(documents);
+                expect(esfHome2.getDocumentsSectionContent()).toEqualAsJson(documents);
                 expect(esfHome.isUrlOfExistingState()).toBe(true);
                 esfHome2.quitBrowser();
             });
         });
 
         it('should be able to change a saved state and save it', () => {
-            var documents: string = '[ {"comment": "good"}, {"comment": "bad"} ]';
+            var documents = [{ "comment": "good" }, { "comment": "bad" }];
             esfHome.setDocumentsSectionContent(documents);
             esfHome.executeSaveCommand();
             esfHome.navigateToCurrentUrlWithNewBrowser().then((esfHome2: EsfHome) => {
-                var furtherChangedDocuments: string = '[ {"comment": "changed"}, { "comment": "new" }, {"comment" : "more"}]';
+                var furtherChangedDocuments = [{ "comment": "changed" }, { "comment": "new" }, { "comment": "more" }];
                 esfHome2.setDocumentsSectionContent(furtherChangedDocuments);
                 esfHome2.executeSaveCommand();
                 esfHome2.navigateToCurrentUrlWithNewBrowser().then((esfHome3: EsfHome) => {
-                    expect(esfHome2.getDocumentsSectionContent()).toEqual(furtherChangedDocuments);
-                    expect(esfHome3.getDocumentsSectionContent()).toEqual(furtherChangedDocuments);
+                    expect(esfHome2.getDocumentsSectionContent()).toEqualAsJson(furtherChangedDocuments);
+                    expect(esfHome3.getDocumentsSectionContent()).toEqualAsJson(furtherChangedDocuments);
 
                     esfHome2.quitBrowser();
                     esfHome3.quitBrowser();

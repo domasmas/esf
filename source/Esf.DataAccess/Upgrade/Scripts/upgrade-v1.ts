@@ -11,7 +11,7 @@ if (!auditor.isUpgradePerformed()) {
         StateUrl: UUID(upgradeFramework.EmptyGuid),
         Documents: ['{ "message": "very good message" }', '{ "message": "message with fox" }'],
         Mapping: '{"properties": {"message": {"type": "string", "store": true}}}',
-        Query: '{"match": {"message": "fox"}}'
+        Query: '{ "query": { "match": { "message" : "fox" }}}'
     });
     auditor.auditAction('populated initial esState');
 
