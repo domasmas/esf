@@ -16,10 +16,10 @@ namespace Esf.WebApi.Areas.EsfQueryRunner
 
         [HttpPost]
         [Route("")]
-        public async Task<string> Post([FromBody]EsfQueryRunnerDto esfState)
+        public async Task<EsfQueryRunnerResponseDto> Post([FromBody]EsfQueryRunnerDto esfState)
         {
-            var runResult = await _queryRunner.Run(esfState.Mapping, esfState.Documents.ToArray(), esfState.Query);
-            return runResult.QueryResponse.SuccessJsonResult;
+            EsfQuerySessionResponse runResult = await _queryRunner.Run(esfState.Mapping, esfState.Documents.ToArray(), esfState.Query);
+            return EsfQueryRunnerResponseMapper.Map(runResult);
         }
     }
 }

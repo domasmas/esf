@@ -182,8 +182,13 @@
     <Compile Include="App_Start\EsfWebApiDepencencyInjection.cs" />
     <Compile Include="App_Start\NinjectWebApiBootstrapper.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Areas\EsfQueryRunner\EsfErrorDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerController.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerDto.cs" />
+    <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerResponseDto.cs" />
+    <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerResponseMapper.cs" />
+    <Compile Include="Areas\EsfQueryRunner\EsfRunResponseDto.cs" />
+    <Compile Include="Areas\EsfQueryRunner\JsonErrorDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateController.cs" />
     <Compile Include="Areas\EsfState\EsfStateConverter.cs" />
     <Compile Include="Areas\EsfState\ExistingEsfStateDto.cs" />

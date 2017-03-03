@@ -1,7 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
-import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfQueryRunnerService, IEsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
@@ -151,8 +151,8 @@ export class EsfQueryRunner {
         
         this.queryResult = 'Elastic Search is running Query. Wait for results...';
         this.queryError = '';
-        this.queryRunnerService.runSearchQuery(state.mapping, serializedDocs, state.query).subscribe((queryResult: string) => {
-            this.queryResult = queryResult;
+        this.queryRunnerService.runQuery(state.mapping, serializedDocs, state.query).subscribe((queryResponse: IEsfRunQueryResponse) => {
+            this.queryResult = queryResponse.queryResponse.successJsonResult;
         }, (error: Error) => {
             this.queryResult = '';
             this.queryError = JSON.stringify(error);

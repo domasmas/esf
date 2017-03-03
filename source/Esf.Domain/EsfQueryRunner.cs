@@ -16,12 +16,16 @@ namespace Esf.Domain
             using (var session = _elasticsearchFactory.Create())
             {
                 EsfResponse mappingResponse = await session.CreateMapping(mappingObject);
+                var blankUnuccessfulReponse = new EsfResponse()
+                {
+                    IsSuccess = false
+                };
                 if (!mappingResponse.IsSuccess)
-                    return CreateResponse(mappingResponse, null, null);
+                    return CreateResponse(mappingResponse, blankUnuccessfulReponse, blankUnuccessfulReponse);
 
                 EsfResponse documentsResponse = await session.InsertDocuments(documents);
                 if (!documentsResponse.IsSuccess)
-                    return CreateResponse(mappingResponse, documentsResponse, null);
+                    return CreateResponse(mappingResponse, documentsResponse, blankUnuccessfulReponse);
 
                 EsfResponse queryResponse = await session.RunQuery(query);
                 return CreateResponse(mappingResponse, documentsResponse, queryResponse);

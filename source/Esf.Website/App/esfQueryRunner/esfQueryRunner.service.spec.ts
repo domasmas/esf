@@ -1,7 +1,7 @@
 ﻿import { TestBed, inject } from '@angular/core/testing';
 import { Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { IEsfQueryRunnerService, EsfQueryRunnerService } from './esfQueryRunner.service';
+import { IEsfQueryRunnerService, EsfQueryRunnerService, IEsfRunQueryResponse } from './esfQueryRunner.service';
 import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
 import { ResponseOptionsArgs } from '@angular/http';
 import '../testsFramework/jasmineExtraMatchers';
@@ -27,8 +27,8 @@ class EsfQueryRunnerServiceFixture {
         return this.mockHttp.configureResponses(requestResponsePair);
     }
 
-    runSearchQuery(mapping: Object, documents: Object[], query: Object): Observable<string> {
-        return this.queryRunnerService.runSearchQuery(JSON.stringify(mapping), documents.map(doc => JSON.stringify(doc)), JSON.stringify(query));
+    runSearchQuery(mapping: Object, documents: Object[], query: Object): Observable<IEsfRunQueryResponse> {
+        return this.queryRunnerService.runQuery(JSON.stringify(mapping), documents.map(doc => JSON.stringify(doc)), JSON.stringify(query));
     }
 }
 
@@ -53,11 +53,24 @@ describe('esfQueryRunner.service', function () {
         };
 
         var expectedResult = JSON.stringify({
-            "hits": {
-                "total": 1,
-                "hits": [{
-                    "_source": { "message": "doc1" }
-                }]
+            createMappingResponse: {
+                isSuccess: true
+            },
+            CreateDocumentsResponse: {
+                isSuccess: true
+            },
+            queryResponse: {
+                isSuccess: true,
+                successJsonResult: JSON.stringify({
+                    "hits": {
+                        "total": 1,
+                        "hits": [{
+                            "_source": { "message": "doc1" }
+                        }]
+                    }
+                }),
+                jsonValidationError: null,
+                elasticsearchError: null
             }
         });
         serviceFixture.configureResponse({
@@ -67,7 +80,7 @@ describe('esfQueryRunner.service', function () {
             response: { status: 200, body: expectedResult }
         });
 
-        serviceFixture.runSearchQuery(mapping, documents, query).subscribe((actualQueryResult: string) => {
+        serviceFixture.runSearchQuery(mapping, documents, query).subscribe((actualQueryResult: IEsfRunQueryResponse) => {
             expect(actualQueryResult).toEqual(expectedResult);
         });
     });

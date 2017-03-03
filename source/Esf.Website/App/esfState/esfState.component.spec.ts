@@ -3,7 +3,7 @@ import { EsFiddlerComponent } from './esfState.component';
 import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { IEsfQueryRunnerService, EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service'
+import { IEsfQueryRunnerService, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
 import 'jquery';
@@ -124,9 +124,25 @@ export class JsonEditorDirectiveStub {
 }
 
 class EsfQueryRunnerServiceStub implements IEsfQueryRunnerService {
-    static StubbedRunResult: string = `{ "message": "message with fox" }`;
-    runSearchQuery(mapping: string, documents: string[], query: string): Observable<string> {
-        return new BehaviorSubject<string>(EsfQueryRunnerServiceStub.StubbedRunResult);
+    static StubbedRunResult: IEsfRunQueryResponse = {
+        createDocumentsResponse: null,
+        createMappingResponse: null,
+        queryResponse: {
+            isSuccess: true,
+            successJsonResult: JSON.stringify({
+                "hits": {
+                    "total": 1,
+                    "hits": [{
+                        "_source": { "message": "doc1" }
+                    }]
+                }
+            }),
+            elasticsearchError: null,
+            jsonValidationError: null
+        }
+    };
+    runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse> {
+        return new BehaviorSubject<IEsfRunQueryResponse>(EsfQueryRunnerServiceStub.StubbedRunResult);
     }
 }
 
@@ -210,7 +226,7 @@ class EsFiddlerComponentFixture {
         return '';
     }
 
-    public getStubbedQueryRunResult(): string {
+    public getStubbedQueryRunResult(): IEsfRunQueryResponse {
         return EsfQueryRunnerServiceStub.StubbedRunResult;
     }
 
@@ -382,7 +398,7 @@ describe('esfState.component', function () {
         esfComponent.runQueryCommand();
         //then
         var queryResultEditor = esfComponent.getQueryResult();
-        expect(queryResultEditor.textSpy.calls.mostRecent().args).toEqual([esfComponent.getStubbedQueryRunResult()]);
+        expect(queryResultEditor.textSpy.calls.mostRecent().args).toEqual([esfComponent.getStubbedQueryRunResult().queryResponse.successJsonResult]);
     });
 
 });
