@@ -4,30 +4,32 @@
  */
 (function (global) {
 
-    var map = {
-        'app': 'wwwroot/app',
-        'rxjs': 'npm:rxjs',
-        'zonejs': 'npm:zone.js/dist',
-        'reflect-metadata': 'npm:reflect-metadata',
+	var map = {
+		'app': 'wwwroot/app',
+		'rxjs': 'npm:rxjs',
+    	'reflect-metadata': 'npm:reflect-metadata',
         'angular-in-memory-web-api': 'npm:angular-in-memory-web-api',
         '@angular': 'npm:@angular',
         'w3c-blob': 'npm:w3c-blob',
         'buffer': 'npm:buffer-shims',
         'brace': 'npm:brace',
-        'jquery': 'npm:jquery/dist/jquery.min.js'
+        'js-beautify': 'npm:js-beautify',
+        'core-js': 'npm:core-js/client/shim.min.js',
+        'zone.js': 'npm:zone.js/dist',
     };
 
     var packages = {
-        'app': { main: 'main', defaultExtension: 'js' },
-        'rxjs': { defaultExtension: 'js' },
-        'zonejs': { main: 'zone', defaultExtension: 'js' },
-        'reflect-metadata': { main: 'Reflect', defaultExtension: 'js' },
+    	'app': { main: 'main', defaultExtension: 'js' },
+    	'rxjs': { defaultExtension: 'js' },
+    	'zone.js': { main: 'zone', defaultExtension: 'js' },
+        'reflect-metadata': { main: 'Reflect', defaultExtension: 'js' },        
         'angular-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
         'w3c-blob': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
         'buffer': { format: 'cjs', defaultExtension: 'js', main: 'index.js' },
         'brace': {
             format: 'cjs', defaultExtension: 'js', main: 'index.js'
-        }
+        },
+        'js-beautify': { format: 'cjs', defaultExtension: 'js', main: '/js/index.js' }
     };
 
     var ngPackageNames = [

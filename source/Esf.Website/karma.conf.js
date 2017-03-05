@@ -52,10 +52,7 @@ module.exports = function (config) {
             // Angular itself
             { pattern: thirdPartyLibs + '@angular/**/*.js', included: false, watched: false },
             { pattern: thirdPartyLibs + '@angular/**/*.js.map', included: false, watched: false },
-
-            { pattern: thirdPartyLibs + 'jquery/dist/jquery.min.js', included: false, watched: false },
-            { pattern: thirdPartyLibs + 'jquery/dist/jquery.min.map', included: false, watched: false },
-
+			
             { pattern: 'systemjs.config.js', included: false, watched: false },
             'karma-test-shim.js',
 

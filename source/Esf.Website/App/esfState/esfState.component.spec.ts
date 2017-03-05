@@ -6,7 +6,6 @@ import { ActivatedRoute, Router, Params } from '@angular/router';
 import { IEsfQueryRunnerService, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
-import 'jquery';
 
 class EsfStateServiceStub {
     initialState = this.getStubbedState('00000000-0000-0000-0000-000000000000');
