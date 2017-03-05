@@ -29,14 +29,16 @@
     "rxjs": "5.0.0-beta.12",
     "systemjs": "0.19.39",
     "w3c-blob": "^0.0.1",
-		"zone.js": "^0.6.25"
+		"zone.js": "^0.6.25",
+		"js-beautify": "1.6.11"
   },
   "devDependencies": {
     "@types/ace": "0.0.32",
     "@types/core-js": "^0.9.34",
     "@types/jasmine": "^2.5.35",
     "@types/node": "^6.0.45",
-		"@types/selenium-webdriver": "^2.53.39",
+		"@types/selenium-webdriver": "^2.53.39",		
+    "@types/js-beautify": "^0.0.28",
     "concurrently": "^3.0.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
