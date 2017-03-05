@@ -29,9 +29,14 @@ export class EsfHome {
         this.browserInstance.quit();
     }
 
-    getPageTitle(): webDriverPromise.Promise<string> {
+	getPageTitle(): webDriverPromise.Promise<string> {
+		this.waitUntilAngularPageIsLoaded();
         return this.browserInstance.getTitle();
     }
+
+	private waitUntilAngularPageIsLoaded(): webDriverPromise.Promise<void> {
+		return this.browserInstance.wait(() => this.browserInstance.element(by.css('esf-app router-outlet')).isPresent());
+	}
 
     getCurrentUrl(): webDriverPromise.Promise<string> {
         return this.browserInstance.getCurrentUrl();
