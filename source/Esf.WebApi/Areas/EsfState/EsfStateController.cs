@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using System.Web.Http;
 using Esf.DataAccess;
+using AutoMapper;
 
 namespace Esf.WebApi.Areas.EsfState
 {
@@ -9,10 +10,12 @@ namespace Esf.WebApi.Areas.EsfState
     public class EsfStateController : ApiController
     {
         protected readonly IEsStatesRepository _esStatesRepository;
+		protected readonly IMapper _mapper;
 
-        public EsfStateController(IEsStatesRepository esStatesRepository)
+		public EsfStateController(IEsStatesRepository esStatesRepository, IMapper mapper)
         {
             _esStatesRepository = esStatesRepository;
+			_mapper = mapper;
         }
         
         [HttpGet]
@@ -21,15 +24,16 @@ namespace Esf.WebApi.Areas.EsfState
         {
             Guid parsedStateUrl = Guid.Parse(stateUrl);
             EsState storedState = await _esStatesRepository.FindEsState((state) => state.StateUrl == parsedStateUrl);
-            return EsfStateConverter.From(storedState);
+            return _mapper.Map<EsState, ExistingEsfStateDto>(storedState);
         }
         
         [HttpPost]
         [Route("")]
         public async Task<ExistingEsfStateDto> Post([FromBody]EsfStateDto state)
         {
-            var newEsState = EsfStateConverter.FromNew(state);
-            return EsfStateConverter.From(await _esStatesRepository.InsertEsState(newEsState));
+            var newEsState = _mapper.Map<EsfStateDto, EsState>(state);
+			var insertResponse = await _esStatesRepository.InsertEsState(newEsState);
+			return _mapper.Map<EsState, ExistingEsfStateDto>(insertResponse);
         }
         
         [HttpDelete]

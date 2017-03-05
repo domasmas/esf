@@ -1,11 +1,12 @@
 ﻿using Esf.DataAccess;
+using Esf.WebApi.Areas.EsfState;
 using System;
 
-namespace Esf.WebApi.Areas.EsfState
+namespace Esf.WebApi.App_Start
 {
     public class EsfStateConverter
     {
-        public static ExistingEsfStateDto From(EsState esState)
+        public static ExistingEsfStateDto FromExisting(EsState esState)
         {
             return new ExistingEsfStateDto()
             {
@@ -19,7 +20,7 @@ namespace Esf.WebApi.Areas.EsfState
             };
         }
 
-        public static EsState FromNew(EsfStateDto esfStateDto)
+        public static EsState ToNew(EsfStateDto esfStateDto)
         {
             return new EsState()
             {

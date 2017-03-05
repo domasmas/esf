@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AutoMapper, Version=5.2.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.5.2.0\lib\net45\AutoMapper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Elasticsearch.Net, Version=5.0.0.0, Culture=neutral, PublicKeyToken=96c599bbe3e70f5d, processorArchitecture=MSIL">
       <HintPath>..\packages\Elasticsearch.Net.5.0.0\lib\net46\Elasticsearch.Net.dll</HintPath>
       <Private>True</Private>
@@ -179,6 +183,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Start\AutoMapperBootstrapper.cs" />
     <Compile Include="App_Start\EsfWebApiDepencencyInjection.cs" />
     <Compile Include="App_Start\NinjectWebApiBootstrapper.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
@@ -186,11 +191,10 @@
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerController.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerResponseDto.cs" />
-    <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerResponseMapper.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfRunResponseDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\JsonErrorDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateController.cs" />
-    <Compile Include="Areas\EsfState\EsfStateConverter.cs" />
+    <Compile Include="App_Start\EsfStateConverter.cs" />
     <Compile Include="Areas\EsfState\ExistingEsfStateDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateDto.cs" />
     <Compile Include="Areas\EsfState\New\NewEsfStateController.cs" />
