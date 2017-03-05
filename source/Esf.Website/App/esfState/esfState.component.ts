@@ -9,27 +9,29 @@ import { EsfStateValidationService, EsfStateValidationResult } from '../common/s
 import { EsfStateProvider } from '../common/interfaces/esfStateProvider.interface';
 import { EsfStateQueryResultConsumer } from '../common/interfaces/esfStateQueryResultConsumer.interface';
 import { EsfStateSaveCommandService } from './esfStateSaveCommand.service';
-import { EsfStateRunQueryCommand } from './esfStateRunQueryCommand.service';
+import { EsfStateRunQueryCommand, QueryResult } from './esfStateRunQueryCommand.service';
+import { CommandState } from '../common/models/commandState';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService, EsfQueryRunnerService, EsfStateValidationService]
+    providers: [EsfStateService, EsfQueryRunnerService, EsfStateValidationService, EsfStateSaveCommandService, EsfStateRunQueryCommand]
 })
-export class EsFiddlerComponent implements OnInit, EsfStateProvider, EsfStateQueryResultConsumer {
+export class EsFiddlerComponent implements OnInit, EsfStateProvider {
     private state: EsfStateViewModel;
     private lastSavedState: EsfStateDto;
     private sub: any;
-    private saveCommand: EsfStateSaveCommandService;
-    private runQueryCommand: EsfStateRunQueryCommand;
+
     private queryResult: string;
     private queryError: string; 
+    private runQueryCommandState: CommandState;
+
+    private saveCommandState: CommandState;
 
     constructor(
-        private esfStateService: EsfStateService,
         private route: ActivatedRoute,
-        private router: Router,
-        private queryRunnerService: EsfQueryRunnerService,
-        private stateValidationService: EsfStateValidationService
+        private esfStateService: EsfStateService,
+        private saveCommand: EsfStateSaveCommandService,
+        private runQueryCommand: EsfStateRunQueryCommand
     ) {
         this.state = new EsfStateViewModel();
         this.state = {
@@ -37,11 +39,11 @@ export class EsFiddlerComponent implements OnInit, EsfStateProvider, EsfStateQue
             mapping: null,
             query: null,
         };
-        this.saveCommand = new EsfStateSaveCommandService(this, this.esfStateService, this.stateValidationService, this.router);
-        this.runQueryCommand = new EsfStateRunQueryCommand(this, this, this.esfStateService, this.queryRunnerService, this.stateValidationService);
+        
+        this.setupCommands();
     }
 
-    ngOnInit() {
+    public ngOnInit() {
         this.sub = this.route.params.subscribe(params => {
             let stateUrl = params['stateUrl'];
             if (stateUrl == null) {
@@ -52,24 +54,29 @@ export class EsFiddlerComponent implements OnInit, EsfStateProvider, EsfStateQue
         }); 
     }
 
-    getState(): EsfStateViewModel {
+    public getState(): EsfStateViewModel {
         return this.state;
     }
 
-    setState(state: EsfStateViewModel): void {
-        this.state = state;
-    }
+    private setupCommands() {
 
-    setQueryResult(result: string): void {
-        this.queryResult = result;
-    }
+        // Save State Command
 
-    setQueryStatus(status: string): void {
-        this.queryError = status;
-    }
+        this.saveCommand.attachStateProvider(this);
+        this.saveCommand.getCommandState().subscribe((commandState: CommandState) => {
+            this.saveCommandState = commandState;
+        });
 
-    setMapping($event: string) {
-        this.state.mapping = $event;
+        // Run Query Command
+
+        this.runQueryCommand.attachStateProvider(this);
+        this.runQueryCommand.getQueryResults().subscribe((queryResult: QueryResult) => {
+            this.queryResult = queryResult.result;
+            this.queryError = queryResult.status;
+        });
+        this.runQueryCommand.getCommandState().subscribe((commandState: CommandState) => {
+            this.runQueryCommandState = commandState;
+        });
     }
 
     private getInitialState(): void {

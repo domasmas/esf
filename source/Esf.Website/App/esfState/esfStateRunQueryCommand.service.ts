@@ -6,19 +6,38 @@ import { EsfStateQueryResultConsumer } from '../common/interfaces/esfStateQueryR
 import { EsfStateService } from './esfState.service';
 import { EsfStateValidationService } from '../common/services/esfStateValidation.service';
 import { EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
+import { CommandState } from '../common/models/commandState';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class EsfStateRunQueryCommand {
+    private stateProvider: EsfStateProvider;
+    private queryResultStream: Subject<QueryResult>;
+    private commandStateStream: Subject<CommandState>;
+
     constructor(
-        private stateProvider: EsfStateProvider,
-        private queryResultConsumer: EsfStateQueryResultConsumer,
         private esfStateService: EsfStateService,
         private esfQueryRunnerService: EsfQueryRunnerService,
         private stateValidationService: EsfStateValidationService
     ) {
+        this.queryResultStream = new Subject<QueryResult>();
+        this.commandStateStream = new Subject<CommandState>();
+    }
+     
+    public attachStateProvider(stateProvider: EsfStateProvider): void {
+        this.stateProvider = stateProvider;
     }
 
-    run(): void {
+    public getQueryResults(): Observable<QueryResult> {
+        return this.queryResultStream.asObservable();
+    }
+
+    public getCommandState(): Observable<CommandState> {
+        return this.commandStateStream.asObservable();
+    }
+
+    public run(): void {
         let state = this.stateProvider.getState();
         let validationMessage = this.stateValidationService.getValidationMessage(state);
 
@@ -27,16 +46,33 @@ export class EsfStateRunQueryCommand {
             return;
         }
 
+        this.commandStateStream.next(CommandState.InProgress);
+
         let stateDto = EsfStateViewModel.toDto(state);
 
-        this.queryResultConsumer.setQueryResult('Elastic Search is running Query. Wait for results...');
-        this.queryResultConsumer.setQueryStatus('');
+        this.queryResultStream.next({
+            result: 'Elastic Search is running Query. Wait for results...',
+            status: ''
+        });
+
         this.esfQueryRunnerService.runSearchQuery(state.mapping, stateDto.documents, state.query)
             .subscribe((queryResult: string) => {
-                this.queryResultConsumer.setQueryResult(queryResult);
+                this.queryResultStream.next({
+                    result: queryResult,
+                    status: ''
+                });
             }, (error: Error) => {
-                this.queryResultConsumer.setQueryResult('');
-                this.queryResultConsumer.setQueryStatus(JSON.stringify(error));
-        });
+                this.queryResultStream.next({
+                    result: '',
+                    status: JSON.stringify(error)
+                });
+            }, () => {
+                this.commandStateStream.next(CommandState.Enabled);
+            });
     }
+}
+
+export class QueryResult {
+    public result: string;
+    public status: string;
 }

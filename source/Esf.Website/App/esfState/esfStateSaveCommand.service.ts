@@ -6,18 +6,32 @@ import { EsfStateService } from './esfState.service';
 import { EsfStateValidationService, EsfStateValidationResult } from '../common/services/esfStateValidation.service';
 import { ExistingEsfStateDto } from '../common/models/existingEsfStateDto';
 import { EsfStateDto } from '../common/models/esfStateDto';
+import { CommandState } from '../common/models/commandState';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class EsfStateSaveCommandService {
+    private stateProvider: EsfStateProvider;
+    private commandStateStream: Subject<CommandState>;
+
     constructor(
-        private stateProvider: EsfStateProvider,
         private esfStateService: EsfStateService,
         private stateValidationService: EsfStateValidationService,
         private router: Router
     ) {
+        this.commandStateStream = new Subject<CommandState>();
     }
 
-    run(): void {
+    public attachStateProvider(stateProvider: EsfStateProvider): void {
+        this.stateProvider = stateProvider;
+    }
+
+    public getCommandState(): Observable<CommandState> {
+        return this.commandStateStream.asObservable();
+    }
+
+    public run(): void {
         let esfState = this.stateProvider.getState();
         let validationMessage = this.stateValidationService.getValidationMessage(esfState);
 
@@ -27,19 +41,17 @@ export class EsfStateSaveCommandService {
             return;
         }
 
+        this.commandStateStream.next(CommandState.InProgress);
+
         this.esfStateService
             .createNewVersion(EsfStateViewModel.toDto(esfState))
             .subscribe((existingState: ExistingEsfStateDto) => {
                 let savedState = EsfStateViewModel.fromDto(existingState.state);
-                this.stateProvider.setState(savedState);
                 this.router.navigate(['/state', existingState.stateUrl]);
             }, (error: Error) => {
                 console.error(error);
+            }, () => {
+                this.commandStateStream.next(CommandState.Enabled);
             });
-    }
-
-    canRun(): boolean {
-        let esfState = this.stateProvider.getState();
-        return !!this.stateValidationService.getValidationMessage(esfState);
     }
 }

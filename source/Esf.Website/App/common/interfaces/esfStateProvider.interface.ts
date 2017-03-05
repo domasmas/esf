@@ -2,5 +2,4 @@
 
 export interface EsfStateProvider {
     getState(): EsfStateViewModel;
-    setState(state: EsfStateViewModel): void;
 }
