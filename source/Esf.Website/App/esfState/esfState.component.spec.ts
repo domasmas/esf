@@ -3,7 +3,7 @@ import { EsFiddlerComponent } from './esfState.component';
 import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { IEsfQueryRunnerService, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
+import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
 
@@ -122,7 +122,7 @@ export class JsonEditorDirectiveStub {
     }
 }
 
-class EsfQueryRunnerServiceStub implements IEsfQueryRunnerService {
+class EsfQueryRunnerServiceStub extends EsfQueryRunnerServiceContract {
     static StubbedRunResult: IEsfRunQueryResponse = {
         createDocumentsResponse: null,
         createMappingResponse: null,
@@ -163,7 +163,7 @@ class EsFiddlerComponentFixture {
             providers: [{ provide: EsfStateService, useValue: this.stateService },
             { provide: ActivatedRoute, useValue: this.activatedRoute },
             { provide: Router, useValue: this.routerStub },
-            { provide: EsfQueryRunnerService, useValue: this.queryRunnerService }
+            { provide: EsfQueryRunnerServiceContract, useValue: this.queryRunnerService }
             ]
         }).overrideComponent(EsFiddlerComponent, {
             set: {

@@ -1,21 +1,21 @@
 ﻿import { TestBed, inject } from '@angular/core/testing';
 import { Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { IEsfQueryRunnerService, EsfQueryRunnerService, IEsfRunQueryResponse } from './esfQueryRunner.service';
+import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from './esfQueryRunner.service';
 import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
 import { ResponseOptionsArgs } from '@angular/http';
 import '../testsFramework/jasmineExtraMatchers';
 
 class EsfQueryRunnerServiceFixture {
     private mockHttp: MockHttpFixture;
-    private queryRunnerService: IEsfQueryRunnerService;
+	private queryRunnerService: EsfQueryRunnerServiceContract;
 
-    constructor() {
+	constructor() {
         TestBed.configureTestingModule({
-            providers: [EsfQueryRunnerService].concat(MockHttpFixture.getModuleProviders())
+			providers: [{ provide: EsfQueryRunnerServiceContract, useClass: EsfQueryRunnerService }].concat(MockHttpFixture.getModuleProviders())
         });
         this.mockHttp = new MockHttpFixture('http://localhost:40081');
-        this.queryRunnerService = TestBed.get(EsfQueryRunnerService);
+		this.queryRunnerService = TestBed.get(EsfQueryRunnerServiceContract);
     }
 
     private serializeResponseBody(response: ResponseOptionsArgs) {

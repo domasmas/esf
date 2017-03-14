@@ -1,11 +1,11 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateService, ExistingEsfStateDto, EsfStateDto } from "./esfState.service";
-import { EsfQueryRunnerService, IEsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
-    providers: [EsfStateService, EsfQueryRunnerService]
+	providers: [EsfStateService, { provide: EsfQueryRunnerServiceContract, useClass: EsfQueryRunnerService }]
 })
 export class EsFiddlerComponent implements OnInit {
     state: EsfStateViewModel;
@@ -17,7 +17,7 @@ export class EsFiddlerComponent implements OnInit {
         private esfStateService: EsfStateService,
         private route: ActivatedRoute,
         private router: Router,
-        private queryRunnerService: EsfQueryRunnerService
+		private queryRunnerService: EsfQueryRunnerServiceContract
     ) {
         this.state = new EsfStateViewModel();
         this.state = {
@@ -127,7 +127,7 @@ export class EsfQueryRunner {
     queryResult: string;
     queryError: string; 
 
-    constructor(private queryRunnerService: IEsfQueryRunnerService) {
+    constructor(private queryRunnerService: EsfQueryRunnerServiceContract) {
         this.queryResult = '';
         this.queryError = '';
     }

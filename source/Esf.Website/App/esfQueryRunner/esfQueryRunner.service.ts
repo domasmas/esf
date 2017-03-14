@@ -3,8 +3,8 @@ import { Observable } from 'rxjs/Rx';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 
-export interface IEsfQueryRunnerService {
-    runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse>;
+export abstract class EsfQueryRunnerServiceContract {
+    abstract runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse>;
 }
 
 export interface IEsfRunQueryResponse {
@@ -29,10 +29,11 @@ export interface IEsfError {
 }
 
 @Injectable()
-export class EsfQueryRunnerService implements IEsfQueryRunnerService {
+export class EsfQueryRunnerService extends EsfQueryRunnerServiceContract {
     private static webApiServiceUrl: string = 'http://localhost:40081';
 
-    constructor(private http: Http) {
+	constructor(private http: Http) {
+		super();
     }
 
     public runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse> {
