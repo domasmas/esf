@@ -1,7 +1,7 @@
 ﻿import { TestBed, inject } from '@angular/core/testing';
 import { Headers } from '@angular/http';
 import { IEsfQueryRunnerService, EsfQueryRunnerService } from './esfQueryRunner.service';
-import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
+import { MockHttpFixture, RequestResponsePair } from '../shared/unitTests/mockHttpFixture';
 
 class EsfQueryRunnerServiceFixture {
     private mockHttp: MockHttpFixture;

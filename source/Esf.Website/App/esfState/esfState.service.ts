@@ -2,8 +2,8 @@
 import { Observable } from 'rxjs/Rx';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
-import { EsfStateDto } from '../common/models/esfStateDto';
-import { ExistingEsfStateDto } from '../common/models/existingEsfStateDto';
+import { EsfStateDto } from './esfStateDto';
+import { ExistingEsfStateDto } from './existingEsfStateDto';
 
 @Injectable()
 export class EsfStateService {

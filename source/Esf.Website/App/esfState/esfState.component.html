@@ -4,23 +4,25 @@
             <a class="navbar-brand" href="#">ESFiddle</a>
         </div>
         <button type="button" 
-                (click)="runQueryCommand.run()" 
-                [ngClass]="{'disabled' : runQueryCommandState > 0}"
+                (click)="runQueryCommand.run(state)" 
+                [ngClass]="{'disabled' : !runCommandEnabled}"
                 class="run-command btn btn-default navbar-btn">
             <span>Run</span>
-            <span *ngIf="runQueryCommandState == 2">
+            <span *ngIf="runCommandInProgress">
+                <!--TODO: add spinner gif-->
                 ...
             </span>
         </button>
 
         <button type="button" 
-                (click)="saveCommand.run()" 
-                [ngClass]="{'disabled' : saveCommandState > 0}"
+                (click)="saveCommand.run(state)" 
+                [ngClass]="{'disabled' : !saveCommandEnabled}"
                 class="save-command btn btn-default navbar-btn">
             <span>Save</span>
-            <span *ngIf="saveCommandState == 2">
+            <span *ngIf="saveCommandInProgress">
+                <!--TODO: add spinner gif-->
                 ...
-            </span>  
+            </span>
         </button>
     </div>
 </nav>
@@ -28,17 +30,17 @@
     <div class="row">
         <div class="col-xs-6">
             <label>Mapping</label>
-            <div class="mapping-editor" [(text)]="state.mapping" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
         <div class="col-xs-6">
             <label>Documents</label>
-            <div class="documents-editor" [(text)]="state.documents" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-6">
             <label>Query</label>
-            <div class="query-editor" [(text)]="state.query" json-editor style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
         </div>
         <div class="col-xs-6">
             <label>Result</label>

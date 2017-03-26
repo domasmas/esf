@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { EsfStateViewModel } from '../models/esfStateViewModel';
+import { EsfStateViewModel } from './esfStateViewModel';
 
 @Injectable()
 export class EsfStateValidationService {

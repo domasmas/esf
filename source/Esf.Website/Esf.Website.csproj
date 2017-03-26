@@ -151,8 +151,8 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App\common\components\app.component.html" />
-    <Content Include="App\common\components\pageNotFound.component.html" />
+    <Content Include="App\app.component.html" />
+    <Content Include="App\pageNotFound\pageNotFound.component.html" />
     <Content Include="Global.asax" />
     <None Include="gulpfile.js" />
     <Content Include="App\esfState\esfState.component.html" />
@@ -175,9 +175,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Web.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="App\common\styles\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
@@ -185,16 +183,16 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
-    <TypeScriptCompile Include="App\common\components\jsonEditor.directive.ts" />
-    <TypeScriptCompile Include="App\common\components\app.component.ts" />
-    <TypeScriptCompile Include="App\common\components\pageNotFound.component.ts" />
-    <TypeScriptCompile Include="App\common\interfaces\esfStateProvider.interface.ts" />
-    <TypeScriptCompile Include="App\common\interfaces\esfStateQueryResultConsumer.interface.ts" />
-    <TypeScriptCompile Include="App\common\models\esfStateDto.ts" />
-    <TypeScriptCompile Include="App\common\models\esfStateViewModel.ts" />
-    <TypeScriptCompile Include="App\common\models\existingEsfStateDto.ts" />
-    <TypeScriptCompile Include="App\common\services\esfStateValidation.service.ts" />
-    <TypeScriptCompile Include="App\common\unitTests\mockHttpFixture.ts" />
+    <TypeScriptCompile Include="App\shared\commands\commandStateType.ts" />
+    <TypeScriptCompile Include="App\shared\commands\esfCommand.ts" />
+    <TypeScriptCompile Include="App\shared\jsonEditor\jsonEditor.directive.ts" />
+    <TypeScriptCompile Include="App\app.component.ts" />
+    <TypeScriptCompile Include="App\pageNotFound\pageNotFound.component.ts" />
+    <TypeScriptCompile Include="App\esfState\esfStateDto.ts" />
+    <TypeScriptCompile Include="App\esfState\esfStateViewModel.ts" />
+    <TypeScriptCompile Include="App\esfState\existingEsfStateDto.ts" />
+    <TypeScriptCompile Include="App\esfState\esfStateValidation.service.ts" />
+    <TypeScriptCompile Include="App\shared\unitTests\mockHttpFixture.ts" />
     <TypeScriptCompile Include="App\esfQueryRunner\esfQueryRunner.service.spec.ts" />
     <TypeScriptCompile Include="App\esfQueryRunner\esfQueryRunner.service.ts" />
     <TypeScriptCompile Include="App\esfState\esfState.component.spec.ts" />
@@ -203,8 +201,8 @@
     <TypeScriptCompile Include="App\esfState\esfState.service.ts" />
     <TypeScriptCompile Include="App\app.module.ts" />
     <TypeScriptCompile Include="App\app.routes.ts" />
-    <TypeScriptCompile Include="App\esfState\esfStateRunQueryCommand.service.ts" />
-    <TypeScriptCompile Include="App\esfState\esfStateSaveCommand.service.ts" />
+    <TypeScriptCompile Include="App\esfState\esfStateRunQueryCommand.ts" />
+    <TypeScriptCompile Include="App\esfState\esfStateSaveCommand.ts" />
     <TypeScriptCompile Include="App\main.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.pageObject.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.spec.ts" />

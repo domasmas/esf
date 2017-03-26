@@ -1,6 +1,6 @@
 ﻿import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { PageNotFoundComponent } from './common/components/pageNotFound.component';
+import { PageNotFoundComponent } from './pageNotFound/pageNotFound.component';
 import { EsFiddlerComponent } from './esfState/esfState.component';
 import { ModuleWithProviders } from '@angular/core';
 

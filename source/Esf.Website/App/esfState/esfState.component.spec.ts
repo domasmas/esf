@@ -1,6 +1,8 @@
 ﻿import { ComponentFixture, TestBed, async } from '@angular/core/testing';
 import { EsFiddlerComponent } from './esfState.component';
-import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
+import { EsfStateService } from './esfState.service';
+import { EsfStateDto } from './esfStateDto';
+import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { IEsfQueryRunnerService, EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service'

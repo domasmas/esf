@@ -1,7 +1,9 @@
 ﻿import { TestBed, inject } from '@angular/core/testing';
 import { Headers } from '@angular/http';
-import { EsfStateService, EsfStateDto, ExistingEsfStateDto } from './esfState.service';
-import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
+import { EsfStateDto } from './esfStateDto';
+import { EsfStateService } from './esfState.service';
+import { ExistingEsfStateDto } from './existingEsfStateDto';
+import { MockHttpFixture, RequestResponsePair } from '../shared/unitTests/mockHttpFixture';
 
 class EsfStateServiceFixture {
     private mockHttp: MockHttpFixture;
