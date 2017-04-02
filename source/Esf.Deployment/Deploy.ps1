@@ -87,6 +87,11 @@ function TestPrerequisites($deploymentOutput) {
 	Import-Module $PSScriptRoot\PesterSuite.psm1
 	($preqequisitesTestsResult = RunPesterSuite $PSScriptRoot\Prerequisites.tests.ps1) *>&1 |  Out-File $deploymentOutput\prerequisites.tests.txt	
 	ReportTestsResult "environment prerequisites tests" $preqequisitesTestsResult.FailedTestsCount
+	If ($preqequisitesTestsResult.FailedTestsCount -gt 0) {
+		$prerequisitesFailedTestsResult = (Get-Content $deploymentOutput\prerequisites.tests.txt) | Out-String
+		Write-Output $prerequisitesFailedTestsResult
+	}
+
 }
 
 Clear-Host

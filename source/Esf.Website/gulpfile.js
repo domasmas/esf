@@ -1,4 +1,4 @@
-﻿/// <binding AfterBuild='after-build' ProjectOpened='project-open' />
+﻿/// <binding AfterBuild='build:dev' Clean='clean' ProjectOpened='watch' />
 
 var gulp = require('gulp');
 var tsc = require('gulp-typescript');
@@ -27,7 +27,7 @@ var protractor = require('gulp-protractor').protractor;
 
 gulp.task('clean:app',
     function() {
-        return gulp.src(APP_DESTINATION, { read: false })
+    	return gulp.src([APP_DESTINATION, END_TO_END_TESTS_DESTINATION], { read: false })
             .pipe(clean({ force: true }));
     });
 
@@ -42,6 +42,11 @@ gulp.task('clean:content',
         return gulp.src(CONTENT_DESTINATION, { read: false })
             .pipe(clean({ force: true }));
     });
+
+gulp.task('clean', function () {
+	return gulp.src(WWW_ROOT, { read: false })
+		.pipe(clean({ forse: true }));
+});
 
 gulp.task('compile:tsApp',
     function () {
@@ -93,11 +98,8 @@ gulp.task('copy:vendor', function () {
 });
 
 gulp.task('bundle:vendor', function () {
-    return gulp.src([
-        'node_modules/zone.js/dist/zone.js',
-        'node_modules/reflect-metadata/Reflect.js',
+	return gulp.src([
         'node_modules/systemjs/dist/system-polyfills.js',
-        'node_modules/core-js/client/shim.min.js',
         'node_modules/systemjs/dist/system.js',
         'systemjs.config.js'
     ])
@@ -125,7 +127,7 @@ gulp.task('compile:less',
             .pipe(gulp.dest(CONTENT_DESTINATION));
     });
 
-gulp.task('bundle', function () {
+gulp.task('bundle:minify', function () {
     return gulp.src([
         LIBRARIES_DESTINATION + '/vendors.js',
         APP_DESTINATION + '/app.js'
@@ -135,22 +137,24 @@ gulp.task('bundle', function () {
     .pipe(gulp.dest(APP_DESTINATION));
 });
 
-gulp.task('build', function(callback) {
+gulp.task('build:dev', function(callback) {
     runSequence(
-            ['clean:app', 'clean:vendor', 'clean:content'],
-            ['compile:ts', 'copy:vendor', 'compile:less'],
-            ['bundle:vendor', 'bundle:app'],
+            ['clean:app', 'clean:content'],
+            ['compile:ts', 'compile:less'],
             callback
         );
 });
 
-gulp.task('build-dev', function (callback) {
-    runSequence(
-        ['compile:ts', 'compile:less'],
-        callback);
+gulp.task('bundle-js', function (callback) {
+	runSequence(
+			['copy:vendor'],
+            ['bundle:vendor', 'bundle:app'],
+			['bundle:minify'],
+            callback
+        );
 });
 
-gulp.task('release:js', ['bundle'],
+gulp.task('release:js', ['bundle-js'],
     function () {
         gulp.src(APP_DESTINATION + '/app.bundle.js')
             .pipe(gulp.dest(RELEASE_JS_DESTINATION));
@@ -163,28 +167,20 @@ gulp.task('release:css',
             .pipe(gulp.dest(RELEASE_CSS_DESTINATION));
     });
 
-gulp.task('release', ['release:js', 'release:css']);
+gulp.task('build:release', function (callback) {
+	runSequence(
+			['clean'],
+            ['build:dev'],
+            ['release:js', 'release:css'],
+            callback
+        );
+});
 
 gulp.task('watch:less',
     function() {
         gulp.watch('./App/**/*.less', ['compile:less']);
     });
-
-gulp.task('module-changed',
-    function(callback) {
-        runSequence(
-            ['clean:app', 'clean:vendor'],
-            'copy:vendor',
-            ['compile:ts', 'compile:less'],
-            callback
-        );
-    });
-
-gulp.task('watch:modules',
-    function () {
-        gulp.watch('./node_modules/**/*', ['module-changed']);
-    });
-
+	
 gulp.task('watch:ts',
     function () {
         gulp.watch(['./App/**/*.ts', './App/*.ts', './endToEndTests/**/*.ts'], ['compile:ts']);
@@ -192,46 +188,16 @@ gulp.task('watch:ts',
 
 gulp.task('watch', ['watch:less', 'watch:ts']);
 
-gulp.task('before-build',
-    function(callback) {
-        runSequence(
-            []
-        );
-    });
 
-gulp.task('after-build',
-    function (callback) {
-        runSequence(
-            ['compile:less', 'compile:ts'],
-            callback
-        );
-    });
 
-gulp.task('project-open',
-    function (callback) {
-        runSequence(
-            ['compile:less', 'compile:ts'],
-            'watch',
-            callback
-        );
-    });
-
-gulp.task('project-clean',
-    function (callback) {
-        runSequence(
-            [],
-            callback
-        );
-    });
-
-gulp.task('unit-tests:run-tdd', function (done) {
+gulp.task('unitTests:run-tdd', function (done) {
     new karmaServer({
         configFile: __dirname + '/karma.conf.js',
         singleRun: false
     }, done).start();
 });
 
-gulp.task('unit-tests:single-run', function (done) {
+gulp.task('unitTests:single-run', function (done) {
     new karmaServer({
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
@@ -264,4 +230,4 @@ gulp.task('e2etests:debugRun', function () {
 var webdriver_standalone = require("gulp-protractor").webdriver_standalone;
 gulp.task('e2etests:startWebDriver', webdriver_standalone);
 
-gulp.task('default', ['build']);
+gulp.task('default', ['build:dev']);

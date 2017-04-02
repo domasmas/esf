@@ -8,7 +8,7 @@ function GulpGenerateUpgradeScripts() {
 	# Setup npm and gulp
 	cd $PSScriptRoot\..\Esf.DataAccess\
 	npm install
-	npm install --dev
+	npm install --only=dev
 	# Builds generates the upgrade script in UpgradeOtput folder
 	npm run gulp generateUpgradeScripts
 }

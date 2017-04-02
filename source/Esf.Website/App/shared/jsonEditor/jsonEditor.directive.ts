@@ -7,6 +7,7 @@ import 'brace';
 import 'brace/theme/monokai';
 import 'brace/mode/json';
 import 'brace/theme/chrome';
+import * as js_beautify from 'js-beautify';
 
 @Directive({
     selector: '[json-editor]'
@@ -16,7 +17,7 @@ export class JsonEditorDirective {
 
     _readOnly: boolean = false;
     editor: any;
-    oldText: string;
+    oldText: string;	
 
     constructor(elementRef: ElementRef, private zone: NgZone) {
         let el = elementRef.nativeElement;
@@ -79,8 +80,9 @@ export class JsonEditorDirective {
 
         if (text == this.oldText)
             return;
-        this.zone.runOutsideAngular(() => {
-            this.editor.setValue(text);
+		this.zone.runOutsideAngular(() => {
+			text = js_beautify(text, { indent_size: 2 });
+			this.editor.setValue(text);
             this.editor.clearSelection();
         });
     }

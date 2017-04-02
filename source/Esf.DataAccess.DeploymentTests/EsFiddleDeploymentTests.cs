@@ -19,34 +19,48 @@ namespace Esf.DataAccess.Tests
         [SetUp]
         public void Setup()
         {
-            _database = new EsDatabaseClient().Database;
+            var connections = System.Configuration.ConfigurationManager.ConnectionStrings;
+            _database = new EsDatabaseClient(connections["EsFiddleDb"].ConnectionString).Database;
         }              
         
         [Test]
         public void IsDatabaseUp()
         {
+            WaitForConditionUntilTimeout(() => _database.Client.Cluster.Description.State == ClusterState.Connected,
+                () =>
+                {
+                    Assert.AreEqual(_database.DatabaseNamespace.DatabaseName, "esFiddle");
+                    Assert.Pass();
+                });
+        }
+        
+        private void WaitForConditionUntilTimeout(Func<bool> isConditionMet, Action verificationAction)
+        {
             TimeSpan timeoutSpan = new TimeSpan(0, 0, 0, 0, 5000);
             DateTime timeout = DateTime.Now.Add(timeoutSpan);
             do
             {
-                if (_database.Client.Cluster.Description.State == ClusterState.Connected)
-                {
-                    Assert.AreEqual(_database.DatabaseNamespace.DatabaseName, "esFiddle");
-                    Assert.Pass();
-                }
-                Thread.Sleep(100);
+                if (isConditionMet())
+                    verificationAction();
+                else
+                    Thread.Sleep(100);
             }
             while (DateTime.Now < timeout);
-            Assert.Fail(); 
+            Assert.Fail();
         }
-        
+
         [Test]
         public void IsDatabaseVersion3_2()
         {
-            SemanticVersion databaseVersion = _database.Client.Cluster.Description.Servers[0].Version;
-            Assert.AreEqual(databaseVersion.Major, 3);
-            Assert.AreEqual(databaseVersion.Minor, 2);
-            Assert.AreEqual(databaseVersion.PreRelease, null);
+            WaitForConditionUntilTimeout(() => _database.Client.Cluster.Description.State == ClusterState.Connected, 
+                () =>
+                {
+                    SemanticVersion databaseVersion = _database.Client.Cluster.Description.Servers[0].Version;
+                    Assert.AreEqual(databaseVersion.Major, 3);
+                    Assert.AreEqual(databaseVersion.Minor, 2);
+                    Assert.AreEqual(databaseVersion.PreRelease, null);
+                    Assert.Pass();
+                });
         }
         
         [Test]

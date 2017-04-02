@@ -1,4 +1,5 @@
-﻿using Esf.Domain;
+﻿using AutoMapper;
+using Esf.Domain;
 using System.Threading.Tasks;
 using System.Web.Http;
 
@@ -8,18 +9,21 @@ namespace Esf.WebApi.Areas.EsfQueryRunner
     public class EsfQueryRunnerController : ApiController
     {
         protected readonly IEsfQueryRunner _queryRunner;
+		protected readonly IMapper _mapper;
 
-        public EsfQueryRunnerController(IEsfQueryRunner queryRunner)
+        public EsfQueryRunnerController(IEsfQueryRunner queryRunner, IMapper mapper)
         {
             _queryRunner = queryRunner;
-        }
+			_mapper = mapper;
+		}
 
         [HttpPost]
         [Route("")]
-        public async Task<string> Post([FromBody]EsfQueryRunnerDto esfState)
+        public async Task<EsfQueryRunnerResponseDto> Post([FromBody]EsfQueryRunnerDto esfState)
         {
-            var runResult = await _queryRunner.Run(esfState.Mapping, esfState.Documents.ToArray(), esfState.Query);
-            return runResult.QueryResponse.SuccessJsonResult;
+            EsfQuerySessionResponse runResult = await _queryRunner.Run(esfState.Mapping, esfState.Documents.ToArray(), esfState.Query);
+			EsfQueryRunnerResponseDto mappedResult = _mapper.Map<EsfQueryRunnerResponseDto>(runResult);
+			return mappedResult;
         }
     }
 }

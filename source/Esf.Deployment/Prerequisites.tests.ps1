@@ -51,12 +51,36 @@
 			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
-		It "Checks Typescript 2.0" {
+		It "Checks Typescript Tools for Visual Studio 2015 is 2.2" {
 			$msiName = "TypeScript*"
 			$majorVersion = "2"
-			$minorVersion = "0"
+			$minorVersion = "2"
 			(IsMsiPackageInstalled $msiName $majorVersion $minorVersion) | Should Be $true
 		}
 
+	}
+
+	It "Check IIS 10 is installed" {
+		$iisRegistryItem = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\InetStp"
+
+		$iisRegistryItem.SetupString | Should BeLike "IIS*"
+		$iisRegistryItem.MajorVersion | Should BeLike 10
+	}
+
+	function LoadFromJson($jsonPath) {
+		$path = Resolve-Path $jsonPath
+		return (Get-Content $path) -join "`n" | ConvertFrom-Json
+	}
+
+	It "Check MongoDb is installed in program files" {
+		$mongoDbConfigPath = "$PSScriptRoot\..\Esf.DataAccess.Deployment\dbDeployment.config.json"
+		$mongoDbServerInstallPath = (LoadFromJson $mongoDbConfigPath).mongoDbServerDirectory
+		Test-Path $mongoDbServerInstallPath | Should Be True
+	}
+
+	It "Check Elasticsearch is installed in program files" {
+		$elasticsearchConfigPath = "$PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunner.Config.json"
+		$elasticserachInstallPath = (LoadFromJson $elasticsearchConfigPath).ElasticSearchInstallPath
+		Test-Path $elasticserachInstallPath | Should Be True
 	}
 }

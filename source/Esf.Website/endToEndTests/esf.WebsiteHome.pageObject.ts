@@ -29,9 +29,14 @@ export class EsfHome {
         this.browserInstance.quit();
     }
 
-    getPageTitle(): webDriverPromise.Promise<string> {
+	getPageTitle(): webDriverPromise.Promise<string> {
+		this.waitUntilAngularPageIsLoaded();
         return this.browserInstance.getTitle();
     }
+
+	private waitUntilAngularPageIsLoaded(): webDriverPromise.Promise<void> {
+		return this.browserInstance.wait(() => this.browserInstance.element(by.css('esf-app router-outlet')).isPresent());
+	}
 
     getCurrentUrl(): webDriverPromise.Promise<string> {
         return this.browserInstance.getCurrentUrl();
@@ -42,29 +47,28 @@ export class EsfHome {
         return mappingElement.isPresent();
     }
 
-    getMappingSectionContent(): webDriverPromise.Promise<string> {
-        return this.getSectionText('.mapping-editor');
+    getMappingSectionContent(): webDriverPromise.Promise<Object> {
+        return this.getSectionContent('.mapping-editor');
     }
 
-    private removeClosingBrase(content: string): string {
-        if (!content && content.length === 0) {
-            return '';
+    private removeAceEditorExtraClosingBracets(inputElement: ElementFinder, isContentArray: boolean): webDriverPromise.Promise<void> {
+        var result = inputElement.sendKeys(protractor.Key.BACK_SPACE);
+        if (isContentArray) {
+            result = inputElement.sendKeys(protractor.Key.BACK_SPACE);
         }
-        let contentLastChar = content[content.length - 1];
-        if (contentLastChar === '}' || contentLastChar === ']') {
-            return content.substring(0, content.length - 1);
-        }
+        return result;
     }
 
-    private setSectionContent(sectionCss: string, content: string): webDriverPromise.Promise<void> {
+    private setSectionContent(sectionCss: string, content: Object| Object[]): webDriverPromise.Promise<void> {
         var inputElement = this.browserInstance.element(by.css(`${sectionCss} .ace_text-input`));
         //delete input       
         inputElement.clear();
-        content = this.removeClosingBrase(content);
-        return inputElement.sendKeys(content);
+        var serializedContent = JSON.stringify(content);       
+        inputElement.sendKeys(serializedContent);
+        return this.removeAceEditorExtraClosingBracets(inputElement, Array.isArray(content));
     }
 
-    setMappingSectionContent(content: string): webDriverPromise.Promise<void> {
+    setMappingSectionContent(content: Object): webDriverPromise.Promise<void> {
         return this.setSectionContent('.mapping-editor', content);
     }
 
@@ -73,11 +77,11 @@ export class EsfHome {
         return querySection.isPresent();
     }
 
-    getQuerySectionContent(): webDriverPromise.Promise<string> {
-        return this.getSectionText('.query-editor');
+    getQuerySectionContent(): webDriverPromise.Promise<Object> {
+        return this.getSectionContent('.query-editor');
     }
 
-    setQuerySectionContent(content: string): webDriverPromise.Promise<void> {
+    setQuerySectionContent(content: Object): webDriverPromise.Promise<void> {
         return this.setSectionContent('.query-editor', content);
     }
 
@@ -86,21 +90,17 @@ export class EsfHome {
         return documentsSection.isPresent();
     }
 
-    getDocumentsSectionContent(): webDriverPromise.Promise<string> {
-        return this.getSectionText('.documents-editor');
+    getDocumentsSectionContent(): webDriverPromise.Promise<Object> {
+        return this.getSectionContent('.documents-editor');
     }
 
-    setDocumentsSectionContent(content: string): webDriverPromise.Promise<void> {
+    setDocumentsSectionContent(content: Object[]): webDriverPromise.Promise<void> {
         return this.setSectionContent('.documents-editor', content);
     }
 
     hasResultSection(): webDriverPromise.Promise<boolean> {
         var resultSection = this.browserInstance.element(by.cssContainingText('label', 'Result'));
         return resultSection.isPresent();
-    }
-
-    getResultSectionContent(): webDriverPromise.Promise<string> {
-        return this.getSectionText('.result-viewer');
     }
 
     private getSaveCommandElement(): ElementFinder {
@@ -133,14 +133,26 @@ export class EsfHome {
         return this.getRunCommandElement().isPresent();
     }
 
-    getResultContent(): webDriverPromise.Promise<string> {
-        return this.getSectionText('.result-viewer');
+    getResultContent(): webDriverPromise.Promise<any> {
+        return this.getSectionContent('.result-viewer');
     }
 
-    private getSectionText(sectionClass: string): webDriverPromise.Promise<string> {        
+    static emptyResultContent: undefined; 
+
+    private getSectionContent(sectionClass: string): webDriverPromise.Promise<Object> {        
         let sectionText: webDriverPromise.Promise<string> = this.browserInstance.element(by.css(`${sectionClass} .ace_content`)).getAttribute('innerText');
-        let trimUnnecessaryWhitespace = (content: string) => content.trim();
-        return sectionText.then(trimUnnecessaryWhitespace);
+        let result = sectionText.then((content: string) => {
+            if (content) {
+                try {
+                    return JSON.parse(content);
+                }
+                catch (e) {
+                    throw new Error('cannot deserialize: ' + content);
+                }
+            }
+            return undefined;
+        });
+        return result;
     }
 
     isUrlOfExistingState(): webDriverPromise.Promise<boolean> {

@@ -3,18 +3,40 @@ import { Observable } from 'rxjs/Rx';
 import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 
-export interface IEsfQueryRunnerService {
-    runSearchQuery(mapping: string, documents: string[], query: string): Observable<string>;
+export abstract class EsfQueryRunnerServiceContract {
+    abstract runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse>;
+}
+
+export interface IEsfRunQueryResponse {
+    createMappingResponse: IEsfRunResponse;
+    createDocumentsResponse: IEsfRunResponse;
+    queryResponse: IEsfRunResponse
+}
+export interface IEsfRunResponse {
+    isSuccess: boolean;
+    successJsonResult: string;
+    jsonValidationError: IEsfJsonError;
+    elasticsearchError: IEsfError;
+}
+
+export interface IEsfJsonError {
+    sourceJson: string;
+    error: string;
+}
+export interface IEsfError {
+    httpStatusCode: number;
+    error: string;
 }
 
 @Injectable()
-export class EsfQueryRunnerService implements IEsfQueryRunnerService {
+export class EsfQueryRunnerService extends EsfQueryRunnerServiceContract {
     private static webApiServiceUrl: string = 'http://localhost:40081';
 
-    constructor(private http: Http) {
+	constructor(private http: Http) {
+		super();
     }
 
-    public runSearchQuery(mapping: string, documents: string[], query: string): Observable<string> {
+    public runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse> {
         var endpointUrl: string = `${EsfQueryRunnerService.webApiServiceUrl}/query-runner`;
 
         let body = JSON.stringify({

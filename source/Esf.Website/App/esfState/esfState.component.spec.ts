@@ -5,10 +5,9 @@ import { EsfStateDto } from './esfStateDto';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
-import { IEsfQueryRunnerService, EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service'
+import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
-import 'jquery';
 
 class EsfStateServiceStub {
     initialState = this.getStubbedState('00000000-0000-0000-0000-000000000000');
@@ -125,10 +124,26 @@ export class JsonEditorDirectiveStub {
     }
 }
 
-class EsfQueryRunnerServiceStub implements IEsfQueryRunnerService {
-    static StubbedRunResult: string = `{ "message": "message with fox" }`;
-    runSearchQuery(mapping: string, documents: string[], query: string): Observable<string> {
-        return new BehaviorSubject<string>(EsfQueryRunnerServiceStub.StubbedRunResult);
+class EsfQueryRunnerServiceStub extends EsfQueryRunnerServiceContract {
+    static StubbedRunResult: IEsfRunQueryResponse = {
+        createDocumentsResponse: null,
+        createMappingResponse: null,
+        queryResponse: {
+            isSuccess: true,
+            successJsonResult: JSON.stringify({
+                "hits": {
+                    "total": 1,
+                    "hits": [{
+                        "_source": { "message": "doc1" }
+                    }]
+                }
+            }),
+            elasticsearchError: null,
+            jsonValidationError: null
+        }
+    };
+    runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse> {
+        return new BehaviorSubject<IEsfRunQueryResponse>(EsfQueryRunnerServiceStub.StubbedRunResult);
     }
 }
 
@@ -150,7 +165,7 @@ class EsFiddlerComponentFixture {
             providers: [{ provide: EsfStateService, useValue: this.stateService },
             { provide: ActivatedRoute, useValue: this.activatedRoute },
             { provide: Router, useValue: this.routerStub },
-            { provide: EsfQueryRunnerService, useValue: this.queryRunnerService }
+            { provide: EsfQueryRunnerServiceContract, useValue: this.queryRunnerService }
             ]
         }).overrideComponent(EsFiddlerComponent, {
             set: {
@@ -212,7 +227,7 @@ class EsFiddlerComponentFixture {
         return '';
     }
 
-    public getStubbedQueryRunResult(): string {
+    public getStubbedQueryRunResult(): IEsfRunQueryResponse {
         return EsfQueryRunnerServiceStub.StubbedRunResult;
     }
 
@@ -384,7 +399,7 @@ describe('esfState.component', function () {
         esfComponent.runQueryCommand();
         //then
         var queryResultEditor = esfComponent.getQueryResult();
-        expect(queryResultEditor.textSpy.calls.mostRecent().args).toEqual([esfComponent.getStubbedQueryRunResult()]);
+        expect(queryResultEditor.textSpy.calls.mostRecent().args).toEqual([esfComponent.getStubbedQueryRunResult().queryResponse.successJsonResult]);
     });
 
 });

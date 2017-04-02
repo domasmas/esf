@@ -27,7 +27,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
-    <TypeScriptToolsVersion>2.0</TypeScriptToolsVersion>
+    <TypeScriptToolsVersion>2.2</TypeScriptToolsVersion>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <WebGreaseLibPath>..\packages\WebGrease.1.5.2\lib</WebGreaseLibPath>
   </PropertyGroup>
@@ -204,9 +204,10 @@
     <TypeScriptCompile Include="App\esfState\esfStateRunQueryCommand.ts" />
     <TypeScriptCompile Include="App\esfState\esfStateSaveCommand.ts" />
     <TypeScriptCompile Include="App\main.ts" />
+    <TypeScriptCompile Include="App\testsFramework\jasmineExtraMatchers.d.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.pageObject.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.spec.ts" />
-    <TypeScriptCompile Include="Scripts\typings\jquery\jquery.d.ts" />
+    <TypeScriptCompile Include="App\testsFramework\jasmineExtraMatchers.ts" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
@@ -218,7 +219,6 @@
     <Content Include="App\esfState\esfSate.styles.less" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PreDeploy.ps1" />
     <None Include="Properties\PublishProfiles\Release.pubxml">
       <SubType>Designer</SubType>
     </None>
@@ -247,7 +247,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55759</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

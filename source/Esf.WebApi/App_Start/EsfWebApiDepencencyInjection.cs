@@ -8,6 +8,7 @@ using System.Configuration;
 using Esf.Domain;
 using Esf.DataAccess;
 using Elasticsearch.Net;
+using AutoMapper;
 
 namespace Esf.WebApi.App_Start
 {
@@ -43,6 +44,9 @@ namespace Esf.WebApi.App_Start
             Kernel.Bind<IEsDatabaseClient>()
                   .To<EsDatabaseClient>()
                   .WithConstructorArgument(connections["EsFiddleDb"].ConnectionString);
-        }
-    }
+
+			IMapper autoMapper = AutoMapperBootstrapper.Bootstrap();
+			Kernel.Bind<IMapper>().ToConstant(autoMapper);
+		}		
+	}
 }
