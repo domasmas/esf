@@ -4,7 +4,7 @@ import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateService } from './esfState.service';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { EsfStateDto } from './esfStateDto';
-import { EsfQueryRunnerService, IEsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfQueryRunnerService, EsfQueryRunnerServiceContract } from '../esfQueryRunner/esfQueryRunner.service';
 import { EsfStateValidationService, EsfStateValidationResult } from './esfStateValidation.service';
 import { EsfStateSaveCommand, EsfStateSaveCommandState } from './esfStateSaveCommand';
 import { EsfStateRunQueryCommand, EsfStateRunQueryCommandState } from './esfStateRunQueryCommand';
@@ -15,14 +15,14 @@ import { CommandStateType } from '../shared/commands/commandStateType';
     templateUrl: '/App/esfState/esfState.component.html',
     providers: [
         EsfStateService,
-        EsfQueryRunnerService,
+        { provide: EsfQueryRunnerServiceContract, useClass: EsfQueryRunnerService },
         EsfStateValidationService,
         EsfStateSaveCommand,
         EsfStateRunQueryCommand
     ]
 })
 export class EsFiddlerComponent implements OnInit {
-    private state: EsfStateViewModel;
+    public state: EsfStateViewModel;
     private lastSavedState: EsfStateDto;
     private sub: any;
 
@@ -48,6 +48,7 @@ export class EsFiddlerComponent implements OnInit {
             mapping: null,
             query: null,
         };
+        this.queryResult = '';
 
         this.runCommandEnabled = true;
         this.saveCommandEnabled = true;
@@ -98,6 +99,7 @@ export class EsFiddlerComponent implements OnInit {
         this.esfStateService
             .getInitialState()
             .subscribe((state: ExistingEsfStateDto) => {
+                console.log('initial state retrieved');
                 this.state = EsfStateViewModel.fromDto(state.state);
         }, (error: Error) => {
             console.error(error);

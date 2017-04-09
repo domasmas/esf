@@ -40,7 +40,7 @@ export class EsfStateValidationService {
         if (!this.isJSONArray(documents)) {
             return {
                 isError: true,
-                errorMessage: `Documents field must be an array`
+                errorMessage: `Documents field must be an array, but was ${documents}`
             };
         }
 
@@ -61,7 +61,7 @@ export class EsfStateValidationService {
         if (!this.isJSON(fieldValue)) {
             return {
                 isError: true,
-                errorMessage: `${fieldName} has to be a valid JSON document`
+                errorMessage: `${fieldName} has to be a valid JSON document ${fieldValue}`
             };
         }
 

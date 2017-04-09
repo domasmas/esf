@@ -6,6 +6,9 @@ import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { Observable, BehaviorSubject, Subject } from 'rxjs/Rx';
 import { ActivatedRoute, Router, Params } from '@angular/router';
 import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service'
+import { EsfStateSaveCommand } from './esfStateSaveCommand';
+import { EsfStateRunQueryCommand } from './esfStateRunQueryCommand';
+import { EsfStateValidationService } from './esfStateValidation.service';
 import { By } from '@angular/platform-browser';
 import { Directive, EventEmitter, ElementRef, Input, Output, DebugElement } from '@angular/core';
 
@@ -105,7 +108,6 @@ export class JsonEditorDirectiveStub {
     }
     constructor() {
         this.textSpy = jasmine.createSpy('text');
-        this.readOnlySpy = jasmine.createSpy('readOnly');
         JsonEditorDirectiveStub.instances.push(this);
     }
 
@@ -113,10 +115,10 @@ export class JsonEditorDirectiveStub {
     }
 
     textSpy: jasmine.Spy;
-    readOnlySpy: jasmine.Spy;
+    isReadonly: boolean;
 
     @Input() set readOnly(readOnly: boolean) {
-        this.readOnlySpy(readOnly);
+        this.isReadonly = readOnly;
     }
 
     @Input() set text(text: string) {
@@ -165,7 +167,10 @@ class EsFiddlerComponentFixture {
             providers: [{ provide: EsfStateService, useValue: this.stateService },
             { provide: ActivatedRoute, useValue: this.activatedRoute },
             { provide: Router, useValue: this.routerStub },
-            { provide: EsfQueryRunnerServiceContract, useValue: this.queryRunnerService }
+            { provide: EsfQueryRunnerServiceContract, useValue: this.queryRunnerService },
+                EsfStateSaveCommand,
+                EsfStateRunQueryCommand,
+                EsfStateValidationService
             ]
         }).overrideComponent(EsFiddlerComponent, {
             set: {
@@ -251,6 +256,7 @@ describe('esfState.component', function () {
     it('should display the initial state when navigated to states/new', function () {
         //given
         esfComponent.createComponent();
+        console.log('checking initial state');
         //then
         var newInitialState = esfComponent.stateService.initialState.state;
         var documents = newInitialState.documents.map(x => JSON.parse(x));
@@ -258,19 +264,19 @@ describe('esfState.component', function () {
 
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(newInitialState.mapping);
-        expect(mappingEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(mappingEditor.isReadonly).toEqual(false);
 
         var documentEditor = esfComponent.getDocumentsJsonEditor();
         expect(documentEditor.textSpy).toHaveBeenCalledWith(serializedDocuments);
-        expect(documentEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(documentEditor.isReadonly).toEqual(false);
 
         var queryEditor = esfComponent.getQueryJsonEditor();
         expect(queryEditor.textSpy).toHaveBeenCalledWith(newInitialState.query);
-        expect(queryEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(queryEditor.isReadonly).toEqual(false);
 
         var queryResult = esfComponent.getQueryResult();
         expect(queryResult.textSpy).toHaveBeenCalledWith(esfComponent.getInitialQueryResult());
-        expect(queryResult.readOnlySpy).toHaveBeenCalledWith(true);
+        expect(queryResult.isReadonly).toEqual(true);
     });
 
     it('should display saved state when navigated to existing stateUrl c1a5b76f-f08a-45cc-996b-c3f22ff00241', function () {
@@ -287,19 +293,19 @@ describe('esfState.component', function () {
 
         var mappingEditor = esfComponent.getMappingJsonEditor();
         expect(mappingEditor.textSpy).toHaveBeenCalledWith(expectedSavedState.mapping);
-        expect(mappingEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(mappingEditor.isReadonly).toEqual(false);
 
         var documentEditor = esfComponent.getDocumentsJsonEditor();
         expect(documentEditor.textSpy).toHaveBeenCalledWith(serializedDocuments);
-        expect(documentEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(documentEditor.isReadonly).toEqual(false);
 
         var queryEditor = esfComponent.getQueryJsonEditor();
         expect(queryEditor.textSpy).toHaveBeenCalledWith(expectedSavedState.query);
-        expect(queryEditor.readOnlySpy).not.toHaveBeenCalled();
+        expect(queryEditor.isReadonly).toEqual(false);
 
         var queryResult = esfComponent.getQueryResult();
         expect(queryResult.textSpy).toHaveBeenCalledWith(esfComponent.getInitialQueryResult());
-        expect(queryResult.readOnlySpy).toHaveBeenCalledWith(true);
+        expect(queryResult.isReadonly).toEqual(true);
     });
 
     it('should allow changing Mapping as json formatted text', function () {

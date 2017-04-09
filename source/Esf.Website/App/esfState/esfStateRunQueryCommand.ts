@@ -3,7 +3,7 @@ import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateDto } from './esfStateDto';
 import { EsfStateService } from './esfState.service';
 import { EsfStateValidationService } from './esfStateValidation.service';
-import { EsfQueryRunnerService } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfQueryRunnerServiceContract, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service';
 import { CommandStateType } from '../shared/commands/commandStateType';
 import { EsfCommandState, EsfCommand } from '../shared/commands/esfCommand';
 import { Observable } from 'rxjs/Observable';
@@ -13,7 +13,7 @@ import { Subject } from 'rxjs/Subject';
 export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandState> {
     constructor(
         private esfStateService: EsfStateService,
-        private esfQueryRunnerService: EsfQueryRunnerService,
+        private esfQueryRunnerService: EsfQueryRunnerServiceContract,
         private stateValidationService: EsfStateValidationService
     ) {
         super();
@@ -35,13 +35,22 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             status: ''
         });
 
-        this.esfQueryRunnerService.runSearchQuery(state.mapping, stateDto.documents, state.query)
-            .subscribe((queryResult: string) => {
-                this.commandStateStream.next({
-                    commandState: CommandStateType.Enabled,
-                    result: queryResult,
-                    status: ''
-                });
+        this.esfQueryRunnerService.runQuery(state.mapping, stateDto.documents, state.query)
+            .subscribe((queryResult: IEsfRunQueryResponse) => {
+                if (queryResult.queryResponse.isSuccess) {
+                    this.commandStateStream.next({
+                        commandState: CommandStateType.Enabled,
+                        result: queryResult.queryResponse.successJsonResult,
+                        status: ''
+                    });
+                } else {
+                    this.commandStateStream.next({
+                        commandState: CommandStateType.Enabled,
+                        result: '',
+                        status: queryResult.queryResponse.jsonValidationError.error ||
+                            queryResult.queryResponse.elasticsearchError.error
+                    });
+                }
             }, (error: Error) => {
                 this.commandStateStream.next({
                     commandState: CommandStateType.Enabled,

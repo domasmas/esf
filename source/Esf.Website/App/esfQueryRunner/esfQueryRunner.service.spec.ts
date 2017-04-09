@@ -2,7 +2,7 @@
 import { Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from './esfQueryRunner.service';
-import { MockHttpFixture, RequestResponsePair } from '../common/unitTests/mockHttpFixture';
+import { MockHttpFixture, RequestResponsePair } from '../shared/unitTests/mockHttpFixture';
 import { ResponseOptionsArgs } from '@angular/http';
 import '../testsFramework/jasmineExtraMatchers';
 
