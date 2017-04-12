@@ -63,7 +63,7 @@ describe('Given Esf.Website home page', function () {
 
         it('should have empty result state', () => {
             var resultContent = esfHome.getResultContent();
-            expect(resultContent).toEqualAsJson(EsfHome.emptyResultContent);
+            expect(resultContent).toEqualAsJson(EsfHome.emptySectionContent);
         });
 
         it('should be able to run query', (done: () => void) => {

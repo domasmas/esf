@@ -1,10 +1,19 @@
 ﻿/// <reference types="selenium-webdriver" />
-import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder, element } from 'protractor';
+import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder, element, WebElementPromise, WebElement } from 'protractor';
 import { promise as webDriverPromise }  from 'selenium-webdriver';
 
 export class EsfHome {
-    constructor(private browserInstance: ProtractorBrowser) {
+	constructor(private browserInstance: ProtractorBrowser) {
+		this.queryEditor = new AceEditorFixture(browserInstance, '.query-editor', EsfHome.emptySectionContent);
+		this.mappingEditor = new AceEditorFixture(browserInstance, '.mapping-editor', EsfHome.emptySectionContent);
+		this.documentsEditor = new AceEditorFixture(browserInstance, '.documents-editor', EsfHome.emptySectionContent);
+		this.resultViewer = new AceEditorFixture(browserInstance, '.result-viewer', EsfHome.emptySectionContent);
     }
+
+	private queryEditor: AceEditorFixture;
+	private mappingEditor: AceEditorFixture;
+	private documentsEditor: AceEditorFixture;
+	private resultViewer: AceEditorFixture;
 
     navigate(): void {
         this.browserInstance.get('http://localhost:40082');  
@@ -48,28 +57,11 @@ export class EsfHome {
     }
 
     getMappingSectionContent(): webDriverPromise.Promise<Object> {
-        return this.getSectionContent('.mapping-editor');
-    }
-
-    private removeAceEditorExtraClosingBracets(inputElement: ElementFinder, isContentArray: boolean): webDriverPromise.Promise<void> {
-        var result = inputElement.sendKeys(protractor.Key.BACK_SPACE);
-        if (isContentArray) {
-            result = inputElement.sendKeys(protractor.Key.BACK_SPACE);
-        }
-        return result;
-    }
-
-    private setSectionContent(sectionCss: string, content: Object| Object[]): webDriverPromise.Promise<void> {
-        var inputElement = this.browserInstance.element(by.css(`${sectionCss} .ace_text-input`));
-        //delete input       
-        inputElement.clear();
-        var serializedContent = JSON.stringify(content);       
-        inputElement.sendKeys(serializedContent);
-        return this.removeAceEditorExtraClosingBracets(inputElement, Array.isArray(content));
+        return this.mappingEditor.getContent();
     }
 
     setMappingSectionContent(content: Object): webDriverPromise.Promise<void> {
-        return this.setSectionContent('.mapping-editor', content);
+        return this.mappingEditor.setContent(content);
     }
 
     hasQuerySection(): webDriverPromise.Promise<boolean> {
@@ -78,11 +70,11 @@ export class EsfHome {
     }
 
     getQuerySectionContent(): webDriverPromise.Promise<Object> {
-        return this.getSectionContent('.query-editor');
+        return this.queryEditor.getContent();
     }
 
     setQuerySectionContent(content: Object): webDriverPromise.Promise<void> {
-        return this.setSectionContent('.query-editor', content);
+        return this.queryEditor.setContent(content);
     }
 
     hasDocumentsSection(): webDriverPromise.Promise<boolean> {
@@ -91,11 +83,11 @@ export class EsfHome {
     }
 
     getDocumentsSectionContent(): webDriverPromise.Promise<Object> {
-        return this.getSectionContent('.documents-editor');
+        return this.documentsEditor.getContent();
     }
 
     setDocumentsSectionContent(content: Object[]): webDriverPromise.Promise<void> {
-        return this.setSectionContent('.documents-editor', content);
+        return this.documentsEditor.setContent(content);
     }
 
     hasResultSection(): webDriverPromise.Promise<boolean> {
@@ -134,30 +126,70 @@ export class EsfHome {
     }
 
     getResultContent(): webDriverPromise.Promise<any> {
-        return this.getSectionContent('.result-viewer');
+		return this.resultViewer.getContent();
     }
 
-    static emptyResultContent: undefined; 
-
-    private getSectionContent(sectionClass: string): webDriverPromise.Promise<Object> {        
-        let sectionText: webDriverPromise.Promise<string> = this.browserInstance.element(by.css(`${sectionClass} .ace_content`)).getAttribute('innerText');
-        let result = sectionText.then((content: string) => {
-            if (content) {
-                try {
-                    return JSON.parse(content);
-                }
-                catch (e) {
-                    throw new Error('cannot deserialize: ' + content);
-                }
-            }
-            return undefined;
-        });
-        return result;
-    }
+	static readonly emptySectionContent: undefined; 
 
     isUrlOfExistingState(): webDriverPromise.Promise<boolean> {
         return this.browserInstance.getCurrentUrl().then((url: string) => 
             /(https{0,1}:\/{0,2}){0,1}(\w*):*\d*\/state\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.test(url)
         );
     }
+}
+
+class AceEditorFixture
+{
+	constructor(private browserInstance: ProtractorBrowser, private cssSelector: string, private emptyContent: any) {		
+	}
+	
+	private getSerializedContent(): webDriverPromise.Promise<string> {
+		return this.browserInstance.executeScript(function () {
+			var sectionCss: string = arguments[0];
+			var getAceEditor = (sectionCss: string): AceAjax.Editor => {
+				var aceEditorElement: any = document.querySelector(sectionCss);
+				var aceEditor: AceAjax.Editor = aceEditorElement.env.editor;
+				return aceEditor;
+			};
+
+			var aceEditor = getAceEditor(sectionCss);
+			return aceEditor.getValue();
+		}, this.cssSelector);
+	}
+
+	getContent(): webDriverPromise.Promise<Object> {
+		return this.getSerializedContent().then((serializedContent: string) => {
+			try {
+				if (serializedContent) {
+					return JSON.parse(serializedContent);
+				}
+				else {
+					return this.emptyContent;
+				}
+			}
+			catch (e) {
+				throw new Error('cannot deserialize: ' + serializedContent);
+			}
+		});
+	}
+	
+	private setSerializedContent(serializedJson: string): webDriverPromise.Promise<void> {
+		return this.browserInstance.executeScript(function setAceEditorContentContent() {
+			var sectionCss: string = arguments[0];
+			var serializedContent: string = arguments[1];
+			var getAceEditor = (sectionCss: string): AceAjax.Editor => {
+				var aceEditorElement: any = document.querySelector(sectionCss);
+				var aceEditor: AceAjax.Editor = aceEditorElement.env.editor;
+				return aceEditor;
+			};
+			var aceEditor = getAceEditor(sectionCss);
+			aceEditor.setValue(serializedContent);
+			aceEditor.clearSelection();
+		}, this.cssSelector, serializedJson);		 
+	}	
+
+	setContent(content: Object | Object[]): webDriverPromise.Promise<void> {
+		var serializedContent = JSON.stringify(content);
+		return this.setSerializedContent(serializedContent);
+	}
 }
