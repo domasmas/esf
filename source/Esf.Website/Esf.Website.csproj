@@ -205,6 +205,7 @@
     <TypeScriptCompile Include="App\esfState\esfStateSaveCommand.ts" />
     <TypeScriptCompile Include="App\main.ts" />
     <TypeScriptCompile Include="App\testsFramework\jasmineExtraMatchers.d.ts" />
+    <TypeScriptCompile Include="endToEndTests\esf.pageObject.AceEditorFixture.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.pageObject.ts" />
     <TypeScriptCompile Include="endToEndTests\esf.WebsiteHome.spec.ts" />
     <TypeScriptCompile Include="App\testsFramework\jasmineExtraMatchers.ts" />

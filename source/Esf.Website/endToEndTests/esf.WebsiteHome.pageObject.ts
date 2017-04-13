@@ -1,6 +1,7 @@
 ﻿/// <reference types="selenium-webdriver" />
 import { protractor, Ptor, browser, ProtractorBrowser, by, ElementFinder, element, WebElementPromise, WebElement } from 'protractor';
 import { promise as webDriverPromise }  from 'selenium-webdriver';
+import { AceEditorFixture, IJsonEditor } from './esf.pageObject.AceEditorFixture';
 
 export class EsfHome {
 	constructor(private browserInstance: ProtractorBrowser) {
@@ -10,10 +11,10 @@ export class EsfHome {
 		this.resultViewer = new AceEditorFixture(browserInstance, '.result-viewer', EsfHome.emptySectionContent);
     }
 
-	private queryEditor: AceEditorFixture;
-	private mappingEditor: AceEditorFixture;
-	private documentsEditor: AceEditorFixture;
-	private resultViewer: AceEditorFixture;
+	private queryEditor: IJsonEditor;
+	private mappingEditor: IJsonEditor;
+	private documentsEditor: IJsonEditor;
+	private resultViewer: IJsonEditor;
 
     navigate(): void {
         this.browserInstance.get('http://localhost:40082');  
@@ -136,60 +137,4 @@ export class EsfHome {
             /(https{0,1}:\/{0,2}){0,1}(\w*):*\d*\/state\/\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/.test(url)
         );
     }
-}
-
-class AceEditorFixture
-{
-	constructor(private browserInstance: ProtractorBrowser, private cssSelector: string, private emptyContent: any) {		
-	}
-	
-	private getSerializedContent(): webDriverPromise.Promise<string> {
-		return this.browserInstance.executeScript(function () {
-			var sectionCss: string = arguments[0];
-			var getAceEditor = (sectionCss: string): AceAjax.Editor => {
-				var aceEditorElement: any = document.querySelector(sectionCss);
-				var aceEditor: AceAjax.Editor = aceEditorElement.env.editor;
-				return aceEditor;
-			};
-
-			var aceEditor = getAceEditor(sectionCss);
-			return aceEditor.getValue();
-		}, this.cssSelector);
-	}
-
-	getContent(): webDriverPromise.Promise<Object> {
-		return this.getSerializedContent().then((serializedContent: string) => {
-			try {
-				if (serializedContent) {
-					return JSON.parse(serializedContent);
-				}
-				else {
-					return this.emptyContent;
-				}
-			}
-			catch (e) {
-				throw new Error('cannot deserialize: ' + serializedContent);
-			}
-		});
-	}
-	
-	private setSerializedContent(serializedJson: string): webDriverPromise.Promise<void> {
-		return this.browserInstance.executeScript(function setAceEditorContentContent() {
-			var sectionCss: string = arguments[0];
-			var serializedContent: string = arguments[1];
-			var getAceEditor = (sectionCss: string): AceAjax.Editor => {
-				var aceEditorElement: any = document.querySelector(sectionCss);
-				var aceEditor: AceAjax.Editor = aceEditorElement.env.editor;
-				return aceEditor;
-			};
-			var aceEditor = getAceEditor(sectionCss);
-			aceEditor.setValue(serializedContent);
-			aceEditor.clearSelection();
-		}, this.cssSelector, serializedJson);		 
-	}	
-
-	setContent(content: Object | Object[]): webDriverPromise.Promise<void> {
-		var serializedContent = JSON.stringify(content);
-		return this.setSerializedContent(serializedContent);
-	}
 }
