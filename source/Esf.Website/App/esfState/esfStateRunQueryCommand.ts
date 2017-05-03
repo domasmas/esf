@@ -31,7 +31,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
 
         this.commandStateStream.next({
             commandState: CommandStateType.InProgress,
-            result: 'Elastic Search is running Query. Wait for results...',
+            result: '',
             status: ''
         });
 
