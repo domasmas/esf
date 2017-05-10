@@ -47,8 +47,18 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
                     this.commandStateStream.next({
                         commandState: CommandStateType.Enabled,
                         result: '',
-                        status: queryResult.queryResponse.jsonValidationError.error ||
-                            queryResult.queryResponse.elasticsearchError.error
+                        status: (() => {
+                            if (queryResult.createMappingResponse && queryResult.createMappingResponse.jsonValidationError) {
+                                return queryResult.createMappingResponse.jsonValidationError.error;
+                            }
+                            if (queryResult.createDocumentsResponse && queryResult.createDocumentsResponse.jsonValidationError) {
+                                return queryResult.createDocumentsResponse.jsonValidationError.error;
+                            }
+                            if (queryResult.queryResponse && queryResult.queryResponse.jsonValidationError) {
+                                return queryResult.queryResponse.jsonValidationError.error;
+                            }
+                            return null;
+                        })()
                     });
                 }
             }, (error: Error) => {

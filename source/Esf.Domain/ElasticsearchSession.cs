@@ -1,6 +1,8 @@
 ﻿using Elasticsearch.Net;
 using Esf.Domain.Helpers;
+using Esf.Domain.Validation;
 using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,19 +15,23 @@ namespace Esf.Domain
         private readonly string _typeName;
 
         private IIdGenerator _documentsIdGenerator;
+        private IEsfStateInputValidator _validator;
 
         public ElasticsearchSession(IElasticLowLevelClient elasticClient,
-            IUniqueNameResolver uniqueNameResolver, IIdGenerator documentsIdGenerator)
+                                    IUniqueNameResolver uniqueNameResolver, 
+                                    IIdGenerator documentsIdGenerator,
+                                    IEsfStateInputValidator validator)
         {
             _elasticClient = elasticClient;
             _indexName = uniqueNameResolver.GetUniqueName();
             _typeName = uniqueNameResolver.GetUniqueName();
             _documentsIdGenerator = documentsIdGenerator;
+            _validator = validator;
         }
 
         public async Task<EsfResponse> CreateMapping(string mappingObject)
         {
-            EsfResponse invalidJsonResponse = TestInvalidJson(mappingObject);
+            EsfResponse invalidJsonResponse = TestInvalidJson("mapping", mappingObject);
             if (invalidJsonResponse != null)
             {
                 return invalidJsonResponse;
@@ -38,13 +44,15 @@ namespace Esf.Domain
         {
             StringBuilder bulkBody = new StringBuilder();
 
+            int index = 0;
             foreach (string source in documents)
             {
-                EsfResponse invalidJsonResponse = TestInvalidJson(source);
+                EsfResponse invalidJsonResponse = TestInvalidJson($"document[{index++}]", source);
                 if (invalidJsonResponse != null)
                 {
                     return invalidJsonResponse;
                 }
+
                 var actionObject = new
                 {
                     create = new
@@ -72,7 +80,7 @@ namespace Esf.Domain
 
         public async Task<EsfResponse> RunQuery(string query)
         {
-            EsfResponse invalidJsonResponse = TestInvalidJson(query);
+            EsfResponse invalidJsonResponse = TestInvalidJson("query", query);
             if (invalidJsonResponse != null)
             {
                 return invalidJsonResponse;
@@ -81,20 +89,20 @@ namespace Esf.Domain
             return GetEsfResponse(response);
         }
 
-        private static EsfResponse TestInvalidJson(string serializedJson)
+        private EsfResponse TestInvalidJson(string fieldName, string serializedJson)
         {
-            try
+            var errors = _validator.GetErrors(fieldName, serializedJson);
+
+            if (errors.Any())
             {
-                dynamic result = JSON.Deserialize<dynamic>(serializedJson);
-                return null;
-            }
-            catch (Exception ex)
-            {
+                var combinedErrorMessages = String.Join(Environment.NewLine, errors.Select(x => x.ErrorMessage));
+
                 var jsonValidationError = new JsonError()
                 {
-                    Error = ex.Message,
+                    Error = combinedErrorMessages,
                     SourceJson = serializedJson
                 };
+
                 return new EsfResponse()
                 {
                     IsSuccess = false,
@@ -103,6 +111,8 @@ namespace Esf.Domain
                     SuccessJsonResult = null
                 };
             }
+
+            return null;
         }
 
         private static EsfResponse GetEsfResponse(ElasticsearchResponse<string> response)

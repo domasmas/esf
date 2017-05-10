@@ -1,5 +1,6 @@
 ﻿using Elasticsearch.Net;
 using Esf.Domain.Helpers;
+using Esf.Domain.Validation;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
 using System;
@@ -24,7 +25,8 @@ namespace Esf.Domain.Tests.Elasticsearch
         {
             var esConfig = new ConnectionConfiguration(esfQueryRunnerUri);
             var esClient = new ElasticLowLevelClient(esConfig);
-            var elasticsearchFactory = new ElasticsearchSessionFactory(esClient, uniqueNameResolver, idGenerator);
+            var validator = new EsfStateInputValidator();
+            var elasticsearchFactory = new ElasticsearchSessionFactory(esClient, uniqueNameResolver, idGenerator, validator);
             _esfQueryRunner = new EsfQueryRunner(elasticsearchFactory);
         }
 
