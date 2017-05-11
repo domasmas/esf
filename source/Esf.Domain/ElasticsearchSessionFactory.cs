@@ -1,9 +1,5 @@
 ﻿using Elasticsearch.Net;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Esf.Domain.Validation;
 
 namespace Esf.Domain
 {
@@ -12,17 +8,23 @@ namespace Esf.Domain
         private IElasticLowLevelClient _elasticClient;
         private IUniqueNameResolver _uniqueNameResolver;
         private IIdGenerator _idGenerator;
+        private IEsfStateInputValidator _validator;
 
-        public ElasticsearchSessionFactory(IElasticLowLevelClient elasticClient, IUniqueNameResolver uniqueNameResolver, IIdGenerator idGenerator)
+        public ElasticsearchSessionFactory(
+                IElasticLowLevelClient elasticClient, 
+                IUniqueNameResolver uniqueNameResolver, 
+                IIdGenerator idGenerator, 
+                IEsfStateInputValidator validator)
         {
             _elasticClient = elasticClient;
             _uniqueNameResolver = uniqueNameResolver;
             _idGenerator = idGenerator;
+            _validator = validator;
         }
 
         public IElasticsearchSession Create()
         {
-            return new ElasticsearchSession(_elasticClient, _uniqueNameResolver, _idGenerator);
+            return new ElasticsearchSession(_elasticClient, _uniqueNameResolver, _idGenerator, _validator);
         }
     }
 }

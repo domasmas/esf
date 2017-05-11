@@ -1,8 +1,10 @@
 ﻿using Elasticsearch.Net;
 using Esf.Domain.Helpers;
+using Esf.Domain.Validation;
 using Moq;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
@@ -26,8 +28,9 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             uniqueNameResolverMock.Setup(r => r.GetUniqueName()).Returns(indexAndTypeName);
             var idGeneratorMock = new Mock<IIdGenerator>();
             idGeneratorMock.Setup(g => g.NextId()).Returns(1);
+            var validator = new EsfStateInputValidator();
 
-            using (var session = new Domain.ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGeneratorMock.Object))
+            using (var session = new Domain.ElasticsearchSession(esClient, uniqueNameResolverMock.Object, idGeneratorMock.Object, validator))
             {
                 var mappingCreated = session.CreateMapping(mapping).Result.IsSuccess;
                 var documentsCreated = session.InsertDocuments(documents).Result.IsSuccess;

@@ -9,6 +9,7 @@ using Esf.Domain;
 using Esf.DataAccess;
 using Elasticsearch.Net;
 using AutoMapper;
+using Esf.Domain.Validation;
 
 namespace Esf.WebApi.App_Start
 {
@@ -44,6 +45,12 @@ namespace Esf.WebApi.App_Start
             Kernel.Bind<IEsDatabaseClient>()
                   .To<EsDatabaseClient>()
                   .WithConstructorArgument(connections["EsFiddleDb"].ConnectionString);
+
+            Kernel.Bind<IEsfStateValidator>()
+                  .To<EsfStateValidator>();
+
+            Kernel.Bind<IEsfStateInputValidator>()
+                  .To<EsfStateInputValidator>();
 
 			IMapper autoMapper = AutoMapperBootstrapper.Bootstrap();
 			Kernel.Bind<IMapper>().ToConstant(autoMapper);

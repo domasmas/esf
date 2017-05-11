@@ -88,6 +88,15 @@
     <Compile Include="Helpers\JSON.cs" />
     <Compile Include="NewEsfStateFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Validation\EsfStateInputValidator.cs" />
+    <Compile Include="Validation\EsfStateValidator.cs" />
+    <Compile Include="Validation\IEsfStateInputValidator.cs" />
+    <Compile Include="Validation\IEsfStateValidator.cs" />
+    <Compile Include="Validation\InputValidationResponse.cs" />
+    <Compile Include="Validation\InputValidationRule.cs" />
+    <Compile Include="Validation\JsonArrayValidationRule.cs" />
+    <Compile Include="Validation\JsonValidationRule.cs" />
+    <Compile Include="Validation\LengthValidationRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Esf.DataAccess\Esf.DataAccess.csproj">
