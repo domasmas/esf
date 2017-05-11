@@ -102,13 +102,17 @@ export class EsfHome {
 
     hasSaveCommand(): webDriverPromise.Promise<boolean> {
         return this.getSaveCommandElement().isPresent();
-    }
+	}
 
-    executeSaveCommand(): webDriverPromise.Promise<void> {
+	isSaveCommandDisabled(): webDriverPromise.Promise<boolean> {
+		return this.browserInstance.element(by.css('.save-command.disabled')).isPresent();
+	}
+
+	executeSaveCommand(): webDriverPromise.Promise<{}> {
         var saveCommandElement = this.getSaveCommandElement();
-        return saveCommandElement.click().then(() => {
-            this.browserInstance.sleep(500); //workaround for "Error while waiting for Protractor to sync"
-        });
+		return saveCommandElement.click().then(() => {
+			this.browserInstance.sleep(500); //workaround for "Error while waiting for Protractor to sync"
+		}).catch(() => { });
     }
     
     executeRunCommand(): webDriverPromise.Promise<void> {

@@ -36,18 +36,18 @@ export class EsfStateSaveCommand extends EsfCommand<EsfStateSaveCommandState> {
         });
 
         this.esfStateService
-            .createNewVersion(EsfStateViewModel.toDto(state))
+            .createNewVersion(state.toDto())
             .subscribe((existingState: ExistingEsfStateDto) => {
-                let savedState = EsfStateViewModel.fromDto(existingState.state);
+                let savedState = state.fromDto(existingState.state);
                 this.commandStateStream.next({
-                    commandState: CommandStateType.Enabled,
+                    commandState: CommandStateType.Disabled,
                     savedState: savedState
                 });
                 this.router.navigate(['/state', existingState.stateUrl]);
             }, (error: Error) => {
                 console.error(error);
                 this.commandStateStream.next({
-                    commandState: CommandStateType.Enabled,
+                    commandState: CommandStateType.Disabled,
                     savedState: state
                 });
             });

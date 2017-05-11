@@ -16,7 +16,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
         private esfQueryRunnerService: EsfQueryRunnerServiceContract,
         private stateValidationService: EsfStateValidationService
     ) {
-        super();
+		super();
     }
 
     public run(state: EsfStateViewModel): void {
@@ -27,7 +27,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             return;
         }
 
-        let stateDto = EsfStateViewModel.toDto(state);
+        let stateDto = state.toDto();
 
         this.commandStateStream.next({
             commandState: CommandStateType.InProgress,
@@ -35,7 +35,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             status: ''
         });
 
-        this.esfQueryRunnerService.runQuery(state.mapping, stateDto.documents, state.query)
+        this.esfQueryRunnerService.runQuery(stateDto.mapping, stateDto.documents, stateDto.query)
             .subscribe((queryResult: IEsfRunQueryResponse) => {
                 if (queryResult.queryResponse.isSuccess) {
                     this.commandStateStream.next({

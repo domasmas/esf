@@ -352,9 +352,13 @@ describe('esfState.component', function () {
             var changedDocument = '[ {"savedDocument" : 66}, {"anotherDoc": "value"} ]';
             esfComponent.getDocumentsJsonEditor().textChange.emit(changedDocument);
             esfComponent.fixture.detectChanges();
-            esfComponent.saveCommand();
-            let expectedDto = JSON.parse(JSON.stringify(esfComponent.instance.state));
-            expectedDto.documents = JSON.parse(changedDocument).map((x: Object) => JSON.stringify(x))
+			esfComponent.saveCommand();
+			var initialState: EsfStateDto = esfComponent.stateService.initialState.state;
+			let expectedDto = <EsfStateDto> {
+				documents: ['{"savedDocument":66}', '{"anotherDoc":"value"}'],
+				mapping: initialState.mapping,
+				query: initialState.query
+			};
             //then
             expect(esfComponent.stateService.createNewVersionSpy).toHaveBeenCalledWith(expectedDto);
         });

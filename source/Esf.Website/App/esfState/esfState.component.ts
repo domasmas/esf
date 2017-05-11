@@ -23,7 +23,6 @@ import { CommandStateType } from '../shared/commands/commandStateType';
 })
 export class EsFiddlerComponent implements OnInit {
     public state: EsfStateViewModel;
-    private lastSavedState: EsfStateDto;
     private sub: any;
 
     private queryResult: string;
@@ -42,12 +41,9 @@ export class EsFiddlerComponent implements OnInit {
         private saveCommand: EsfStateSaveCommand,
         private runQueryCommand: EsfStateRunQueryCommand
     ) {
-        this.state = new EsfStateViewModel();
-        this.state = {
-            documents: null,
-            mapping: null,
-            query: null,
-        };
+		var onStateChange = this.onStateChange.bind(this);
+		this.state = new EsfStateViewModel(onStateChange, onStateChange, onStateChange);
+
         this.queryResult = '';
 
         this.runCommandEnabled = true;
@@ -74,9 +70,9 @@ export class EsFiddlerComponent implements OnInit {
         // Save State Command
 
         this.saveCommand.getCommandState().subscribe((commandState: EsfStateSaveCommandState) => {
-            this.state = commandState.savedState;
-            this.saveCommandEnabled = commandState.commandState == CommandStateType.Enabled;
-            this.saveCommandInProgress = commandState.commandState == CommandStateType.InProgress;
+			this.saveCommandEnabled = commandState.commandState == CommandStateType.Enabled;
+			this.state = commandState.savedState;
+			this.saveCommandInProgress = commandState.commandState == CommandStateType.InProgress;
             this.refreshStateFlags();
         });
 
@@ -95,26 +91,27 @@ export class EsFiddlerComponent implements OnInit {
         this.editorsEnabled = !this.runCommandInProgress && !this.saveCommandInProgress;
     }
 
-    private getInitialState(): void {
+	private getInitialState(): void {
         this.esfStateService
             .getInitialState()
             .subscribe((state: ExistingEsfStateDto) => {
                 console.log('initial state retrieved');
-                this.state = EsfStateViewModel.fromDto(state.state);
+				this.state = this.state.fromDto(state.state);
+				this.saveCommandEnabled = false;
         }, (error: Error) => {
             console.error(error);
         });
     }
 
-    private getStateByUrl(stateUrl: string): void {
+	private onStateChange(): void {
+		this.saveCommandEnabled = true;
+	}
+
+	private getStateByUrl(stateUrl: string): void {
         this.esfStateService.getState(stateUrl)
             .subscribe((state: ExistingEsfStateDto) => {
-                this.state = EsfStateViewModel.fromDto(state.state);
-                this.lastSavedState = this.copy(this.state);
+				this.state = this.state.fromDto(state.state);
+				this.saveCommandEnabled = false;
             });        
-    }
-
-    private copy(source: any): any {
-        return JSON.parse(JSON.stringify(source));
     }
 }

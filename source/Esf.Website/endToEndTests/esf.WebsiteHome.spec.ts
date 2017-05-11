@@ -66,6 +66,10 @@ describe('Given Esf.Website home page', function () {
             expect(resultContent).toEqualAsJson(EsfHome.emptySectionContent);
         });
 
+		it('should disable the save command before making changes', () => {
+			expect(esfHome.isSaveCommandDisabled()).toBe(true);
+		});
+
         it('should be able to run query', (done: () => void) => {
             esfHome.executeRunCommand();
             var resultContent = esfHome.getResultContent();
@@ -121,10 +125,10 @@ describe('Given Esf.Website home page', function () {
             it('should not change URL if parameters havent changed', () => {
                 esfHome.executeSaveCommand();
 
-                browser.getCurrentUrl().then((url1: string) => {
-                    esfHome.executeSaveCommand();
-
-                    expect(browser.getCurrentUrl()).toEqual(url1);
+				browser.getCurrentUrl().then((url1: string) => {
+					expect(esfHome.isSaveCommandDisabled()).toBe(true, 'Save command must be disabled');
+					esfHome.executeSaveCommand();
+					expect(browser.getCurrentUrl()).toEqual(url1, 'URL must not change');
                 });
             });
 
