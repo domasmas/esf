@@ -95,7 +95,6 @@ export class EsFiddlerComponent implements OnInit {
         this.esfStateService
             .getInitialState()
             .subscribe((state: ExistingEsfStateDto) => {
-                console.log('initial state retrieved');
 				this.state = this.state.fromDto(state.state);
 				this.saveCommandEnabled = false;
         }, (error: Error) => {

@@ -29,7 +29,7 @@ describe('esfState.service', function () {
     });
 
     it('should be able to the initial state', function () {
-        var expectedState: ExistingEsfStateDto = {
+        var esfStateDto: ExistingEsfStateDto = {
             state: <EsfStateDto> {
                 mapping: "{ \"mappingKey\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
@@ -37,25 +37,37 @@ describe('esfState.service', function () {
             },
             stateUrl: '00000000-0000-0000-0000-000000000000'
         };
+
+        var httpResponseState = {
+            esfState: esfStateDto,
+            success: true
+        };
+
         serviceFixture.configureResponse({
             expectedRequest: {
                 url: '/states/new'
             },
-            response: { status: 200, body: expectedState }
+            response: { status: 200, body: httpResponseState }
         });
+
         serviceFixture.esfStateService.getInitialState().subscribe((actualState: ExistingEsfStateDto) => {
-            expect(actualState).toEqual(expectedState);
+            expect(actualState).toEqual(esfStateDto);
         });
     });
 
     it('should be able to create new version state', function () {
-        var httpResponseState: ExistingEsfStateDto = {
+        var esfStateDto: ExistingEsfStateDto = {
             state: <EsfStateDto>{
                 mapping: "{ \"mappingKeyModified\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
                 documents: ['{ \"doc1\": 1 }']
             },
             stateUrl: '12345678-0000-0000-0000-000000000000'
+        };
+
+        var httpResponseState = {
+            esfState: esfStateDto,
+            success: true
         };
 
         serviceFixture.configureResponse({
@@ -73,13 +85,14 @@ describe('esfState.service', function () {
             documents: ['{ \"doc1\": 55 }']
         };
         serviceFixture.esfStateService.createNewVersion(newEsfState).subscribe((actualState: ExistingEsfStateDto) => {
-            expect(actualState).toEqual(httpResponseState);
+            expect(actualState).toEqual(esfStateDto);
         });
     });
 
     it('should be able to get existing state by id GUID', function () {
-        var existingStateGuid: string = 'DDC4133A-6706-4267-A32A-89F844AB27C4';        
-        var httpResponseState: ExistingEsfStateDto = {
+        var existingStateGuid: string = 'DDC4133A-6706-4267-A32A-89F844AB27C4'; 
+               
+        var esfStateDto: ExistingEsfStateDto = {
             state: <EsfStateDto>{
                 mapping: "{ \"mappingKeyModified\": \"value\" }",
                 query: "{ \"queryKey\": \"value\" }",
@@ -87,6 +100,12 @@ describe('esfState.service', function () {
             },
             stateUrl: existingStateGuid
         };
+
+        var httpResponseState = {
+            esfState: esfStateDto,
+            success: true
+        };
+
         serviceFixture.configureResponse({
             expectedRequest: {
                 url: `/states/?stateUrl=${existingStateGuid}`
@@ -95,7 +114,7 @@ describe('esfState.service', function () {
         });
 
         serviceFixture.esfStateService.getState(existingStateGuid).subscribe((actualState: ExistingEsfStateDto) => {
-            expect(actualState).toEqual(httpResponseState);
+            expect(actualState).toEqual(esfStateDto);
         });
     });
 });

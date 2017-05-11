@@ -183,6 +183,7 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="App\esfState\esfStateResponseDto.ts" />
     <TypeScriptCompile Include="App\shared\commands\commandStateType.ts" />
     <TypeScriptCompile Include="App\shared\commands\esfCommand.ts" />
     <TypeScriptCompile Include="App\shared\jsonEditor\jsonEditor.directive.ts" />

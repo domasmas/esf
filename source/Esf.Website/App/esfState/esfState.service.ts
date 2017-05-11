@@ -4,6 +4,7 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 import { EsfStateDto } from './esfStateDto';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
+import { EsfStateResponseDto } from './esfStateResponseDto';
 
 @Injectable()
 export class EsfStateService {
@@ -15,8 +16,11 @@ export class EsfStateService {
     getInitialState(): Observable<ExistingEsfStateDto> {
         var url = `${EsfStateService.serviceUrl}/states/new`;
         return this.http.get(url).map((res: Response) => {
-            var result = res.json();
-            return <ExistingEsfStateDto>result;
+            var result = <EsfStateResponseDto>res.json();
+            if (result.success) {
+                return <ExistingEsfStateDto>result.esfState;
+            }
+            return Observable.throw(result.error);
         }, (error: Error) => {
             return error;
         });
@@ -29,19 +33,25 @@ export class EsfStateService {
         let options = new RequestOptions({ headers: headers });
 
         return this.http.post(url, body, options).map((res: Response) => {
-            var result = res.json();
-            return <ExistingEsfStateDto>result;
+            let result = <EsfStateResponseDto>res.json();
+            if (result.success) {
+                return <ExistingEsfStateDto>result.esfState;
+            }
+            return Observable.throw(result.error);
         }, (error: Error) => {
             return error;
-        });
+        }); 
     }
 
     getState(stateUrl: string): Observable<ExistingEsfStateDto> {
         let url = `${EsfStateService.serviceUrl}/states/?stateUrl=${stateUrl}`;
 
         return this.http.get(url).map((res: Response) => {
-            var result = res.json();
-            return <ExistingEsfStateDto>result;
+            var result = <EsfStateResponseDto>res.json();
+            if (result.success) {
+                return <ExistingEsfStateDto>result.esfState;
+            }
+            return Observable.throw(result.error);
         }, (error: Error) => {
             return error;
         });        

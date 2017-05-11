@@ -4,6 +4,7 @@ using System.Web.Http;
 using Esf.DataAccess;
 using AutoMapper;
 using Esf.Domain.Validation;
+using System.Linq;
 
 namespace Esf.WebApi.Areas.EsfState
 {
@@ -23,27 +24,73 @@ namespace Esf.WebApi.Areas.EsfState
         
         [HttpGet]
         [Route("")]
-        public async Task<ExistingEsfStateDto> Get(string stateUrl)
+        public async Task<EsfStateResponseDto> Get(string stateUrl)
         {
-            Guid parsedStateUrl = Guid.Parse(stateUrl);
-            EsState storedState = await _esStatesRepository.FindEsState((state) => state.StateUrl == parsedStateUrl);
-            return _mapper.Map<EsState, ExistingEsfStateDto>(storedState);
+            try
+            {
+                Guid parsedStateUrl = Guid.Parse(stateUrl);
+                EsState storedState = await _esStatesRepository.FindEsState((state) => state.StateUrl == parsedStateUrl);
+                var newState = _mapper.Map<EsState, ExistingEsfStateDto>(storedState);
+
+                return new EsfStateResponseDto
+                {
+                    EsfState = newState,
+                    Success = true
+                };
+            }
+            catch(Exception exception)
+            {
+                return new EsfStateResponseDto
+                {
+                    Error = exception.Message,
+                    Success = false
+                };
+            }
         }
         
         [HttpPost]
         [Route("")]
-        public async Task<ExistingEsfStateDto> Post([FromBody]EsfStateDto state)
+        public async Task<EsfStateResponseDto> Post([FromBody]EsfStateDto state)
         {
-            var newEsState = _mapper.Map<EsfStateDto, EsState>(state);
-			var insertResponse = await _esStatesRepository.InsertEsState(newEsState);
-			return _mapper.Map<EsState, ExistingEsfStateDto>(insertResponse);
+            try
+            {
+                var inputErrors = _validator.GetStateErrors(state.Mapping, state.Query, state.Documents);
+                if (inputErrors != null && inputErrors.Any())
+                {
+                    return new EsfStateResponseDto
+                    {
+                        Error = String.Join(Environment.NewLine, inputErrors.Select(x => x.ErrorMessage)),
+                        Success = false
+                    };
+                }
+
+                var newEsState = _mapper.Map<EsfStateDto, EsState>(state);
+                var insertResponse = await _esStatesRepository.InsertEsState(newEsState);
+                var newState = _mapper.Map<EsState, ExistingEsfStateDto>(insertResponse);
+
+                return new EsfStateResponseDto
+                {
+                    EsfState = newState,
+                    Success = true
+                };
+            }
+            catch(Exception exception)
+            {
+                return new EsfStateResponseDto
+                {
+                    Error = exception.Message,
+                    Success = false
+                };
+            }
         }
         
-        [HttpDelete]
-        [Route("")]
-        public async void Delete(string id)
-        {
-            await _esStatesRepository.DeleteEsState(id);
-        }
+
+        // TODO: I don't think we even need this one... Looks dangerous - people can delete other people's states
+        //[HttpDelete]
+        //[Route("")]
+        //public async void Delete(string id)
+        //{
+        //    await _esStatesRepository.DeleteEsState(id);
+        //}
     }
 }
