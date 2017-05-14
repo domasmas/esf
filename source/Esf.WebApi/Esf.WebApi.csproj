@@ -201,6 +201,9 @@
     <Compile Include="Areas\EsfState\ExistingEsfStateDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateDto.cs" />
     <Compile Include="Areas\EsfState\New\NewEsfStateController.cs" />
+    <Compile Include="Exceptions\EsfException.cs" />
+    <Compile Include="Exceptions\EsfValidationException.cs" />
+    <Compile Include="Filters\EsfExceptionFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>

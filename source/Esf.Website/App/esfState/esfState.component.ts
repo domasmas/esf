@@ -111,6 +111,8 @@ export class EsFiddlerComponent implements OnInit {
             .subscribe((state: ExistingEsfStateDto) => {
 				this.state = this.state.fromDto(state.state);
 				this.saveCommandEnabled = false;
-            });        
+            }, (error: Error) => {
+                console.error(error);
+            });
     }
 }

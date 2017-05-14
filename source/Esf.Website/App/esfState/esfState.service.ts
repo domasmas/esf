@@ -17,10 +17,7 @@ export class EsfStateService {
         var url = `${EsfStateService.serviceUrl}/states/new`;
         return this.http.get(url).map((res: Response) => {
             var result = <EsfStateResponseDto>res.json();
-            if (result.success) {
-                return <ExistingEsfStateDto>result.esfState;
-            }
-            return Observable.throw(result.error);
+            return <ExistingEsfStateDto>result.esfState;
         }, (error: Error) => {
             return error;
         });
@@ -34,10 +31,7 @@ export class EsfStateService {
 
         return this.http.post(url, body, options).map((res: Response) => {
             let result = <EsfStateResponseDto>res.json();
-            if (result.success) {
-                return <ExistingEsfStateDto>result.esfState;
-            }
-            return Observable.throw(result.error);
+            return <ExistingEsfStateDto>result.esfState;
         }, (error: Error) => {
             return error;
         }); 
@@ -48,10 +42,7 @@ export class EsfStateService {
 
         return this.http.get(url).map((res: Response) => {
             var result = <EsfStateResponseDto>res.json();
-            if (result.success) {
-                return <ExistingEsfStateDto>result.esfState;
-            }
-            return Observable.throw(result.error);
+            return <ExistingEsfStateDto>result.esfState;
         }, (error: Error) => {
             return error;
         });        
