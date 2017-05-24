@@ -192,7 +192,6 @@
     <Compile Include="Areas\EsfQueryRunner\EsfErrorDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerController.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerDto.cs" />
-    <Compile Include="Areas\EsfQueryRunner\EsfQueryRunnerResponseDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\EsfRunResponseDto.cs" />
     <Compile Include="Areas\EsfQueryRunner\JsonErrorDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateController.cs" />
@@ -201,8 +200,7 @@
     <Compile Include="Areas\EsfState\ExistingEsfStateDto.cs" />
     <Compile Include="Areas\EsfState\EsfStateDto.cs" />
     <Compile Include="Areas\EsfState\New\NewEsfStateController.cs" />
-    <Compile Include="Exceptions\EsfException.cs" />
-    <Compile Include="Exceptions\EsfValidationException.cs" />
+    <Compile Include="Filters\EsfExceptionDto.cs" />
     <Compile Include="Filters\EsfExceptionFilterAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

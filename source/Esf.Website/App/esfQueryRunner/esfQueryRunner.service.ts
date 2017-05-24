@@ -4,28 +4,11 @@ import { Http, Response, Headers, RequestOptions } from '@angular/http';
 import { Injectable } from '@angular/core';
 
 export abstract class EsfQueryRunnerServiceContract {
-    abstract runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse>;
+    abstract runQuery(mapping: string, documents: string[], query: string): Observable<EsfQueryRunResult>;
 }
 
-export interface IEsfRunQueryResponse {
-    createMappingResponse: IEsfRunResponse;
-    createDocumentsResponse: IEsfRunResponse;
-    queryResponse: IEsfRunResponse
-}
-export interface IEsfRunResponse {
-    isSuccess: boolean;
-    successJsonResult: string;
-    jsonValidationError: IEsfJsonError;
-    elasticsearchError: IEsfError;
-}
-
-export interface IEsfJsonError {
-    sourceJson: string;
-    error: string;
-}
-export interface IEsfError {
-    httpStatusCode: number;
-    error: string;
+export interface EsfQueryRunResult {
+    result: string;
 }
 
 @Injectable()
@@ -36,7 +19,7 @@ export class EsfQueryRunnerService extends EsfQueryRunnerServiceContract {
 		super();
     }
 
-    public runQuery(mapping: string, documents: string[], query: string): Observable<IEsfRunQueryResponse> {
+    public runQuery(mapping: string, documents: string[], query: string): Observable<EsfQueryRunResult> {
         var endpointUrl: string = `${EsfQueryRunnerService.webApiServiceUrl}/query-runner`;
 
         let body = JSON.stringify({

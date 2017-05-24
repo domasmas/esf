@@ -73,9 +73,12 @@
     <Compile Include="ElasticsearchSession.cs" />
     <Compile Include="ElasticsearchSessionFactory.cs" />
     <Compile Include="EsfError.cs" />
-    <Compile Include="EsfResponse.cs" />
+    <Compile Include="EsfQueryRunResult.cs" />
     <Compile Include="EsfQueryRunner.cs" />
-    <Compile Include="EsfQuerySessionResponse.cs" />
+    <Compile Include="Exceptions\EsfException.cs" />
+    <Compile Include="Exceptions\EsfElasticSearchException.cs" />
+    <Compile Include="Exceptions\EsfInvalidStateException.cs" />
+    <Compile Include="Exceptions\EsfUnexpectedException.cs" />
     <Compile Include="IdGenerator.cs" />
     <Compile Include="IElasticsearchSession.cs" />
     <Compile Include="IElasticsearchSessionFactory.cs" />

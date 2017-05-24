@@ -4,7 +4,7 @@
             <a class="navbar-brand" href="#">ESFiddle</a>
         </div>
         <button type="button" 
-                (click)="runQueryCommand.run(state)" 
+                (click)="runClicked()" 
                 [ngClass]="{'disabled' : !runCommandEnabled}"
                 class="run-command btn btn-default navbar-btn">
             <span>Run</span>
@@ -15,7 +15,7 @@
         </button>
 
         <button type="button" 
-                (click)="saveCommand.run(state)" 
+                (click)="saveClicked()" 
                 [ngClass]="{'disabled' : !saveCommandEnabled}"
                 class="save-command btn btn-default navbar-btn">
             <span>Save</span>
@@ -31,16 +31,19 @@
         <div class="col-xs-6">
             <label>Mapping</label>
             <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="alert alert-danger" *ngIf="!!mappingInputError">{{mappingInputError}}</div>
         </div>
         <div class="col-xs-6">
             <label>Documents</label>
             <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="alert alert-danger" *ngIf="!!documentsInputError">{{documentsInputError}}</div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-6">
             <label>Query</label>
             <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            <div class="alert alert-danger" *ngIf="!!queryInputError">{{queryInputError}}</div>
         </div>
         <div class="col-xs-6">
             <label>Result</label>

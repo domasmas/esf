@@ -186,6 +186,9 @@
     <TypeScriptCompile Include="App\esfState\esfStateResponseDto.ts" />
     <TypeScriptCompile Include="App\shared\commands\commandStateType.ts" />
     <TypeScriptCompile Include="App\shared\commands\esfCommand.ts" />
+    <TypeScriptCompile Include="App\shared\exceptions\esfElasticSearchException.ts" />
+    <TypeScriptCompile Include="App\shared\exceptions\esfException.ts" />
+    <TypeScriptCompile Include="App\shared\exceptions\esfInvalidStateException.ts" />
     <TypeScriptCompile Include="App\shared\jsonEditor\jsonEditor.directive.ts" />
     <TypeScriptCompile Include="App\app.component.ts" />
     <TypeScriptCompile Include="App\pageNotFound\pageNotFound.component.ts" />

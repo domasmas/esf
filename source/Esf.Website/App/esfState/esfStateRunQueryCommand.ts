@@ -1,13 +1,16 @@
 ﻿import { Injectable } from '@angular/core';
+import { Response } from '@angular/http';
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
 import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateDto } from './esfStateDto';
 import { EsfStateService } from './esfState.service';
 import { EsfStateValidationService } from './esfStateValidation.service';
-import { EsfQueryRunnerServiceContract, IEsfRunQueryResponse } from '../esfQueryRunner/esfQueryRunner.service';
+import { EsfQueryRunnerServiceContract, EsfQueryRunResult } from '../esfQueryRunner/esfQueryRunner.service';
 import { CommandStateType } from '../shared/commands/commandStateType';
 import { EsfCommandState, EsfCommand } from '../shared/commands/esfCommand';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
+import { EsfException, EsfExceptionDetails } from '../shared/exceptions/esfException';
 
 @Injectable()
 export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandState> {
@@ -16,18 +19,10 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
         private esfQueryRunnerService: EsfQueryRunnerServiceContract,
         private stateValidationService: EsfStateValidationService
     ) {
-		super();
-    }
+		super(); 
+    } 
 
     public run(state: EsfStateViewModel): void {
-        let validationMessage = this.stateValidationService.getValidationMessage(state);
-
-        if (validationMessage) {
-            alert("Cannot run a query because of errors: " + "\n" + validationMessage);
-            return;
-        }
-
-        let stateDto = state.toDto();
 
         this.commandStateStream.next({
             commandState: CommandStateType.InProgress,
@@ -35,37 +30,34 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             status: ''
         });
 
+        try {
+            this.stateValidationService.validateEsfState(state);
+        }
+        catch (error) {
+            this.commandStateStream.next({
+                commandState: CommandStateType.Enabled,
+                result: '',
+                status: '',
+                error: error
+            });
+            return;
+        }
+
+        let stateDto = state.toDto();
+
         this.esfQueryRunnerService.runQuery(stateDto.mapping, stateDto.documents, stateDto.query)
-            .subscribe((queryResult: IEsfRunQueryResponse) => {
-                if (queryResult.queryResponse.isSuccess) {
-                    this.commandStateStream.next({
-                        commandState: CommandStateType.Enabled,
-                        result: queryResult.queryResponse.successJsonResult,
-                        status: ''
-                    });
-                } else {
-                    this.commandStateStream.next({
-                        commandState: CommandStateType.Enabled,
-                        result: '',
-                        status: (() => {
-                            if (queryResult.createMappingResponse && queryResult.createMappingResponse.jsonValidationError) {
-                                return queryResult.createMappingResponse.jsonValidationError.error;
-                            }
-                            if (queryResult.createDocumentsResponse && queryResult.createDocumentsResponse.jsonValidationError) {
-                                return queryResult.createDocumentsResponse.jsonValidationError.error;
-                            }
-                            if (queryResult.queryResponse && queryResult.queryResponse.jsonValidationError) {
-                                return queryResult.queryResponse.jsonValidationError.error;
-                            }
-                            return null;
-                        })()
-                    });
-                }
+            .subscribe((queryResult: EsfQueryRunResult) => {
+                this.commandStateStream.next({
+                    commandState: CommandStateType.Enabled,
+                    result: queryResult.result,
+                    status: ''
+                });
             }, (error: Error) => {
                 this.commandStateStream.next({
                     commandState: CommandStateType.Enabled,
                     result: '',
-                    status: JSON.stringify(error)
+                    status: '',
+                    error: ((error instanceof Response) ? (<Response>error).json() : error)
                 });
             });
     }

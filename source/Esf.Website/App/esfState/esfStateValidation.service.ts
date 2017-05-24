@@ -1,26 +1,27 @@
 ﻿import { Injectable } from '@angular/core';
 import { EsfStateViewModel } from './esfStateViewModel';
+import { EsfInvalidStateException } from '../shared/exceptions/esfInvalidStateException';
 
 @Injectable()
 export class EsfStateValidationService {
 
     static maxJSONLength: number = 10000;
 
-    getValidationMessage(state: EsfStateViewModel): string {
-        let validationResult = this.validateEsfState(state)
-            .filter((response: EsfStateValidationResult) => response.isError)
-            .map((response: EsfStateValidationResult) => response.errorMessage)
-            .join("\n");
+    validateEsfState(esfState: EsfStateViewModel): void {
+        let mappingErrors = this.validateMapping(esfState.mapping);
+        let documentErrors = this.validateDocuments(esfState.documents);
+        let queryErrors = this.validateQuery(esfState.query);
 
-        return validationResult;
-    }
-
-    validateEsfState(esfState: EsfStateViewModel): EsfStateValidationResult[] {
-        return [
-            this.validateMapping(esfState.mapping),
-            this.validateDocuments(esfState.documents),
-            this.validateQuery(esfState.query)
-        ].filter(r => r.isError);
+        if ([mappingErrors, documentErrors, queryErrors].some(r => r.isError)) {
+            let exception = new EsfInvalidStateException();
+            exception.type = EsfInvalidStateException.name;
+            exception.details = {
+                mapping: mappingErrors.errorMessage,
+                query: queryErrors.errorMessage,
+                documents: documentErrors.errorMessage
+            };
+            throw exception;
+        }
     }
 
     private validateMapping(mapping: string): EsfStateValidationResult {

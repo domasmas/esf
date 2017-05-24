@@ -10,6 +10,10 @@ import { EsfStateSaveCommand, EsfStateSaveCommandState } from './esfStateSaveCom
 import { EsfStateRunQueryCommand, EsfStateRunQueryCommandState } from './esfStateRunQueryCommand';
 import { EsfCommandState } from '../shared/commands/esfCommand';
 import { CommandStateType } from '../shared/commands/commandStateType';
+import { Response } from '@angular/http';
+import { EsfException, EsfExceptionDetails } from '../shared/exceptions/esfException';
+import { EsfInvalidStateException, EsfStateErrorDetails } from '../shared/exceptions/esfInvalidStateException';
+import { EsfElasticSearchException, ElasticSearchExceptionDetails } from '../shared/exceptions/esfElasticSearchException';
 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
@@ -34,6 +38,10 @@ export class EsFiddlerComponent implements OnInit {
     private saveCommandInProgress: boolean;
 
     private editorsEnabled: boolean;
+
+    private queryInputError: string;
+    private mappingInputError: string;
+    private documentsInputError: string;
 
     constructor(
         private route: ActivatedRoute,
@@ -62,7 +70,7 @@ export class EsFiddlerComponent implements OnInit {
             } else {
                 this.getStateByUrl(stateUrl);
             }
-        }); 
+        });
     }
 
     private setupCommands() {
@@ -74,6 +82,7 @@ export class EsFiddlerComponent implements OnInit {
 			this.state = commandState.savedState;
 			this.saveCommandInProgress = commandState.commandState == CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.handleError(commandState.error);
         });
 
         // Run Query Command
@@ -84,11 +93,53 @@ export class EsFiddlerComponent implements OnInit {
             this.runCommandEnabled = commandState.commandState === CommandStateType.Enabled;
             this.runCommandInProgress = commandState.commandState === CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.handleError(commandState.error);
         });
     }
 
     private refreshStateFlags(): void {
         this.editorsEnabled = !this.runCommandInProgress && !this.saveCommandInProgress;
+    }
+
+    private handleError(error: Error): void {
+        if (!error) {
+            return;
+        }
+
+        let errorType = (<EsfException><any>error).type;
+
+        if (errorType) {
+            switch (errorType) {
+                case EsfInvalidStateException.name:
+                    {
+                        let details = (<EsfInvalidStateException><any>error).details;
+                        this.mappingInputError = details.mapping;
+                        this.queryInputError = details.query;
+                        this.documentsInputError = details.documents;
+                    }
+                    break;
+                case EsfElasticSearchException.name:
+                    {
+                        let details = (<EsfElasticSearchException><any>error).details;
+                        this.queryError = details.errorMessage;
+                    }
+                    break;
+                default:
+                    {
+                        let details = (<EsfExceptionDetails>(<EsfException><any>error).details);
+                        this.queryError = details.errorMessage;
+                    }
+                    break;
+            }
+        } else {
+            this.queryError = error.message;
+        }
+    }
+
+    private resetErrorState(): void { 
+        this.mappingInputError = undefined;
+        this.queryInputError = undefined;
+        this.documentsInputError = undefined;
     }
 
 	private getInitialState(): void {
@@ -114,5 +165,15 @@ export class EsFiddlerComponent implements OnInit {
             }, (error: Error) => {
                 console.error(error);
             });
+    }
+
+    private saveClicked(): void {
+        this.resetErrorState();
+        this.saveCommand.run(this.state);
+    }
+
+    private runClicked(): void {
+        this.resetErrorState();
+        this.runQueryCommand.run(this.state);
     }
 }
