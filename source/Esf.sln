@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.6
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website", "Esf.Website\Esf.Website.csproj", "{08905CC7-E07E-415F-9F05-3586BAF5CB56}"
 EndProject
@@ -24,6 +24,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi", "Esf.WebApi\Esf.WebApi.csproj", "{24A64EE9-A151-4131-8136-7680007AFB46}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.DataAccess.IntegrationTests", "Esf.DataAccess.IntegrationTests\Esf.DataAccess.IntegrationTests.csproj", "{ACAE4673-121A-4B65-9300-CF5810C34316}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.Website.NetCore", "Esf.Website.NetCore\Esf.Website.NetCore.csproj", "{E0D3FAE5-4216-43EB-8C34-158A748CE4DA}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C848C8FB-7709-4882-B586-AAB1AE9617A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Esf.WebApi.NetCore", "Esf.WebApi.NetCore\Esf.WebApi.NetCore.csproj", "{C80C917E-D2F4-4904-9AE7-6053BD920C89}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +65,18 @@ Global
 		{ACAE4673-121A-4B65-9300-CF5810C34316}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ACAE4673-121A-4B65-9300-CF5810C34316}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ACAE4673-121A-4B65-9300-CF5810C34316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0D3FAE5-4216-43EB-8C34-158A748CE4DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0D3FAE5-4216-43EB-8C34-158A748CE4DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0D3FAE5-4216-43EB-8C34-158A748CE4DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0D3FAE5-4216-43EB-8C34-158A748CE4DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C848C8FB-7709-4882-B586-AAB1AE9617A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C848C8FB-7709-4882-B586-AAB1AE9617A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C848C8FB-7709-4882-B586-AAB1AE9617A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C848C8FB-7709-4882-B586-AAB1AE9617A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C80C917E-D2F4-4904-9AE7-6053BD920C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C80C917E-D2F4-4904-9AE7-6053BD920C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C80C917E-D2F4-4904-9AE7-6053BD920C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C80C917E-D2F4-4904-9AE7-6053BD920C89}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +89,8 @@ Global
 		{369708B4-28B4-48BE-BF18-99C7161947A7} = {D346AEB2-6C24-4DB2-B7E0-85474ADD22E0}
 		{24A64EE9-A151-4131-8136-7680007AFB46} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
 		{ACAE4673-121A-4B65-9300-CF5810C34316} = {A93FB772-61A4-4531-8BFE-C688445673B6}
+		{E0D3FAE5-4216-43EB-8C34-158A748CE4DA} = {30C098A3-59BF-456B-934C-C955CA8823C9}
+		{C848C8FB-7709-4882-B586-AAB1AE9617A3} = {30C098A3-59BF-456B-934C-C955CA8823C9}
+		{C80C917E-D2F4-4904-9AE7-6053BD920C89} = {851B989A-B3D4-4D3E-B8B8-873488553BE6}
 	EndGlobalSection
 EndGlobal

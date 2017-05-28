@@ -1,0 +1,14 @@
+version: '2'
+
+services:
+  esf.website.netcore:
+    image: esf.website.netcore
+    build:
+      context: ./Esf.Website.NetCore
+      dockerfile: Dockerfile
+
+  esf.webapi.netcore:
+    image: esf.webapi.netcore
+    build:
+      context: ./Esf.WebApi.NetCore
+      dockerfile: Dockerfile
