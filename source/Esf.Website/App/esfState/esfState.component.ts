@@ -10,15 +10,16 @@ import { EsfStateSaveCommand, EsfStateSaveCommandState } from './esfStateSaveCom
 import { EsfStateRunQueryCommand, EsfStateRunQueryCommandState } from './esfStateRunQueryCommand';
 import { EsfCommandState } from '../shared/commands/esfCommand';
 import { CommandStateType } from '../shared/commands/commandStateType';
-
+ 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
+    styleUrls: ['/App/esfState/esfState.styles.css'],
     providers: [
         EsfStateService,
         { provide: EsfQueryRunnerServiceContract, useClass: EsfQueryRunnerService },
         EsfStateValidationService,
         EsfStateSaveCommand,
-        EsfStateRunQueryCommand
+        EsfStateRunQueryCommand   
     ]
 })
 export class EsFiddlerComponent implements OnInit {

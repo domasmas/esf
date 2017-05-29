@@ -16,6 +16,8 @@
         'js-beautify': 'npm:js-beautify',
         'core-js': 'npm:core-js/client/shim.min.js',
         'zone.js': 'npm:zone.js/dist',
+        '@angular/animations/browser': 'node_modules/@angular/animations/bundles/animations-browser.umd.js',
+        '@angular/platform-browser/animations': 'node_modules/@angular/platform-browser/bundles/platform-browser-animations.umd.js'
     };
 
     var packages = {
@@ -33,11 +35,14 @@
     };
 
     var ngPackageNames = [
+       'animations',
        'common',
        'compiler',
        'core',
+       'flex-layout',
        'forms',
        'http',
+       'material',
        'platform-browser',
        'platform-browser-dynamic',
        'router',

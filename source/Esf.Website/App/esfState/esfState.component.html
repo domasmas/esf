@@ -1,51 +1,77 @@
-﻿<nav class="navbar navbar-default">
-    <div class="container">
-        <div class="navbar-header">
-            <a class="navbar-brand" href="#">ESFiddle</a>
-        </div>
-        <button type="button" 
-                (click)="runQueryCommand.run(state)" 
-                [ngClass]="{'disabled' : !runCommandEnabled}"
-                class="run-command btn btn-default navbar-btn">
-            <span>Run</span>
-            <span *ngIf="runCommandInProgress">
-                <!--TODO: add spinner gif-->
-                ...
-            </span>
-        </button>
-
-        <button type="button" 
-                (click)="saveCommand.run(state)" 
-                [ngClass]="{'disabled' : !saveCommandEnabled}"
-                class="save-command btn btn-default navbar-btn">
+﻿<div fxFlexFill fxFlex fxLayout="column">
+    <md-toolbar color="primary" fxLayout="row">
+        <a class="brand" href="#">ESFiddle</a>
+        <button md-button
+                (click)="saveCommand.run(state)"
+                [disabled]="!saveCommandEnabled">
+            <md-icon *ngIf="!saveCommandInProgress">save</md-icon>
+            <md-spinner *ngIf="saveCommandInProgress" color="accent"></md-spinner>
             <span>Save</span>
-            <span *ngIf="saveCommandInProgress">
-                <!--TODO: add spinner gif-->
-                ...
-            </span>
         </button>
+        <button md-button
+                (click)="runQueryCommand.run(state)" 
+                [disabled]="!runCommandEnabled">
+            <md-icon *ngIf="!runCommandInProgress">play_arrow</md-icon>
+            <md-spinner *ngIf="runCommandInProgress" color="accent"></md-spinner>
+            <span>Run</span>
+        </button>
+    </md-toolbar>
+    <div fxLayout="row" fxFlex>
+        <vertical-split-view fxLayout="column" fxFlex>
+            <view1 fxLayout="column">
+                <horizontal-split-view>
+                    <view1 fxLayout="column" fxFlex>
+                        <label>Mapping</label>
+                        <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" fxFlex></div>
+                    </view1>
+                    <view2 fxLayout="column" fxFlex>
+                        <label>Documents</label>
+                        <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" fxFlex></div>
+                    </view2>
+                </horizontal-split-view>
+            </view1>
+            <view2 fxLayout="column">
+                <horizontal-split-view>
+                    <view1 fxLayout="column" fxFlex>
+                        <label>Query</label>
+                        <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" fxFlex></div>
+                    </view1>
+                    <view2 fxLayout="column" fxFlex>
+                        <label>Result</label>
+                        <div class="result-viewer" [text]="queryResult" json-editor [readOnly]="true" fxFlex></div>
+                        <div class="alert alert-danger" *ngIf="!!queryError">{{queryError}}</div>
+                        <div style="background-color: crimson; color: white" *ngIf="!!queryError">asdfasdfadfasdf{{queryError}}</div>
+                    </view2>
+                </horizontal-split-view>
+            </view2>
+        </vertical-split-view>
     </div>
-</nav>
-<section id="editors" class="container">
-    <div class="row">
-        <div class="col-xs-6">
-            <label>Mapping</label>
-            <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+    <!--<div fxLayout="row" fxFlex>
+        <div fxLayout="column" fxFlex style="background-color: red;">a</div>
+        <div fxLayout="column" fxFlex style="background-color: blue;">b</div>
+    </div>-->
+    <!--
+    <section id="editors" class="container">
+        <div class="row">
+            <div class="col-xs-6">
+                <label>Mapping</label>
+                <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            </div>
+            <div class="col-xs-6">
+                <label>Documents</label>
+                <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            </div>
         </div>
-        <div class="col-xs-6">
-            <label>Documents</label>
-            <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+        <div class="row">
+            <div class="col-xs-6">
+                <label>Query</label>
+                <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            </div>
+            <div class="col-xs-6">
+                <label>Result</label>
+                <div class="result-viewer" [text]="queryResult" json-editor [readOnly]="true" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            <label>Query</label>
-            <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
-        </div>
-        <div class="col-xs-6">
-            <label>Result</label>
-            <div class="result-viewer" [text]="queryResult" json-editor [readOnly]="true" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
-            <div class="alert alert-danger" *ngIf="!!queryError">{{queryError}}</div>
-        </div>
-    </div>
-</section>
+    </section>
+    -->
+</div>

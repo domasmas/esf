@@ -1,0 +1,12 @@
+﻿<div fxLayout="column" fxFlex (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp($event)" (mouseleave)="onMouseLeave($event)" ondragstart="return false;" ondrop="return false;">
+    <div fxLayout="row" [fxFlex]="view1Height">
+        <ng-content select="view1" fxFlex>
+        </ng-content>
+    </div>
+    <div fxFlex="3px" style="background-color: gainsboro; cursor: ns-resize;display: block" (mousedown)="onMouseDown($event)">
+    </div>
+    <div fxLayout="row" [fxFlex]="view2Height">
+        <ng-content select="view2" fxFlex>
+        </ng-content>
+    </div>
+</div>

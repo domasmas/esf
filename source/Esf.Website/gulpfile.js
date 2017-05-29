@@ -123,8 +123,9 @@ gulp.task('compile:less',
                     './node_modules/bootstrap-less'
                 ]
             }))
-            .pipe(gulpConcatCss('styles.css'))
-            .pipe(gulp.dest(CONTENT_DESTINATION));
+            //.pipe(gulpConcatCss('styles.css'))
+        //.pipe(gulp.dest(CONTENT_DESTINATION));
+        .pipe(gulp.dest(APP_DESTINATION));
     });
 
 gulp.task('bundle:minify', function () {
