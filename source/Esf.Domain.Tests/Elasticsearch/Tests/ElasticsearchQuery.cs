@@ -1,17 +1,17 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchQuery : ElasticsearchTestsBase
     {
-        [Test]
+        [Fact]
         public void QuerySingleMatch()
         {
             var mapping = new
@@ -37,15 +37,15 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);   
                      
-            Assert.AreEqual(1, successfulQuery.GetHitsCount());
+            Assert.Equal(1, successfulQuery.GetHitsCount());
 
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 ._source(documents[0])
                 .Build());
         }
 
-        [Test]
+        [Fact]
         public void QueryNoMatch()
         {
             var mapping = new
@@ -71,10 +71,10 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(0, successfulQuery.GetHitsCount());
+            Assert.Equal(0, successfulQuery.GetHitsCount());
         }
 
-        [Test]
+        [Fact]
         public void QueryExplainApi()
         {
             var mapping = new
@@ -101,13 +101,13 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(1, successfulQuery.GetHitsCount());
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.Equal(1, successfulQuery.GetHitsCount());
+            Assert.True(successfulQuery.HasHitWith()
                                          .Explanation()
                                          .Build());
         }
 
-        [Test]
+        [Fact]
         public void QueryMatchAll()
         {
             var mapping = new
@@ -139,23 +139,23 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(4, successfulQuery.GetHitsCount(), "expected all documents count + mapping");
+            Assert.Equal(4, successfulQuery.GetHitsCount());
 
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 ._source(documents[0])
                 .Build());
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 ._source(documents[1])
                 .Build());
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 ._source(documents[2])
                 .Build());
         }
 
-        [Test]
+        [Fact]
         public void QueryNestedDocuments()
         {
             var mapping = new
@@ -223,13 +223,13 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 }
             };
             
-            Assert.AreEqual(1, successfulQuery.GetHitsCount());
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.Equal(1, successfulQuery.GetHitsCount());
+            Assert.True(successfulQuery.HasHitWith()
                                          ._source(expectedNestedSource)
                                          .Build());
         }
 
-        [Test]
+        [Fact]
         public void ScriptFields()
         {
             var mapping = new
@@ -268,29 +268,29 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(4, successfulQuery.GetHitsCount());
+            Assert.Equal(4, successfulQuery.GetHitsCount());
 
             dynamic expectedFields1 = new { calculation = new[] { 10 } };
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._id("1")
                                          .fields(expectedFields1)
                                          .Build());
 
             dynamic expectedFields2 = new { calculation = new[] { 20 } };
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._id("2")
                                          .fields(expectedFields2)
                                          .Build());
 
             dynamic expectedFields3 = new { calculation = new[] { 30 } };
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._id("3")
                                          .fields(expectedFields3)
                                          .Build());
         }
 
 
-        [Test]
+        [Fact]
         public void QueryTerm()
         {
             var mapping = new
@@ -322,20 +322,20 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(2, successfulQuery.GetHitsCount());
+            Assert.Equal(2, successfulQuery.GetHitsCount());
             
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._id("3")
                                          ._source(documents[2])
                                          .Build());
 
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                              ._id("2")
                              ._source(documents[1])
                              .Build());
         }
 
-        [Test]
+        [Fact]
         public void QueryRange()
         {
             var mapping = new
@@ -373,21 +373,21 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(3, successfulQuery.GetHitsCount());
+            Assert.Equal(3, successfulQuery.GetHitsCount());
 
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._source(new { age = 22 })
                                          .Build());
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                              ._source(new { age = 33 })
                              .Build());
 
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                              ._source(new { age = 50 })
                              .Build());
         }
 
-        [Test]
+        [Fact]
         public void QueryRegex()
         {
             var mapping = new
@@ -422,21 +422,21 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(3, successfulQuery.GetHitsCount());
+            Assert.Equal(3, successfulQuery.GetHitsCount());
 
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                                          ._source(documents[0])
                                          .Build());
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                              ._source(documents[2])
                              .Build());
 
-            Assert.IsTrue(successfulQuery.HasHitWith()
+            Assert.True(successfulQuery.HasHitWith()
                              ._source(documents[3])
                              .Build());
         }
         
-        [Test]
+        [Fact]
         public void Sort()
         {
             var mapping = new
@@ -477,16 +477,16 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             var successfulQuery = _esfQueryRunner.RunQuery(mapping, documents, query).GetSuccessfulQuery();
             _esfQueryRunner.LogTestRun(successfulQuery.Json);
 
-            Assert.AreEqual(3, successfulQuery.GetHitsCount());
+            Assert.Equal(3, successfulQuery.GetHitsCount());
             
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 .PositionAt(0)
                 .sort(new dynamic[] { 1430784000000, 33, 1.0 })
                 ._source(documents[1])
                 .Build());
 
-            Assert.IsTrue(successfulQuery
+            Assert.True(successfulQuery
                 .HasHitWith()
                 .PositionAt(1)
                 .sort(new dynamic[] { 1273017600000, 22, 1.0 })
@@ -494,7 +494,7 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 .Build());
         }
 
-        [Test]
+        [Fact]
         public void Aggregation()
         {
             var mapping = new
@@ -538,7 +538,7 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             {
                 { "avg_age", new { value = 27.5 } }
             };
-            Assert.IsTrue(successfulQuery.HasAggregations(expectedAggregations));
+            Assert.True(successfulQuery.HasAggregations(expectedAggregations));
         }
     }
 }

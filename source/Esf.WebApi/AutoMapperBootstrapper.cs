@@ -6,9 +6,8 @@ using Esf.WebApi.Areas.EsfState;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
-namespace Esf.WebApi.App_Start
+namespace Esf.WebApi
 {
 	public class AutoMapperBootstrapper
 	{

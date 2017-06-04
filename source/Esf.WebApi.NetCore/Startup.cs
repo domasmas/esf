@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Elasticsearch.Net;
+using Esf.Domain;
 
 namespace Esf.WebApi.NetCore
 {
@@ -27,9 +29,38 @@ namespace Esf.WebApi.NetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureDI(services);
+
             // Add framework services.
             services.AddMvc();
             services.AddCors();
+        }
+
+        private void ConfigureDI(IServiceCollection services)
+        {
+            string EsQueryRunnerDbConnectionString = Configuration.GetConnectionString("EsQueryRunnerDb");
+
+            var esConnectionConfiguration = new ConnectionConfiguration(new Uri(EsQueryRunnerDbConnectionString));
+
+            services.AddScoped<IElasticLowLevelClient, ElasticLowLevelClient>((serviceProvider) => new ElasticLowLevelClient(esConnectionConfiguration));
+            services.AddScoped<IUniqueNameResolver, UniqueNameResolver>();
+            services.AddScoped<IIdGenerator, IdGenerator>();
+        
+
+
+            string esFiddleDbConnectionString = Configuration.GetConnectionString("EsFiddleDb");
+            //Kernel.Bind<IEsDatabaseClient>()
+            //      .To<EsDatabaseClient>()
+            //      .WithConstructorArgument(esFiddleDbConnectionString);
+
+            //Kernel.Bind<IEsfStateValidator>()
+            //      .To<EsfStateValidator>();
+
+            //Kernel.Bind<IEsfStateInputValidator>()
+            //      .To<EsfStateInputValidator>();
+
+            //IMapper autoMapper = AutoMapperBootstrapper.Bootstrap();
+            //Kernel.Bind<IMapper>().ToConstant(autoMapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

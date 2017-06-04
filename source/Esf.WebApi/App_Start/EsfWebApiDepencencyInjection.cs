@@ -1,10 +1,6 @@
-﻿using Ninject.Modules;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using Ninject;
-using System.Configuration;
 using Esf.Domain;
 using Esf.DataAccess;
 using Elasticsearch.Net;
@@ -13,9 +9,9 @@ using Esf.Domain.Validation;
 
 namespace Esf.WebApi.App_Start
 {
-    public class EsfWebApiDepencencyInjection : NinjectModule
+    public class EsfWebApiDepencencyInjection
     {
-        public override void Load()
+        public void Load()
         {
             var connections = ConfigurationManager.ConnectionStrings;
 

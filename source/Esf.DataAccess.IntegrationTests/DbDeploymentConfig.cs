@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Reflection;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.IntegrationTests
 {
     public class DbDeploymentConfig
     {
@@ -19,8 +20,8 @@ namespace Esf.DataAccess.Tests
         }
 
         public static string GetDeploymentScriptPath(string fileName)
-        {
-            string projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        {            
+            string projectDirectory = Path.GetDirectoryName(Directory.GetCurrentDirectory());
             string result = Path.Combine(projectDirectory, "DeploymentScripts", fileName);
             return result;
         }

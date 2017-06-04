@@ -2,17 +2,16 @@
 using Esf.Domain.Helpers;
 using Esf.Domain.Validation;
 using Moq;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Xunit;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
-    [TestFixture]
     public class ElasticsearchSession
     {
-        [Test]
+        [Fact]
         public void CheckSessionIndexIsDeleted()
         {
             string indexAndTypeName = $"index_{Guid.NewGuid().ToString()}";
@@ -36,14 +35,14 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 var documentsCreated = session.InsertDocuments(documents).Result.IsSuccess;
 
                 var indexExistsResponse = esClient.IndicesGet<string>(indexAndTypeName);
-                Assert.IsTrue(indexExistsResponse.Success);
+                Assert.True(indexExistsResponse.Success);
 
-                Assert.IsTrue(mappingCreated);
-                Assert.IsTrue(documentsCreated);
+                Assert.True(mappingCreated);
+                Assert.True(documentsCreated);
             }
 
             var indexExistsResponse2 = esClient.IndicesGet<string>(indexAndTypeName);
-            Assert.IsFalse(indexExistsResponse2.Success);
+            Assert.False(indexExistsResponse2.Success);
         }
     }
 }

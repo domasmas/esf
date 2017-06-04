@@ -1,18 +1,20 @@
 ﻿using Esf.WebApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net.Http;
-using System.Web.Http.Filters;
 
 namespace Esf.WebApi.Filters
 {
     public class EsfExceptionFilterAttribute : ExceptionFilterAttribute
     {
-        public override void OnException(HttpActionExecutedContext context)
+        public override void OnException(ExceptionContext context)
         {
             if (context.Exception is EsfValidationException)
             {
-                context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
+                context.HttpContext.Response. = new TextPlainErrorResult(System.Net.HttpStatusCode.BadRequest)
                 {
-                    Content = new StringContent(((EsfValidationException)context.Exception).ErrorMessage)
+                    Content = new StringContent(((EsfValidationException)context.Exception).ErrorMessage),
+                    ReasonPhrase = "Esf Exception"
                 };
             }
 

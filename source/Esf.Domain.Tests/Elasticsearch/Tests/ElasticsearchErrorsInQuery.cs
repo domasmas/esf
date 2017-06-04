@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchErrorsInQuery : ElasticsearchTestsBase
     {
-        [Test]
+        [Fact]
         public void ErrorInQuery()
         {
             var mapping = new { };
@@ -30,14 +30,14 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             };
 
             var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
-            Assert.IsFalse(queryResponse.IsSuccess, "expected unsuccessful QueryResponse for query with invalid operator");
+            Assert.False(queryResponse.IsSuccess, "expected unsuccessful QueryResponse for query with invalid operator");
             EsfError queryElasticSearchError = queryResponse.ElasticsearchError;
             _esfQueryRunner.LogTestRun(queryElasticSearchError);
-            Assert.AreEqual(400, queryElasticSearchError.HttpStatusCode);
-            Assert.AreEqual("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", queryElasticSearchError.Error);
+            Assert.Equal(400, queryElasticSearchError.HttpStatusCode);
+            Assert.Equal("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", queryElasticSearchError.Error);
         }
 
-        [Test]
+        [Fact]
         public void WrongSortCriteria()
         {
             var mapping = new
@@ -77,13 +77,13 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             };
 
             var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
-            Assert.IsFalse(queryResponse.IsSuccess, "Expected wrong sort criteria query to fail");
+            Assert.False(queryResponse.IsSuccess, "Expected wrong sort criteria query to fail");
             EsfError queryElasticsearchError = queryResponse.ElasticsearchError;
 
             _esfQueryRunner.LogTestRun(queryElasticsearchError);
 
-            Assert.AreEqual(400, queryElasticsearchError.HttpStatusCode);
-            Assert.IsTrue(queryElasticsearchError.Error.Contains("Type: search_phase_execution_exception"));
+            Assert.Equal(400, queryElasticsearchError.HttpStatusCode);
+            Assert.True(queryElasticsearchError.Error.Contains("Type: search_phase_execution_exception"));
         }
     }
 }

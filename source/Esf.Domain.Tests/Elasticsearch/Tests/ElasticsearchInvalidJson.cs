@@ -1,15 +1,15 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchInvalidJson : ElasticsearchTestsBase
     {
-        [Test]
+        [Fact]
         public void InvalidMapppingJson()
         {
             var mapping = @"{""properties"": {""message"": {""type"": ""string""}, ""something"": {""}}}";
@@ -20,11 +20,11 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             JsonError mappingJsonValidationError = sessionResponse.CreateMappingResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(mappingJsonValidationError);
 
-            Assert.AreEqual(mapping, mappingJsonValidationError.SourceJson);
-            Assert.IsTrue(mappingJsonValidationError.Error.Contains("Unterminated string. Expected delimiter: \". Path 'properties.something'"), "mapping creation expected to fail with JSON validation error");
+            Assert.Equal(mapping, mappingJsonValidationError.SourceJson);
+            Assert.True(mappingJsonValidationError.Error.Contains("Unterminated string. Expected delimiter: \". Path 'properties.something'"), "mapping creation expected to fail with JSON validation error");
         }
 
-        [Test]
+        [Fact]
         public void InvalidDocumntsJson()
         {
             var mapping = @"{""properties"": {""message"": {""type"": ""string""} }}";
@@ -38,11 +38,11 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             JsonError documentsJsonValidationError = sessionResponse.CreateDocumentsResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(documentsJsonValidationError);
 
-            Assert.AreEqual(documents[1], documentsJsonValidationError.SourceJson);
-            Assert.IsTrue(documentsJsonValidationError.Error.Contains("Unexpected character encountered while parsing value: T"), "documents creation expected to fail with JSON validation error");
+            Assert.Equal(documents[1], documentsJsonValidationError.SourceJson);
+            Assert.True(documentsJsonValidationError.Error.Contains("Unexpected character encountered while parsing value: T"), "documents creation expected to fail with JSON validation error");
         }
 
-        [Test]
+        [Fact]
         public void InvalidQueryJson()
         {
             var mapping = @"{""properties"": {""message"": {""type"": ""string""}}}";
@@ -56,8 +56,8 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
             JsonError queryJsonValidationError = sessionResponse.QueryResponse.JsonValidationError;
             _esfQueryRunner.LogTestRun(queryJsonValidationError);
 
-            Assert.AreEqual(query, queryJsonValidationError.SourceJson);
-            Assert.IsTrue(queryJsonValidationError.Error.Contains("After parsing a value an unexpected character was encountered: :"), "query run expected to fail with JSON validation error");
+            Assert.Equal(query, queryJsonValidationError.SourceJson);
+            Assert.True(queryJsonValidationError.Error.Contains("After parsing a value an unexpected character was encountered: :"), "query run expected to fail with JSON validation error");
         }
     }
 }

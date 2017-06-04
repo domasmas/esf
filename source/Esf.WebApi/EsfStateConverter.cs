@@ -2,7 +2,7 @@
 using Esf.WebApi.Areas.EsfState;
 using System;
 
-namespace Esf.WebApi.App_Start
+namespace Esf.WebApi
 {
     public class EsfStateConverter
     {
