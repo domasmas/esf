@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Elasticsearch.Net;
 using Esf.Domain;
+using Esf.DataAccess;
+using Esf.Domain.Validation;
+using AutoMapper;
 
 namespace Esf.WebApi.NetCore
 {
@@ -29,38 +32,33 @@ namespace Esf.WebApi.NetCore
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureDI(services);
+            ConfigureDI(services, Configuration);
 
             // Add framework services.
             services.AddMvc();
             services.AddCors();
         }
 
-        private void ConfigureDI(IServiceCollection services)
+        private static void ConfigureDI(IServiceCollection services, IConfigurationRoot configuration)
         {
-            string EsQueryRunnerDbConnectionString = Configuration.GetConnectionString("EsQueryRunnerDb");
+            string EsQueryRunnerDbConnectionString = configuration.GetConnectionString("EsQueryRunnerDb");
 
             var esConnectionConfiguration = new ConnectionConfiguration(new Uri(EsQueryRunnerDbConnectionString));
 
             services.AddScoped<IElasticLowLevelClient, ElasticLowLevelClient>((serviceProvider) => new ElasticLowLevelClient(esConnectionConfiguration));
-            services.AddScoped<IUniqueNameResolver, UniqueNameResolver>();
-            services.AddScoped<IIdGenerator, IdGenerator>();
-        
-
-
-            string esFiddleDbConnectionString = Configuration.GetConnectionString("EsFiddleDb");
-            //Kernel.Bind<IEsDatabaseClient>()
-            //      .To<EsDatabaseClient>()
-            //      .WithConstructorArgument(esFiddleDbConnectionString);
-
-            //Kernel.Bind<IEsfStateValidator>()
-            //      .To<EsfStateValidator>();
-
-            //Kernel.Bind<IEsfStateInputValidator>()
-            //      .To<EsfStateInputValidator>();
-
-            //IMapper autoMapper = AutoMapperBootstrapper.Bootstrap();
-            //Kernel.Bind<IMapper>().ToConstant(autoMapper);
+            services.AddTransient<IUniqueNameResolver, UniqueNameResolver>();
+            services.AddTransient<IIdGenerator, IdGenerator>();
+            services.AddScoped<IElasticsearchSessionFactory, ElasticsearchSessionFactory>();;
+            services.AddScoped<IEsfQueryRunner, EsfQueryRunner>();
+            services.AddScoped<INewEsfStateFactory, NewEsfStateFactory>();
+            services.AddScoped<IEsStatesRepository, EsStatesRepository>();
+            
+            string esFiddleDbConnectionString = configuration.GetConnectionString("EsFiddleDb");
+            services.AddScoped<IEsDatabaseClient, EsDatabaseClient>(serviceProvider => new EsDatabaseClient(esFiddleDbConnectionString));
+            services.AddTransient<IEsfStateValidator, EsfStateValidator>();
+            services.AddTransient<IEsfStateInputValidator, EsfStateInputValidator>();
+            IMapper autoMapper = AutoMapperBootstrapper.Bootstrap();
+            services.AddSingleton(autoMapper);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

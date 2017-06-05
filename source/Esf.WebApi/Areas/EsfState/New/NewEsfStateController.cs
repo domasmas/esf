@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Esf.DataAccess;
 using Esf.Domain;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace Esf.WebApi.Areas.EsfState.New
 {
-    [RoutePrefix("states/new")]
-    public class NewEsfStateController : ApiController
+    [Route("states/new")]
+    public class NewEsfStateController : Controller
     {
         protected readonly INewEsfStateFactory _newEsfStateFactory;
 		protected readonly IMapper _mapper;
@@ -19,7 +19,7 @@ namespace Esf.WebApi.Areas.EsfState.New
 
 		}
 
-        [Route("")]
+        [HttpGet()]
         public async Task<EsfStateResponseDto> Get()
         {
             EsState newState = await _newEsfStateFactory.GetNewState();

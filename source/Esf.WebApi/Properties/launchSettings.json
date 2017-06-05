@@ -1,9 +1,9 @@
-﻿{
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:58260/",
+      "applicationUrl": "http://localhost:40081/",
       "sslPort": 0
     }
   },
@@ -15,13 +15,11 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Esf.Website.NetCore": {
+    "Esf.WebApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "applicationUrl": "http://localhost:58261"
+      "launchUrl": "http://localhost:40081/states/new/",
+      "applicationUrl": "http://localhost:40081/"
     }
   }
 }

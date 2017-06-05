@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Esf.Domain;
 using Esf.Domain.Validation;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace Esf.WebApi.Areas.EsfQueryRunner
 {
-    [RoutePrefix("query-runner")]
-    public class EsfQueryRunnerController : ApiController
+    [Route("query-runner")]
+    public class EsfQueryRunnerController : Controller
     {
         protected readonly IEsfQueryRunner _queryRunner;
 		protected readonly IMapper _mapper;
@@ -21,7 +21,6 @@ namespace Esf.WebApi.Areas.EsfQueryRunner
 		}
 
         [HttpPost]
-        [Route("")]
         public async Task<EsfQueryRunnerResponseDto> Post([FromBody]EsfQueryRunnerDto esfState)
         {
             EsfQuerySessionResponse runResult = await _queryRunner.Run(esfState.Mapping, esfState.Documents.ToArray(), esfState.Query);

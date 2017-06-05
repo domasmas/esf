@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
 using Esf.DataAccess;
 using AutoMapper;
 using Esf.Domain.Validation;
 using System.Linq;
 using Esf.WebApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Esf.WebApi.Areas.EsfState
 {
-    [RoutePrefix("states")]
-    public class EsfStateController : ApiController
+    [Route("states")]
+    public class EsfStateController : Controller
     {
         protected readonly IEsStatesRepository _esStatesRepository;
 		protected readonly IMapper _mapper;
@@ -24,7 +24,6 @@ namespace Esf.WebApi.Areas.EsfState
         }
         
         [HttpGet]
-        [Route("")]
         public async Task<EsfStateResponseDto> Get(string stateUrl)
         {
             Guid parsedStateUrl = Guid.Parse(stateUrl);
@@ -38,7 +37,6 @@ namespace Esf.WebApi.Areas.EsfState
         }
         
         [HttpPost]
-        [Route("")]
         public async Task<EsfStateResponseDto> Post([FromBody]EsfStateDto state)
         {
             var inputErrors = _validator.GetStateErrors(state.Mapping, state.Query, state.Documents);

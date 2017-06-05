@@ -4,6 +4,13 @@
 		<TargetFramework>netcoreapp1.1</TargetFramework>
 		<DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="App_Start\**" />
+	  <Content Remove="App_Start\**" />
+	  <EmbeddedResource Remove="App_Start\**" />
+	  <None Remove="App_Start\**" />
+	</ItemGroup>
 	<ItemGroup>
 		<Folder Include="wwwroot\" />
 	</ItemGroup>

@@ -1,7 +1,6 @@
 ﻿using Esf.WebApi.Exceptions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Net.Http;
 
 namespace Esf.WebApi.Filters
 {
@@ -11,11 +10,9 @@ namespace Esf.WebApi.Filters
         {
             if (context.Exception is EsfValidationException)
             {
-                context.HttpContext.Response. = new TextPlainErrorResult(System.Net.HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(((EsfValidationException)context.Exception).ErrorMessage),
-                    ReasonPhrase = "Esf Exception"
-                };
+                var result = new JsonResult(((EsfValidationException)context.Exception).ErrorMessage);
+                result.StatusCode = (int) System.Net.HttpStatusCode.BadRequest;
+                context.Result = result;
             }
 
             base.OnException(context);
