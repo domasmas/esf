@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace Esf.Website.NetCore
 {
@@ -31,16 +33,28 @@ namespace Esf.Website.NetCore
             services.AddMvc();
         }
 
+        private void UseRoot(IApplicationBuilder app, IHostingEnvironment env, string aliasPath, string rootDirectory = "")
+        {
+            var provider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, rootDirectory));
+            var options = new FileServerOptions();
+            options.RequestPath = aliasPath;
+            options.StaticFileOptions.FileProvider = provider;
+            options.EnableDirectoryBrowsing = true;
+            app.UseFileServer(options);
+        }
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseBrowserLink();
+                UseRoot(app, env, "/debugRoot");
+                UseRoot(app, env, "/node_modules", "node_modules");
             }
             else
             {

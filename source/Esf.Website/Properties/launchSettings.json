@@ -1,8 +1,13 @@
 {
-  "profiles": {
-    "Esf.Website": {
-      "commandName": "Project",
-      "applicationUrl": "http://localhost:40082"
-    }
-  }
+	"profiles": {
+		"Esf.Website": {
+			"commandName": "Project",
+			"launchBrowser": true,
+			"launchUrl": "http://localhost:40082",
+			"environmentVariables": {
+				"ASPNETCORE_ENVIRONMENT": "Development"
+			},
+			"applicationUrl": "http://localhost:40082"
+		}
+	}
 }

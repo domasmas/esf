@@ -11,11 +11,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     @if (Html.IsDebug())
     {
-        <link rel="stylesheet" href="/wwwroot/content/styles.css">
+        <link rel="stylesheet" href="/content/styles.css">
     }
     else
     {
-        <link rel="stylesheet" href="/wwwroot/release/css/styles.css">
+        <link rel="stylesheet" href="/release/css/styles.css">
     }
 </head>
 <body>
@@ -23,8 +23,8 @@
 
     @if (Html.IsDebug())
     {
-        <script src="/node_modules/systemjs/dist/system.src.js"></script>
-        <script src="/systemjs.config.js"></script>
+        <script src="/system.js"></script>
+        <script src="/debugroot/systemjs.config.js"></script>
         <script>
             System
                 .import('app')
@@ -35,7 +35,7 @@
 	}
 	else
 	{
-        <script src="/wwwroot/release/js/app.bundle.js"></script>
+        <script src="/release/js/app.bundle.js"></script>
     }
 </body>
 </html>

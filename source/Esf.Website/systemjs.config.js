@@ -5,7 +5,7 @@
 (function (global) {
 
 	var map = {
-		'app': 'wwwroot/app',
+		'app': 'app',
 		'rxjs': 'npm:rxjs',
     	'reflect-metadata': 'npm:reflect-metadata',
         'angular-in-memory-web-api': 'npm:angular-in-memory-web-api',

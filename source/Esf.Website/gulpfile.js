@@ -97,6 +97,14 @@ gulp.task('copy:vendor', function () {
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
 });
 
+gulp.task('copy:systemjs', function () {
+    return gulp.src([
+        'node_modules/systemjs/dist/system-polyfills.js',
+        'node_modules/systemjs/dist/system.js'
+    ])
+        .pipe(gulp.dest(WWW_ROOT));
+});
+
 gulp.task('bundle:vendor', function () {
 	return gulp.src([
         'node_modules/systemjs/dist/system-polyfills.js',
@@ -139,9 +147,10 @@ gulp.task('bundle:minify', function () {
 
 gulp.task('build:dev', function(callback) {
     runSequence(
-            ['clean:app', 'clean:content'],
-            ['compile:ts', 'compile:less'],
-            callback
+        ['clean'],
+        ['copy:systemjs'],
+        ['compile:ts', 'compile:less'],
+        callback
         );
 });
 
