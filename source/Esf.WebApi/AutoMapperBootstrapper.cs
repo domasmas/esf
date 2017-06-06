@@ -20,7 +20,7 @@ namespace Esf.WebApi
 				config.AssertConfigurationIsValid();
 				return autoMapper;
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				//TODO error logging
 				throw;

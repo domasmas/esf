@@ -48,7 +48,6 @@ namespace Esf.Website.NetCore
             }
 
             app.UseStaticFiles();
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
