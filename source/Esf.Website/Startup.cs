@@ -39,7 +39,7 @@ namespace Esf.Website.NetCore
             var options = new FileServerOptions();
             options.RequestPath = aliasPath;
             options.StaticFileOptions.FileProvider = provider;
-            options.EnableDirectoryBrowsing = true;
+            options.EnableDirectoryBrowsing = false;
             app.UseFileServer(options);
         }
 
@@ -58,16 +58,11 @@ namespace Esf.Website.NetCore
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/Home/Index");
             }
 
             app.UseStaticFiles();
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute(
-                    name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
-            });
+            app.UseMvc(route => route.MapRoute("default", "{*url}", new { controller = "Home", action = "Index" }));
         }
     }
 }

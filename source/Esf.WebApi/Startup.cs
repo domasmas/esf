@@ -12,6 +12,7 @@ using Esf.Domain;
 using Esf.DataAccess;
 using Esf.Domain.Validation;
 using AutoMapper;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 namespace Esf.WebApi.NetCore
 {
@@ -67,11 +68,12 @@ namespace Esf.WebApi.NetCore
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            //configuring CORS must happen before UseMvc
+            app.UseCors(policy => policy.AllowAnyOrigin()
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader());
+
             app.UseMvc();
-            app.UseCors(builder =>
-                builder.WithOrigins(Configuration.GetSection("HostRootUrl").Value)
-                .AllowAnyHeader()
-            );
         }
     }
 }

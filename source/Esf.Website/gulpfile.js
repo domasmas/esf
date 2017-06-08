@@ -27,7 +27,7 @@ var protractor = require('gulp-protractor').protractor;
 
 gulp.task('clean:app',
     function() {
-    	return gulp.src([APP_DESTINATION, END_TO_END_TESTS_DESTINATION], { read: false })
+        return gulp.src([APP_DESTINATION, END_TO_END_TESTS_DESTINATION], { read: false })
             .pipe(clean({ force: true }));
     });
 
@@ -105,6 +105,12 @@ gulp.task('copy:systemjs', function () {
         .pipe(gulp.dest(WWW_ROOT));
 });
 
+gulp.task('copy:htmlTemplates', function () {
+    return gulp.src([
+        'app/**/*.html'
+    ]).pipe(gulp.dest(APP_DESTINATION));
+});
+
 gulp.task('bundle:vendor', function () {
 	return gulp.src([
         'node_modules/systemjs/dist/system-polyfills.js',
@@ -148,7 +154,7 @@ gulp.task('bundle:minify', function () {
 gulp.task('build:dev', function(callback) {
     runSequence(
         ['clean'],
-        ['copy:systemjs'],
+        ['copy:systemjs', 'copy:htmlTemplates'],
         ['compile:ts', 'compile:less'],
         callback
         );
@@ -195,7 +201,7 @@ gulp.task('watch:ts',
         gulp.watch(['./App/**/*.ts', './App/*.ts', './endToEndTests/**/*.ts'], ['compile:ts']);
     });
 
-gulp.task('watch', ['watch:less', 'watch:ts']);
+gulp.task('watch', ['watch:less', 'watch:ts', 'copy:htmlTemplates']);
 
 
 
