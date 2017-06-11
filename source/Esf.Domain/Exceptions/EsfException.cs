@@ -1,25 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace Esf.Domain.Exceptions
 {
-    public abstract class EsfException : ApplicationException
+    [JsonObject(MemberSerialization.OptIn)]
+    public abstract class EsfException : Exception
     {
-        protected ExceptionDetails _details;
-
-        public EsfException(ExceptionDetails details)
-        {
-            _details = details;
-        }
-
         public abstract string Type { get; }
-
-        public ExceptionDetails Details
-        {
-            get  { return _details; }
-        }
-
-        public class ExceptionDetails
-        {
-        }
     }
 }

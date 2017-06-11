@@ -1,5 +1,4 @@
 ﻿using Esf.Domain.Exceptions;
-using Esf.Domain.Helpers;
 using System.Net.Http;
 using System.Web.Http.Filters;
 
@@ -7,44 +6,19 @@ namespace Esf.WebApi.Filters
 {
     public class EsfExceptionFilterAttribute : ExceptionFilterAttribute
     {
+        private readonly EsfExceptionSerializer _serializer;
+
+        public EsfExceptionFilterAttribute(EsfExceptionSerializer serializer)
+        {
+            _serializer = serializer;
+        }
+
         public override void OnException(HttpActionExecutedContext context)
         {
-            if (context.Exception is EsfException)
+            context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
             {
-                var esfException = ((EsfException)context.Exception);
-                var exceptionDto = new EsfExceptionDto
-                {
-                    Type = esfException.Type,
-                    Details = esfException.Details
-                };
-
-                context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent(JSON.Serialize(exceptionDto))
-                };
-            }
-            else
-            {
-                var exceptionDetails = new EsfUnexpectedException.UnexpectedExceptionDetails
-                {
-#if DEBUG
-                    ErrorMessage = context.Exception.Message
-#else 
-                    ErrorMessage = "Unexpected Error"
-#endif
-                };
-
-                var exceptionDto = new EsfExceptionDto
-                {
-                    Type = nameof(EsfUnexpectedException),
-                    Details = exceptionDetails
-                };
-
-                context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
-                {
-                    Content = new StringContent(JSON.Serialize(exceptionDetails))
-                };
-            }
+                Content = new StringContent(_serializer.Serialize(context.Exception))
+            };
 
             base.OnException(context);
         }

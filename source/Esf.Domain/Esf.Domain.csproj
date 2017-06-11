@@ -77,6 +77,7 @@
     <Compile Include="EsfQueryRunner.cs" />
     <Compile Include="Exceptions\EsfException.cs" />
     <Compile Include="Exceptions\EsfElasticSearchException.cs" />
+    <Compile Include="Exceptions\EsfExceptionSerializer.cs" />
     <Compile Include="Exceptions\EsfInvalidStateException.cs" />
     <Compile Include="Exceptions\EsfUnexpectedException.cs" />
     <Compile Include="IdGenerator.cs" />

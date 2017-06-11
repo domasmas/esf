@@ -1,19 +1,17 @@
-﻿namespace Esf.Domain.Exceptions
+﻿using Newtonsoft.Json;
+
+namespace Esf.Domain.Exceptions
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class EsfInvalidStateException : EsfException
     {
-        public EsfInvalidStateException(EsfStateErrorDetails errors)
-            :base(errors)
-        {
-        }
-
+        [JsonProperty]
         public override string Type => nameof(EsfInvalidStateException);
-
-        public class EsfStateErrorDetails: ExceptionDetails
-        {
-            public string Mapping { get; set; }
-            public string Query { get; set; }
-            public string Documents { get; set; }
-        }
+        [JsonProperty]
+        public string[] Mapping { get; set; }
+        [JsonProperty]
+        public string[] Query { get; set; }
+        [JsonProperty]
+        public string[] Documents { get; set; }
     }
 }

@@ -31,19 +31,31 @@
         <div class="col-xs-6">
             <label>Mapping</label>
             <div class="mapping-editor" [(text)]="state.mapping" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
-            <div class="alert alert-danger" *ngIf="!!mappingInputError">{{mappingInputError}}</div>
+            <div class="alert alert-danger" *ngIf="!!mappingInputErrors">
+                <ul>
+                    <li *ngFor="let error of mappingInputErrors">{{error}}</li>
+                </ul>
+            </div>
         </div>
         <div class="col-xs-6">
             <label>Documents</label>
             <div class="documents-editor" [(text)]="state.documents" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
-            <div class="alert alert-danger" *ngIf="!!documentsInputError">{{documentsInputError}}</div>
+            <div class="alert alert-danger" *ngIf="!!documentsInputErrors">
+                <ul>
+                    <li *ngFor="let error of documentsInputErrors">{{error}}</li>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-6">
             <label>Query</label>
             <div class="query-editor" [(text)]="state.query" json-editor [readOnly]="!editorsEnabled" style="border: 2px #e7e7e7 solid; display: block; width: 100%; min-height: 200px; overflow: auto;"></div>
-            <div class="alert alert-danger" *ngIf="!!queryInputError">{{queryInputError}}</div>
+            <div class="alert alert-danger" *ngIf="!!queryInputErrors">
+                <ul>
+                    <li *ngFor="let error of queryInputErrors">{{error}}</li>
+                </ul>
+            </div>
         </div>
         <div class="col-xs-6">
             <label>Result</label>

@@ -4,6 +4,7 @@ using System.Web.Http.Cors;
 using Newtonsoft.Json;
 using System.Net.Http.Formatting;
 using Esf.WebApi.Filters;
+using Esf.Domain.Exceptions;
 
 namespace Esf.WebApi
 {
@@ -23,7 +24,7 @@ namespace Esf.WebApi
             config.MapHttpAttributeRoutes();
 
             // Filters
-            config.Filters.Add(new EsfExceptionFilterAttribute());
+            config.Filters.Add(new EsfExceptionFilterAttribute(new EsfExceptionSerializer()));
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

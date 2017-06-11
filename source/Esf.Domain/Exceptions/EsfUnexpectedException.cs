@@ -1,16 +1,13 @@
-﻿namespace Esf.Domain.Exceptions
+﻿using Newtonsoft.Json;
+
+namespace Esf.Domain.Exceptions
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class EsfUnexpectedException : EsfException
     {
-        public EsfUnexpectedException(UnexpectedExceptionDetails details) : base(details)
-        {
-        }
-
+        [JsonProperty]
         public override string Type => nameof(EsfInvalidStateException);
-
-        public class UnexpectedExceptionDetails: ExceptionDetails
-        {
-            public string ErrorMessage { get; set; }
-        }
+        [JsonProperty]
+        public string ErrorMessage { get; set; }
     }
 }

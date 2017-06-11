@@ -80,11 +80,11 @@ namespace Esf.Domain
         {
             if (!response.Success)
             {
-                throw new EsfElasticSearchException(new EsfElasticSearchException.ElasticSearchExceptionDetails
-                {
+                throw new EsfElasticSearchException
+                { 
                     StatusCode = response.ServerError.Status,
                     ErrorMessage = response.ServerError.Error.ToString(),
-                });
+                };
             }
         }
 

@@ -1,17 +1,15 @@
-﻿namespace Esf.Domain.Exceptions
+﻿using Newtonsoft.Json;
+
+namespace Esf.Domain.Exceptions
 {
+    [JsonObject(MemberSerialization.OptIn)]
     public class EsfElasticSearchException : EsfException
     {
-        public EsfElasticSearchException(ElasticSearchExceptionDetails details) : base(details)
-        {
-        }
-
+        [JsonProperty]
         public override string Type => nameof(EsfElasticSearchException);
-
-        public class ElasticSearchExceptionDetails : EsfException.ExceptionDetails
-        {
-            public int StatusCode { get; set; }
-            public string ErrorMessage { get; set; }
-        }
+        [JsonProperty]
+        public int StatusCode { get; set; }
+        [JsonProperty]
+        public string ErrorMessage { get; set; }
     }
 }

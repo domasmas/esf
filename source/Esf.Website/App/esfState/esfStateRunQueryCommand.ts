@@ -10,7 +10,7 @@ import { EsfStateValidationService } from './esfStateValidation.service';
 import { EsfQueryRunnerServiceContract, EsfQueryRunResult } from '../esfQueryRunner/esfQueryRunner.service';
 import { CommandStateType } from '../shared/commands/commandStateType';
 import { EsfCommandState, EsfCommand } from '../shared/commands/esfCommand';
-import { EsfException, EsfExceptionDetails } from '../shared/exceptions/esfException';
+import { EsfException } from '../shared/exceptions/esfException';
 
 @Injectable()
 export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandState> {
@@ -26,8 +26,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
 
         this.commandStateStream.next({
             commandState: CommandStateType.InProgress,
-            result: '',
-            status: ''
+            result: ''
         });
 
         try {
@@ -37,7 +36,6 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             this.commandStateStream.next({
                 commandState: CommandStateType.Enabled,
                 result: '',
-                status: '',
                 error: error
             });
             return;
@@ -49,14 +47,12 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
             .subscribe((queryResult: EsfQueryRunResult) => {
                 this.commandStateStream.next({
                     commandState: CommandStateType.Enabled,
-                    result: queryResult.result,
-                    status: ''
+                    result: queryResult.result
                 });
             }, (error: Error) => {
                 this.commandStateStream.next({
                     commandState: CommandStateType.Enabled,
                     result: '',
-                    status: '',
                     error: ((error instanceof Response) ? (<Response>error).json() : error)
                 });
             });
@@ -65,5 +61,4 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
 
 export interface EsfStateRunQueryCommandState extends EsfCommandState {
     result: string;
-    status: string;
 }

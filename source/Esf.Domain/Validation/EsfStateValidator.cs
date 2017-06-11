@@ -1,12 +1,11 @@
 ﻿using Esf.Domain.Exceptions;
-using System;
 using System.Linq;
 
 namespace Esf.Domain.Validation
 {
     public class EsfStateValidator : IEsfStateValidator
     {
-        public const int MaxJsonFieldLength = 10000;
+        public const int MaxJsonFieldLength = 10;
 
         public void Validate(string mapping, string query, string[] documents)
         {
@@ -16,13 +15,13 @@ namespace Esf.Domain.Validation
             var mappingErrors = new[] 
             {
                 lenghtValidationRule.Validate("mapping", mapping),
-                jsonFieldValidationRule.Validate("mapping", Truncate(mapping))
+                jsonFieldValidationRule.Validate("mapping", mapping)
             };
 
             var queryErrors = new[]
             {
                 lenghtValidationRule.Validate("query", mapping),
-                jsonFieldValidationRule.Validate("query", Truncate(query))
+                jsonFieldValidationRule.Validate("query", query)
             };
 
             var documentErrors = documents.SelectMany((document, ind) =>
@@ -36,14 +35,13 @@ namespace Esf.Domain.Validation
 
             if (mappingErrors.Union(queryErrors).Union(documentErrors).Any(input => !input.IsValid))
             {
-                throw new EsfInvalidStateException(new EsfInvalidStateException.EsfStateErrorDetails {
-                    Mapping = mappingErrors.Where(e => !e.IsValid).FirstOrDefault()?.ErrorMessage,
-                    Documents = documentErrors.Where(e => !e.IsValid).FirstOrDefault()?.ErrorMessage,
-                    Query = queryErrors.Where(e => !e.IsValid).FirstOrDefault()?.ErrorMessage
-                });
+                throw new EsfInvalidStateException
+                {
+                    Mapping = mappingErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray(),
+                    Documents = documentErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray(),
+                    Query = queryErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray()
+                };
             }
         }
-
-        private static string Truncate(string input) => input?.Substring(0, Math.Min(input.Length, MaxJsonFieldLength));
     }
 }

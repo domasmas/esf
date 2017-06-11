@@ -13,9 +13,8 @@ export class EsfStateValidationService {
         let queryErrors = this.validateQuery(esfState.query);
 
         if ([mappingErrors, documentErrors, queryErrors].some(r => r.isError)) {
-            let exception = new EsfInvalidStateException();
-            exception.type = EsfInvalidStateException.name;
-            exception.details = {
+            let exception = {
+                type: EsfInvalidStateException.name,
                 mapping: mappingErrors.errorMessage,
                 query: queryErrors.errorMessage,
                 documents: documentErrors.errorMessage
