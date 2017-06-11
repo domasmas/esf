@@ -12,50 +12,52 @@ var removeKarmaLoaded = function() {
 };
 removeKarmaLoaded();
 
-var baseUrl = '/base';
-System.config({
-    baseURL: baseUrl,
-    // Extend usual application package list with test folder
-    //packages: { 'testing': { main: 'index.js', defaultExtension: 'js' } },
+function getBaseUrl(url = '') {
+    return '/base/' + url;
+}
 
-    // Assume npm: is set in `paths` in systemjs.config
-    // Map the angular testing umd bundles
-    map: {
-        '@angular/core/testing': 'npm:@angular/core/bundles/core-testing.umd.js',
-        '@angular/common/testing': 'npm:@angular/common/bundles/common-testing.umd.js',
-        '@angular/compiler/testing': 'npm:@angular/compiler/bundles/compiler-testing.umd.js',
-        '@angular/platform-browser/testing': 'npm:@angular/platform-browser/bundles/platform-browser-testing.umd.js',
-        '@angular/platform-browser-dynamic/testing': 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js',
-        '@angular/http/testing': 'npm:@angular/http/bundles/http-testing.umd.js',
-        '@angular/router/testing': 'npm:@angular/router/bundles/router-testing.umd.js',
-        '@angular/forms/testing': 'npm:@angular/forms/bundles/forms-testing.umd.js',
-    },
+System.import(getBaseUrl('systemjs.config.js')).then(function (systemjsConfig) {
+    systemjsConfig.baseURL = getBaseUrl();
+    var map = systemjsConfig.map;
+    map['app'] = 'wwwroot/app';
+    map['@angular/core/testing'] = 'npm:@angular/core/bundles/core-testing.umd.js';
+    map['@angular/common/testing'] = 'npm:@angular/common/bundles/common-testing.umd.js';
+    map['@angular/compiler/testing'] = 'npm:@angular/compiler/bundles/compiler-testing.umd.js';
+    map['@angular/platform-browser/testing'] = 'npm:@angular/platform-browser/bundles/platform-browser-testing.umd.js';
+    map['@angular/platform-browser-dynamic/testing'] = 'npm:@angular/platform-browser-dynamic/bundles/platform-browser-dynamic-testing.umd.js';
+    map['@angular/http/testing'] = 'npm:@angular/http/bundles/http-testing.umd.js';
+    map['@angular/router/testing'] = 'npm:@angular/router/bundles/router-testing.umd.js';
+    map['@angular/forms/testing'] = 'npm:@angular/forms/bundles/forms-testing.umd.js';
+
+    System.config(systemjsConfig);
+    initTestBed().then(initTesting);
 });
 
-System.import('systemjs.config.js')
-  .then(initTestBed)
-  .then(initTesting);
+function initTestBed() {
 
-function initTestBed(){
     return Promise.all([
-      System.import('@angular/core/testing'),
-      System.import('@angular/platform-browser-dynamic/testing')
+        System.import('@angular/core/testing'),
+        System.import('@angular/platform-browser-dynamic/testing')
     ])
 
-    .then(function (providers) {
-        var coreTesting    = providers[0];
-        var browserTesting = providers[1];
+        .then(function (providers) {
+            var coreTesting = providers[0];
+            var browserTesting = providers[1];
 
-        coreTesting.TestBed.initTestEnvironment(
-          browserTesting.BrowserDynamicTestingModule,
-          browserTesting.platformBrowserDynamicTesting());
-    })
+            coreTesting.TestBed.initTestEnvironment(
+                browserTesting.BrowserDynamicTestingModule,
+                browserTesting.platformBrowserDynamicTesting());
+        });
 }
 
 // Import all spec files and start karma
 function initTesting() {    
-    var getAllAppSpecFiles = function (baseUrl) {
-        var appDestPath = baseUrl + '/wwwroot/app/';
+    function getAppDestPath() {
+        return getBaseUrl('wwwroot/app/');
+    }
+
+    var getAllAppSpecFiles = function () {
+        var appDestPath = getAppDestPath();
         var isAppDestFile = function (path) {
             return new RegExp('^' + appDestPath).test(path);
         }
@@ -71,27 +73,9 @@ function initTesting() {
                .filter(isAppFile);
     };
 
-    //var getAllAppHtmlFiles = function (baseUrl) {
-    //    var appSrcPath = baseUrl + '/App/';
-    //    var isAppSourceFile = function (path) {
-    //        return new RegExp('^' + appSrcPath).test(path);
-    //    }
-    //    var isHtmlFile = function (path) {
-    //        //return /\.html/.test(path);
-    //        return false;
-    //    }
-
-    //    return Object.keys(window.__karma__.files)
-    //           .filter(isHtmlFile);
-    //           //.filter(isAppSourceFile);
-    //};
-
     var importSystemJsModule = function (moduleName) {
         return System.import(moduleName);
     };
-    return Promise.all(getAllAppSpecFiles(baseUrl).map(importSystemJsModule))
-    //return Promise.all([, 
-    //    Promise.all(getAllAppHtmlFiles(baseUrl).map(importSystemJsModule))
-    //])
+    return Promise.all(getAllAppSpecFiles().map(importSystemJsModule))
     .then(__karma__.start, __karma__.error);
 }
