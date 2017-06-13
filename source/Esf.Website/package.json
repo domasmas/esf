@@ -10,17 +10,17 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
-    "@angular/animations": "^4.2.0-rc.1",
-    "@angular/common": "^4.2.0-rc.1",
-    "@angular/compiler": "^4.2.0-rc.1",
-    "@angular/core": "^4.2.0-rc.1",
-    "@angular/forms": "^4.2.0-rc.1",
-    "@angular/http": "^4.2.0-rc.1",
-    "@angular/platform-browser": "^4.2.0-rc.1",
-    "@angular/platform-browser-dynamic": "^4.2.0-rc.1",
-    "@angular/platform-server": "^4.2.0-rc.1",
-    "@angular/router": "^4.2.0-rc.1",
-    "@angular/upgrade": "^4.2.0-rc.1",
+    "@angular/animations": "^4.2.0",
+    "@angular/common": "^4.2.0",
+    "@angular/compiler": "^4.2.0",
+    "@angular/core": "^4.2.0",
+    "@angular/forms": "^4.2.0",
+    "@angular/http": "^4.2.0",
+    "@angular/platform-browser": "^4.2.0",
+    "@angular/platform-browser-dynamic": "^4.2.0",
+    "@angular/platform-server": "^4.2.0",
+    "@angular/router": "^4.2.0",
+    "@angular/upgrade": "^4.2.0",
     "angular-in-memory-web-api": "^0.2.5",
     "bootstrap": "^3.3.7",
     "bootstrap-less": "^3.3.8",
@@ -31,7 +31,6 @@
     "reflect-metadata": "^0.1.8",
     "rxjs": "5.0.1",
     "systemjs": "0.19.40",
-    "typescript": "2.3.3",
     "w3c-blob": "~0.0.1",
     "zone.js": "^0.8.4"
   },
@@ -64,6 +63,6 @@
     "protractor": "4.0.14",
     "run-sequence": "^1.2.1",
     "systemjs-builder": "^0.15.23",
-    "typescript": "~2.2.1"
+    "typescript": "~2.2.2"
   }
 }
