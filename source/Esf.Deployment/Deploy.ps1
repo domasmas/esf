@@ -48,11 +48,6 @@ function DeployEsf() {
 	($deployWebsiteAndWebApiTestsResult = RunDeployWebsiteAndWebApiTests) *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.tests.txt
 	ReportTestsResult "website and web api tests" $deployWebsiteAndWebApiTestsResult.FailedTestsCount
 	
-	Import-Module $PSScriptRoot\DeployToIss.psm1
-	Write-Progress -Activity "Deploy Website and web api" -Status "Started"
-	DeployWebsiteAndWebApi *>&1 | Out-File $PSScriptRoot\DeploymentOutput\DeployWebsiteAndWebApi.txt
-	Write-Progress -Activity "Deploy Website and web api" -Status "Finished"
-	
 	Import-Module $PSScriptRoot\PesterSuite.psm1
 	Import-Module $PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunnerDeployment.psm1
 	Write-Progress -Activity "Deploy Elastic Search Query Runner" -Status "Started"
