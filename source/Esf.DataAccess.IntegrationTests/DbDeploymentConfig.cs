@@ -9,6 +9,7 @@ namespace Esf.DataAccess.IntegrationTests
     {
         public string mongoDbServerDirectory { get; set; }
         public string esFiddleDbPath { get; set; }
+        public EsfConnectionStrings ConnectionStrings { get; set; }
 
         public static DbDeploymentConfig Load()
         {
@@ -21,9 +22,14 @@ namespace Esf.DataAccess.IntegrationTests
 
         public static string GetDeploymentScriptPath(string fileName)
         {            
-            string projectDirectory = Path.GetDirectoryName(Directory.GetCurrentDirectory());
-            string result = Path.Combine(projectDirectory, "DeploymentScripts", fileName);
+            string projectOutputDirectory = Path.GetDirectoryName(typeof(DbDeploymentConfig).GetTypeInfo().Assembly.Location);
+            string result = Path.Combine(projectOutputDirectory, "DeploymentScripts", fileName);
             return result;
         }
+    }
+
+    public class EsfConnectionStrings
+    {
+        public string esFiddleDb { get; set; }
     }
 }

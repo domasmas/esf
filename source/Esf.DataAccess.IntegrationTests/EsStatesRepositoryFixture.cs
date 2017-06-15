@@ -14,6 +14,7 @@ namespace Esf.DataAccess.IntegrationTests
         public EsStatesRepositoryFixture()
         {
             var dbDeploymentConfig = DbDeploymentConfig.Load();
+            _esFiddleConnectionString = dbDeploymentConfig.ConnectionStrings.esFiddleDb;
             mongoDbServerDirectory = dbDeploymentConfig.mongoDbServerDirectory;
             string dbDeploymentPath = Path.Combine(dbDeploymentConfig.esFiddleDbPath, "IntegrationTests");
             SetupDbPathAndLogFile(dbDeploymentPath);
@@ -30,11 +31,13 @@ namespace Esf.DataAccess.IntegrationTests
             Directory.CreateDirectory(dbDeploymentPath + "\\DB");
         }
 
+        private string _esFiddleConnectionString;
+
         public string esFiddleConnectionString
         {
             get
             {
-                return "mongodb://localhost:27017/esFiddle";//Configuration.ConnectionStrings["EsFiddleDb"].ConnectionString;
+                return _esFiddleConnectionString;
             }
         }
 

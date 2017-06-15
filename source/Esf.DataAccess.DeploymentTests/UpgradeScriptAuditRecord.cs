@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.DeploymentTests
 {
     public class UpgradeScriptAuditRecord
     {

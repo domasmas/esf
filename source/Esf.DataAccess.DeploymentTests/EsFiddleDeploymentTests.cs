@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using MongoDB.Driver.Core.Clusters;
 using MongoDB.Driver.Core.Misc;
-using NUnit.Framework;
+using Xunit;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -9,66 +9,51 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.DeploymentTests
 {
-    [TestFixture]
-    public class EsFiddleDeploymentTests
+    public class EsFiddleDeploymentTests : IClassFixture<EsFiddleDbFixture>
     {
-        private IMongoDatabase _database;
-
-        [SetUp]
-        public void Setup()
+        private EsFiddleDbFixture _esFiddleDb;
+        
+        public EsFiddleDeploymentTests(EsFiddleDbFixture esFiddleDb)
         {
-            var connections = System.Configuration.ConfigurationManager.ConnectionStrings;
-            _database = new EsDatabaseClient(connections["EsFiddleDb"].ConnectionString).Database;
+            _esFiddleDb = esFiddleDb;
         }              
         
-        [Test]
+        [Fact]
         public void IsDatabaseUp()
         {
-            WaitForConditionUntilTimeout(() => _database.Client.Cluster.Description.State == ClusterState.Connected,
+            IMongoDatabase mongoDb = _esFiddleDb.Database;
+            _esFiddleDb.WaitForConditionUntilTimeout(() => mongoDb.Client.Cluster.Description.State == ClusterState.Connected,
                 () =>
                 {
-                    Assert.AreEqual(_database.DatabaseNamespace.DatabaseName, "esFiddle");
-                    Assert.Pass();
-                });
+                    Assert.Equal("esFiddle", mongoDb.DatabaseNamespace.DatabaseName);
+                }
+                , "Database could not be brought up in timely manner");
         }
         
-        private void WaitForConditionUntilTimeout(Func<bool> isConditionMet, Action verificationAction)
-        {
-            TimeSpan timeoutSpan = new TimeSpan(0, 0, 0, 0, 5000);
-            DateTime timeout = DateTime.Now.Add(timeoutSpan);
-            do
-            {
-                if (isConditionMet())
-                    verificationAction();
-                else
-                    Thread.Sleep(100);
-            }
-            while (DateTime.Now < timeout);
-            Assert.Fail();
-        }
 
-        [Test]
+
+        [Fact]
         public void IsDatabaseVersion3_2()
         {
-            WaitForConditionUntilTimeout(() => _database.Client.Cluster.Description.State == ClusterState.Connected, 
+            IMongoDatabase mongoDb = _esFiddleDb.Database;
+            _esFiddleDb.WaitForConditionUntilTimeout(() => mongoDb.Client.Cluster.Description.State == ClusterState.Connected, 
                 () =>
                 {
-                    SemanticVersion databaseVersion = _database.Client.Cluster.Description.Servers[0].Version;
-                    Assert.AreEqual(databaseVersion.Major, 3);
-                    Assert.AreEqual(databaseVersion.Minor, 2);
-                    Assert.AreEqual(databaseVersion.PreRelease, null);
-                    Assert.Pass();
-                });
+                    SemanticVersion databaseVersion = mongoDb.Client.Cluster.Description.Servers[0].Version;
+                    Assert.Equal(3, databaseVersion.Major);
+                    Assert.Equal(2, databaseVersion.Minor);
+                    Assert.Null(databaseVersion.PreRelease);
+                }, "Database could not be brought up in timely manner");
         }
         
-        [Test]
+        [Fact]
         public async Task IsVersion1UpgradeScriptApplied()
         {
             Expression<Func<UpgradeScriptAuditRecord, bool>> v1UpgradeScriptCondition = (auditRecord) => auditRecord.Version == "1.0";
-            long v1UpgradeAuditRecords = await _database.GetCollection<UpgradeScriptAuditRecord>("upgradeScriptsAudit").Find(v1UpgradeScriptCondition).CountAsync();
-            Assert.GreaterOrEqual(v1UpgradeAuditRecords, 1);
+            long v1UpgradeAuditRecordsCount = await _esFiddleDb.Database.GetCollection<UpgradeScriptAuditRecord>("upgradeScriptsAudit").Find(v1UpgradeScriptCondition).CountAsync();
+            Assert.True(v1UpgradeAuditRecordsCount >= 1);
         }                
     }
 }
