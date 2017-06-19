@@ -11,6 +11,26 @@ function EnsureDeploymentOutputExists($deploymentOutput) {
 	}
 }
 
+function RunXunitSuite($xunitProjectPath)
+{
+	cd (Resolve-Path $xunitProjectPath) 
+	$testResult = (dotnet test)
+	cd $PSScriptRoot
+	return [PSCustomObject]@{
+		Result = $testResult
+		ErrorCode = $LASTEXITCODE
+	}
+}
+
+function BuildDotNetSolution($solutionPath)
+{
+	$result = (dotnet build (Resolve-Path $solutionPath))
+	return [PSCustomObject] @{
+		Result = $result
+		ErrorCode = $LASTEXITCODE
+	}
+}
+
 function DeployEsf() {
 	Write-Host -ForegroundColor Cyan "Deployment process of ES Fiddle"
 	Import-Module $PSScriptRoot\MSBuild.psm1
@@ -90,5 +110,11 @@ function TestPrerequisites($deploymentOutput) {
 }
 
 Clear-Host
-DeployEsf
+$buildDotNetSolution = BuildDotNetSolution "$PSScriptRoot\..\Esf.sln"
+$buildDotNetSolution.Result | Out-File $PSScriptRoot\DeploymentOutput\EsfDotnetBuild.txt
+ReportTestsResult "Esf.sln Dotnet Build" $buildDotNetSolution.ErrorCode
+$deploymentTests = (RunXunitSuite "$PSScriptRoot\..\Esf.DataAccess.DeploymentTests" )
+$deploymentTests.Result | Out-File $PSScriptRoot\DeploymentOutput\deploymentTests.txt
+ReportTestsResult "Es Fiddle State database tests" $deploymentTests.ErrorCode
+#DeployEsf
 Pause
