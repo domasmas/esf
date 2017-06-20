@@ -46,9 +46,14 @@
     <Compile Include="RunTests.ps1" />
     <Compile Include="SetupDevEnvironment.ps1" />
     <Compile Include="StartEsfServices.ps1" />
+    <Compile Include="DotNetCoreBuild.psm1" />
+    <Compile Include="UnitTests\DotNetCoreBuild.tests.ps1" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="esfWebsite.config.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="UnitTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />
