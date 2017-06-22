@@ -41,24 +41,11 @@ function SiteExists($website) {
     return (get-website | where-object { $_.name -eq $website })
 }
 
-function CleanIIS() {
-    Import-Module $PSScriptRoot\Permissions.psm1
-    CheckForElevatedPermissions
-    if (SiteExists "esf.WebApi") {
-        Remove-Website "esf.Website"
-        Remove-WebAppPool "esf.Website"
-    }
-
-    if (SiteExists "esf.WebApi") {
-        Remove-Website "esf.WebApi"
-        Remove-WebAppPool "esf.WebApi"
-    }
-}
-
-function CleanEnvironment($databasePath, $esfRootPath, $cleanEnvironmentOutput) {
+function CleanEnvironment($esfStatesDbPath, $esfQueryRunnerDbPath, $esfRootPath, $cleanEnvironmentOutput) {
     Write-Output "Start cleaning ESF deployment"
 
-    EnsurePathIsRemoved $databasePath
+    EnsurePathIsRemoved $esfStatesDbPath
+	EnsurePathIsRemoved $esfQueryRunnerDbPath
     EnsureBinPathsAreRemoved $esfRootPath
     EnsureNugetPackagesAreRemoved $esfRootPath
     
@@ -75,15 +62,14 @@ function CleanEnvironment($databasePath, $esfRootPath, $cleanEnvironmentOutput) 
     EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\typings" | Out-File $cleanEnvironmentOutput\website_typings_removed.txt
 
     GitCleanEsf $esfRootPath
-
-    CleanIIS
-
+	
     Write-Output "Cleaning ESF deployment finished."
 
     Write-Output "To check cleaning logs go to: $CleanEnvironmentOutput"
 }
 
 $esfRootPath = Resolve-Path "$PSScriptRoot\..\..\"
-$databasePath = "C:\Databases\EsFiddle"
+$esfStatesDbPath = "C:\Databases\EsFiddle"
+$esfQueryRunnerDbPath = "C:\Databases\EsfQueryRunner"
 $cleanEnvironmentOutput = "$esfRootPath\..\CleanEnvironmentOutput"
-CleanEnvironment $databasePath $esfRootPath $cleanEnvironmentOutput
+CleanEnvironment $esfStatesDbPath $esfQueryRunnerDbPath $esfRootPath $cleanEnvironmentOutput

@@ -19,14 +19,12 @@ function BuildDotNetSolution($solutionPath) {
 	}
 }
 
-function BuildEsfSolution() {
-	$buildDotNetSolution = BuildDotNetSolution "$PSScriptRoot\..\Esf.sln"
-	Return $buildDotNetSolution
+function RestoreDotNetSolution($solutionPath) {
+	$result = (dotnet restore (Resolve-Path $solutionPath))
+	return [PSCustomObject] @{
+		Result = $result
+		ErrorCode = $LASTEXITCODE
+	}
 }
 
-function RunEsfStateDbDeploymentTests() {
-	$deploymentTests = (RunXunitSuite "$PSScriptRoot\..\Esf.DataAccess.DeploymentTests" )
-	Return $deploymentTests
-}
-
-Export-ModuleMember -Function BuildEsfSolution, RunEsfStateDbDeploymentTests
+Export-ModuleMember -Function BuildDotNetSolution, RunXunitSuite
