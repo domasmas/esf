@@ -42,14 +42,14 @@ function DeployEsf() {
 	Import-Module $PSScriptRoot\StartEsfServices.psm1
 
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Started"
-	$esfWebApiResult = Start-EsfWebApiServer
+	$esfWebApiResult = Start-EsfWebApiServer "Production"
 	$esfWebApiResult.Result| Out-File $PSScriptRoot\DeploymentOutput\DeployEsfWebApi.txt
 	ReportResult $esfWebApiResult.ErrorCode
 	$esfWebApiTests = (RunPesterSuite $PSScriptRoot\Esf.WebApiDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebApiDeployment.tests.txt
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Finished"
 
 	Write-Progress -Activity "Deploy Esf.Website" -Status "Started"
-	$esfWebsiteResult = Start-EsfWebsiteServer
+	$esfWebsiteResult = Start-EsfWebsiteServer "Production"
 	$esfWebsiteResult.Result| Out-File $PSScriptRoot\DeploymentOutput\DeployEsfWebsite.txt
 	ReportResult $esfWebsiteResult.ErrorCode
 	$esfWebsiteTests = (RunPesterSuite $PSScriptRoot\Esf.WebsiteDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebsiteDeployment.tests.txt

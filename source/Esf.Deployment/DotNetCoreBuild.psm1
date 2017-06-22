@@ -27,4 +27,4 @@ function RestoreDotNetSolution($solutionPath) {
 	}
 }
 
-Export-ModuleMember -Function BuildDotNetSolution, RunXunitSuite
+Export-ModuleMember -Function BuildDotNetSolution, RunXunitSuite, RestoreDotNetSolution
