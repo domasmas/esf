@@ -4,7 +4,7 @@ import { Response } from '@angular/http';
 
 import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateService } from './esfState.service';
-import { EsfStateValidationService, EsfStateValidationResult } from './esfStateValidation.service';
+import { EsfStateValidationService } from './esfStateValidation.service';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { EsfStateDto } from './esfStateDto';
 import { CommandStateType } from '../shared/commands/commandStateType';

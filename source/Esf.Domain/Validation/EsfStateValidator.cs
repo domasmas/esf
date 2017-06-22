@@ -5,7 +5,7 @@ namespace Esf.Domain.Validation
 {
     public class EsfStateValidator : IEsfStateValidator
     {
-        public const int MaxJsonFieldLength = 10;
+        public const int MaxJsonFieldLength = 10000;
 
         public void Validate(string mapping, string query, string[] documents)
         {

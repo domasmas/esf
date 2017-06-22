@@ -5,7 +5,7 @@ import { EsfStateService } from './esfState.service';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { EsfStateDto } from './esfStateDto';
 import { EsfQueryRunnerService, EsfQueryRunnerServiceContract } from '../esfQueryRunner/esfQueryRunner.service';
-import { EsfStateValidationService, EsfStateValidationResult } from './esfStateValidation.service';
+import { EsfStateValidationService } from './esfStateValidation.service';
 import { EsfStateSaveCommand, EsfStateSaveCommandState } from './esfStateSaveCommand';
 import { EsfStateRunQueryCommand, EsfStateRunQueryCommandState } from './esfStateRunQueryCommand';
 import { EsfCommandState } from '../shared/commands/esfCommand';
@@ -89,7 +89,6 @@ export class EsFiddlerComponent implements OnInit {
 
         this.runQueryCommand.getCommandState().subscribe((commandState: EsfStateRunQueryCommandState) => {
             this.queryResult = commandState.result;
-            this.queryError = commandState.status;
             this.runCommandEnabled = commandState.commandState === CommandStateType.Enabled;
             this.runCommandInProgress = commandState.commandState === CommandStateType.InProgress;
             this.refreshStateFlags();
@@ -105,6 +104,8 @@ export class EsFiddlerComponent implements OnInit {
         if (!error) {
             return;
         }
+
+        console.error(error);
 
         let errorType = (<EsfException><any>error).type;
 
