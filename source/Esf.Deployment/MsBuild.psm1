@@ -24,7 +24,7 @@ function InvokeMsBuildOnProject($msBuildProjectPath, $buildLogDirectoryPath) {
 	ReportResult $buildResult
 }
 function InvokeMsBuildOnSolution($msBuildSolutionPath, $buildLogDirectoryPath) {
-	$buildResult = Invoke-MsBuild -Path $msBuildSolutionPath -BuildLogDirectoryPath $buildLogDirectoryPath -Params "/target:Clean;Build /property:Configuration=Debug;Platform=""Any CPU"" " -KeepBuildLogOnSuccessfulBuilds
+	$buildResult = Invoke-MsBuild -Path $msBuildSolutionPath -BuildLogDirectoryPath $buildLogDirectoryPath -Params "/target:Clean;Build /property:Configuration=Release;Platform=""Any CPU"" " -KeepBuildLogOnSuccessfulBuilds
 	ReportResult $buildResult
 }
 
