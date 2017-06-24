@@ -33,7 +33,7 @@ function CreateStartEsfMongoShellShortcut() {
 
 function CreateStartEsfServicesDebugShortcut() {
 	$Command = Resolve-Path "$PSScriptRoot\StartEsfServices-Debug.ps1"
-	$OutputFilePath = GetShortcutFilePath "StartEsfServices"
+	$OutputFilePath = GetShortcutFilePath "StartEsfServices-Debug"
 	CreatePowershellCommandShortcut $command $OutputFilePath
 }
 function CreateStartEsfServicesReleaseShortcut() {
