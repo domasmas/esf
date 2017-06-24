@@ -115,14 +115,16 @@ gulp.task('bundle:vendor', function () {
 	return gulp.src([
         'node_modules/systemjs/dist/system-polyfills.js',
         'node_modules/systemjs/dist/system.js',
-        'systemjs.config.js'
     ])
         .pipe(concat('vendors.js'))
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
 });
 
 gulp.task('bundle:app', ['compile:ts'], function () {
-    var builder = new systemjsBuilder('/', './systemjs.config.js');
+    var builder = new systemjsBuilder('/');
+    var systemjsConfig = require('./systemjs.config.js');
+    systemjsConfig.map.app = 'wwwroot/app/';
+    builder.config(systemjsConfig);
     return builder.buildStatic('app', APP_DESTINATION + '/app.js');
 });
 

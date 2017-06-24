@@ -3,7 +3,14 @@
 #
 function Start-DotNetCore($dotNetCoreProjectPath, $ASPNETCORE_ENVIRONMENT) {
 	$env:ASPNETCORE_ENVIRONMENT= $ASPNETCORE_ENVIRONMENT
-	Start-Process powershell.exe -ArgumentList " -command dotnet run" -WorkingDirectory $dotNetCoreProjectPath 
+	if ($ASPNETCORE_ENVIRONMENT -eq "Development") {
+		$configuration = "Debug"
+	}
+	else {
+		$configuration = "Release"
+	}
+	$dotnetRunCommand = " -command dotnet run -c '$configuration' "
+	Start-Process powershell.exe -ArgumentList $dotnetRunCommand -WorkingDirectory $dotNetCoreProjectPath 
 }
 
 function Start-EsfStateDbServer() {
@@ -20,7 +27,7 @@ function Start-EsfWebApiServer($ASPNETCORE_ENVIRONMENT = "Development") {
 	Start-DotNetCore $PSScriptRoot\..\Esf.WebApi $ASPNETCORE_ENVIRONMENT
 }
 
-function Start-EsfWebsiteServer() {
+function Start-EsfWebsiteServer($ASPNETCORE_ENVIRONMENT = "Development") {
 	Start-DotNetCore $PSScriptRoot\..\Esf.Website $ASPNETCORE_ENVIRONMENT
 }
 
