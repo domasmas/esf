@@ -42,8 +42,9 @@
     <Compile Include="PsModule.psm1" />
     <Compile Include="RunTests.ps1" />
     <Compile Include="SetupDevEnvironment.ps1" />
-    <Compile Include="StartEsfServices.ps1" />
     <Compile Include="DotNetCoreBuild.psm1" />
+    <Compile Include="StartEsfServices-Debug.ps1" />
+    <Compile Include="StartEsfServices-Release.ps1" />
     <Compile Include="StartEsfServices.psm1" />
     <Compile Include="UnitTests\DotNetCoreBuild.tests.ps1" />
   </ItemGroup>

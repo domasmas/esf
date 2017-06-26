@@ -19,10 +19,10 @@ function DeployEsf() {
 	$esfSolutionPath = "$PSScriptRoot\..\Esf.sln"
 	$esfRestoreResult = (RestoreDotNetSolution	$esfSolutionPath)
 	$esfRestoreResult.Result | Out-File $deploymentOutput\Esf-DotNetCoreRestore.txt
-	ReportResult $esfRestoreResult.ErrorCode
+	ReportResult "Esf nuget restore" $esfRestoreResult.ErrorCode
 	$esfBuildResult = (BuildDotNetSolution	$esfSolutionPath)
 	$esfBuildResult.Result |  Out-File $deploymentOutput\Esf-DotNetCoreBuild.txt
-	ReportResult $esfBuildResult.ErrorCode
+	ReportResult "Esf .net core build" $esfBuildResult.ErrorCode
 	Write-Progress -Activity "Esf .Net Core Build" -Status "Finished"
 
 	Import-Module $PSScriptRoot\Esf.Website.GulpBuild.psm1
@@ -35,24 +35,20 @@ function DeployEsf() {
 	& DeployDb *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.output.txt
 	$deployDbTestsResult = RunEsfStateDbDeploymentTests
 	$deployDbTestsResult.Result *>&1 |  Out-File $PSScriptRoot\DeploymentOutput\DeployDB.tests.txt
-	ReportResult "deploy DB tests" $deployDbTestsResult.ErrorCode
+	ReportResult "Deploy DB tests" $deployDbTestsResult.ErrorCode
 	Write-Progress -Activity "Deploy DB" -Status "Finished"
 	
 	Import-Module $PSScriptRoot\PesterSuite.psm1
 	Import-Module $PSScriptRoot\StartEsfServices.psm1
 
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Started"
-	$esfWebApiResult = Start-EsfWebApiServer "Production"
-	$esfWebApiResult.Result| Out-File $PSScriptRoot\DeploymentOutput\DeployEsfWebApi.txt
-	ReportResult $esfWebApiResult.ErrorCode
-	$esfWebApiTests = (RunPesterSuite $PSScriptRoot\Esf.WebApiDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebApiDeployment.tests.txt
+	Start-EsfWebApiServer "Production" 5
+	($esfWebApiTests = RunPesterSuite $PSScriptRoot\Esf.WebApiDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebApiDeployment.tests.txt
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Finished"
 
 	Write-Progress -Activity "Deploy Esf.Website" -Status "Started"
-	$esfWebsiteResult = Start-EsfWebsiteServer "Production"
-	$esfWebsiteResult.Result| Out-File $PSScriptRoot\DeploymentOutput\DeployEsfWebsite.txt
-	ReportResult $esfWebsiteResult.ErrorCode
-	$esfWebsiteTests = (RunPesterSuite $PSScriptRoot\Esf.WebsiteDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebsiteDeployment.tests.txt
+	Start-EsfWebsiteServer "Production" 5
+	($esfWebsiteTests = RunPesterSuite $PSScriptRoot\Esf.WebsiteDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebsiteDeployment.tests.txt
 	Write-Progress -Activity "Deploy Esf.Website" -Status "Finished"
 
 	Import-Module $PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunnerDeployment.psm1

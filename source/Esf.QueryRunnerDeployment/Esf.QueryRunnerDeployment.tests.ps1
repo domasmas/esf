@@ -1,6 +1,6 @@
 Describe "Esf.QueryRunnerDeployment" {
 	Context "Elastic Search Diagnostic checks" {
-		[Microsoft.PowerShell.Commands.HtmlWebResponseObject] $queryRunnerDiagnosticRequest = Invoke-WebRequest -Uri "Http://localhost:9200" -Method Get -TimeoutSec 10
+		[Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject] $queryRunnerDiagnosticRequest = Invoke-WebRequest -Uri "Http://localhost:9200" -Method Get -TimeoutSec 10 -UseBasicParsing
 
 		It "Should Query Runner Elastic Search server be up" {
 			$queryRunnerDiagnosticRequest.StatusCode | Should Be 200
