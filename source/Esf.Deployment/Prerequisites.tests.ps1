@@ -51,7 +51,7 @@
 			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
-		It "Checks Typescript Tools for Visual Studio 2017 is 2.2" {	
+		It "Checks Typescript Tools for Visual Studio is 2.2" {	
 			$isTypescript2_2Installed = Test-Path "${env:ProgramFiles(x86)}\Microsoft SDKs\TypeScript\2.2\tsc.exe"
 			$isTypescript2_2Installed | Should Be $true
 		}
