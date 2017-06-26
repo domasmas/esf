@@ -1,13 +1,28 @@
 {
+  "iisSettings": {
+    "windowsAuthentication": false,
+    "anonymousAuthentication": true,
+    "iisExpress": {
+      "applicationUrl": "http://localhost:55900/",
+      "sslPort": 0
+    }
+  },
   "profiles": {
-			"Esf.WebApi": {
-				"commandName": "Project",
-				"launchBrowser": true,
-				"launchUrl": "http://localhost:40081",
-				"environmentVariables": {
-					"ASPNETCORE_ENVIRONMENT": "Development"
-				},
-				"applicationUrl": "http://localhost:40081/"
-			}
+    "IIS Express": {
+      "commandName": "IISExpress",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    "Esf.WebApi": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "launchUrl": "http://localhost:40081",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "http://localhost:40081/"
+    }
   }
 }
