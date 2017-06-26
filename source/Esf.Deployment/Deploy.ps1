@@ -5,8 +5,13 @@ function EnsureDeploymentOutputExists($deploymentOutput) {
 }
 
 function DeployEsf() {
-	Write-Host -ForegroundColor Cyan "Deployment process of ES Fiddle"
-	
+	Write-Host -ForegroundColor Cyan ***********************************
+	Write-Host -ForegroundColor Cyan * Deployment process of ES Fiddle *
+	Write-Host -ForegroundColor Cyan ***********************************
+	Write-Host
+	Write-Host
+	Write-Host
+
 	$deploymentOutput = "$PSScriptRoot\DeploymentOutput"
 	EnsureDeploymentOutputExists $deploymentOutput
 	
@@ -42,26 +47,28 @@ function DeployEsf() {
 	Import-Module $PSScriptRoot\StartEsfServices.psm1
 
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Started"
-	Start-EsfWebApiServer "Production" 5
+	Start-EsfWebApiServer "Production" 7
 	($esfWebApiTests = RunPesterSuite $PSScriptRoot\Esf.WebApiDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebApiDeployment.tests.txt
+	ReportResult "Esf.WebApi tests" $esfWebApiTests.FailedTestsCount
 	Write-Progress -Activity "Deploy Esf.WebApi" -Status "Finished"
 
 	Write-Progress -Activity "Deploy Esf.Website" -Status "Started"
-	Start-EsfWebsiteServer "Production" 5
+	Start-EsfWebsiteServer "Production" 7
 	($esfWebsiteTests = RunPesterSuite $PSScriptRoot\Esf.WebsiteDeployment.tests.ps1) *>&1 | Out-File $deploymentOutput\Esf.WebsiteDeployment.tests.txt
+	ReportResult "Esf.WebApi tests" $esfWebsiteTests.FailedTestsCount
 	Write-Progress -Activity "Deploy Esf.Website" -Status "Finished"
 
 	Import-Module $PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunnerDeployment.psm1
 	Write-Progress -Activity "Deploy Elastic Search Query Runner" -Status "Started"
 	Start-EsfQueryRunner
-	$startQueryRunnerTests = (RunPesterSuite $PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunnerDeployment.tests.ps1) *>&1 | Out-File $PSScriptRoot\DeploymentOutput\QueryRunner.tests.txt
+	($startQueryRunnerTests = RunPesterSuite $PSScriptRoot\..\Esf.QueryRunnerDeployment\Esf.QueryRunnerDeployment.tests.ps1) *>&1 | Out-File $PSScriptRoot\DeploymentOutput\QueryRunner.tests.txt
 	ReportResult "Query runner deployment tests" $startQueryRunnerTests.FailedTestsCount
 	Write-Progress -Activity "Deploy Elastic Search Query Runner" -Status "Finished"
 
-	Write-Output "Deployment finished. To check if it is successful go to:"
+	Write-Output "Deployment finished. To check error logs go to:"
 	Write-Output $deploymentOutput
 	
-	If ($esfWebsiteTests.ErrorCode -eq 0) { 
+	If ($esfWebsiteTests.FailedTestsCount -eq 0) { 
 		OpenWebsite 
 	}
 }
@@ -76,7 +83,7 @@ function ReportResult($message, $errorCode) {
 }
 
 function OpenWebsite() {
-	$hostServerUrl = $((Get-Content "$PSScriptRoot\..Esf.Website\hostsettings.json") -join "`n" | ConvertFrom-Json)."server.urls"
+	$hostServerUrl = $((Get-Content "$PSScriptRoot\..\Esf.Website\hostsettings.json") -join "`n" | ConvertFrom-Json)."server.urls"
 	start "$hostServerUrl"
 }
 

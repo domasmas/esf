@@ -5,10 +5,10 @@
 
 Describe "esf.Website deployment"  {
 	Context "Self-hosted deployment" {		
-		$esfsiteApiConfig = GetDeploymentConfig("$PSScriptRoot\..\Esf.WebApi\hostsettings.json")
+		$esfWebsiteConfig = GetDeploymentConfig("$PSScriptRoot\..\Esf.Website\hostsettings.json")
 
 		It "should be able to navigate the home page" {
-			$hostServerUrl = $esfsiteApiConfig."server.urls"
+			$hostServerUrl = $esfWebsiteConfig."server.urls"
 
 			$NavigationHeadResponse = Invoke-WebRequest -Uri "$hostServerUrl" -Method Head -UseBasicParsing
 			$NavigationHeadResponse.StatusCode | Should Be 200
