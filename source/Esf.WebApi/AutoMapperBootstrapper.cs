@@ -30,8 +30,7 @@ namespace Esf.WebApi
 		private static void ConfigureMappings(IMapperConfigurationExpression mapperConfig)
 		{
 			//EsfRunResponse
-			mapperConfig.CreateMap<EsfQuerySessionResponse, EsfQueryRunnerResponseDto>();
-			mapperConfig.CreateMap<EsfResponse, EsfRunResponseDto>();
+			mapperConfig.CreateMap<EsfQueryRunResult, EsfRunResponseDto>();
 			mapperConfig.CreateMap<JsonError, JsonErrorDto>();
 			mapperConfig.CreateMap<EsfError, EsfErrorDto>();
 

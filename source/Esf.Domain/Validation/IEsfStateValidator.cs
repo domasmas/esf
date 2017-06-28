@@ -1,9 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Esf.Domain.Validation
+﻿namespace Esf.Domain.Validation
 {
     public interface IEsfStateValidator
     {
-        IEnumerable<InputValidationResponse> GetStateErrors(string mapping, string query, string[] documents);
+        void Validate(string mapping, string query, string[] documents);
     }
 }

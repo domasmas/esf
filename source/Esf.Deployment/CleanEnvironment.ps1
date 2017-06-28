@@ -40,7 +40,19 @@ function GitCleanEsf($esfRootPath) {
 function SiteExists($website) {
     return (get-website | where-object { $_.name -eq $website })
 }
+function CleanIIS() {
+    Import-Module $PSScriptRoot\Permissions.psm1
+    CheckForElevatedPermissions
+    if (SiteExists "esf.WebApi") {
+        Remove-Website "esf.Website"
+        Remove-WebAppPool "esf.Website"
+    }
 
+    if (SiteExists "esf.WebApi") {
+        Remove-Website "esf.WebApi"
+        Remove-WebAppPool "esf.WebApi"
+    }
+}
 function CleanEnvironment($esfStatesDbPath, $esfQueryRunnerDbPath, $esfRootPath, $cleanEnvironmentOutput) {
     Write-Output "Start cleaning ESF deployment"
 
@@ -62,7 +74,9 @@ function CleanEnvironment($esfStatesDbPath, $esfQueryRunnerDbPath, $esfRootPath,
     EnsureLongPathIsRemoved "$esfRootPath\source\Esf.Website\typings" | Out-File $cleanEnvironmentOutput\website_typings_removed.txt
 
     GitCleanEsf $esfRootPath
-	
+	#To make sure pre- ASP .Net Core deployments are cleaned
+    CleanIIS 
+
     Write-Output "Cleaning ESF deployment finished."
 
     Write-Output "To check cleaning logs go to: $CleanEnvironmentOutput"

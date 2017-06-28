@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Esf.Domain.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -29,12 +30,24 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 }
             };
 
-            var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
-            Assert.False(queryResponse.IsSuccess, "expected unsuccessful QueryResponse for query with invalid operator");
-            EsfError queryElasticSearchError = queryResponse.ElasticsearchError;
-            _esfQueryRunner.LogTestRun(queryElasticSearchError);
-            Assert.Equal(400, queryElasticSearchError.HttpStatusCode);
-            Assert.Equal("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", queryElasticSearchError.Error);
+            bool success;
+            string errorMessage = string.Empty;
+
+            try
+            {
+                var queryResult = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.Result;
+                success = true;
+            }
+            catch(AggregateException aggException)
+            {
+                var ex = aggException.InnerException as EsfElasticSearchException;
+                success = false;
+                errorMessage = ex.ErrorMessage;
+            }
+
+            Assert.False(success, "expected unsuccessful QueryResponse for query with invalid operator");
+            _esfQueryRunner.LogTestRun(errorMessage);
+            Assert.Equal("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", errorMessage);
         }
 
         [Fact]
@@ -76,14 +89,24 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 }
             };
 
-            var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
-            Assert.False(queryResponse.IsSuccess, "Expected wrong sort criteria query to fail");
-            EsfError queryElasticsearchError = queryResponse.ElasticsearchError;
+            bool success;
+            string errorMessage = String.Empty;
 
-            _esfQueryRunner.LogTestRun(queryElasticsearchError);
+            try
+            {
+                var queryResponse = _esfQueryRunner.RunQuery(mapping, documents, query).SessionResponse.QueryResponse;
+                success = true;
+            }
+            catch (AggregateException aggException)
+            {
+                var ex = aggException.InnerException as EsfElasticSearchException;
+                success = false;
+                errorMessage = ex.ErrorMessage;
+            }
 
-            Assert.Equal(400, queryElasticsearchError.HttpStatusCode);
-            Assert.True(queryElasticsearchError.Error.Contains("Type: search_phase_execution_exception"));
+            Assert.False(success, "Expected wrong sort criteria query to fail");
+            _esfQueryRunner.LogTestRun(errorMessage);
+            Assert.Contains("Type: search_phase_execution_exception", errorMessage);
         }
     }
 }

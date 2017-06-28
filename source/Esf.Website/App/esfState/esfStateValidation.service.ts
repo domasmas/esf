@@ -1,78 +1,64 @@
 ﻿import { Injectable } from '@angular/core';
 import { EsfStateViewModel } from './esfStateViewModel';
+import { EsfInvalidStateException } from '../shared/exceptions/esfInvalidStateException';
 
 @Injectable()
 export class EsfStateValidationService {
 
     static maxJSONLength: number = 10000;
 
-    getValidationMessage(state: EsfStateViewModel): string {
-        let validationResult = this.validateEsfState(state)
-            .filter((response: EsfStateValidationResult) => response.isError)
-            .map((response: EsfStateValidationResult) => response.errorMessage)
-            .join("\n");
+    validateEsfState(esfState: EsfStateViewModel): void {
+        let mappingErrors = this.validateMapping(esfState.mapping);
+        let documentErrors = this.validateDocuments(esfState.documents);
+        let queryErrors = this.validateQuery(esfState.query);
 
-        return validationResult;
+        if ([mappingErrors, documentErrors, queryErrors].some(x => x.some(y => !!y))) {
+            let exception = {
+                type: EsfInvalidStateException.name,
+                mapping: mappingErrors,
+                query: queryErrors,
+                documents: documentErrors
+            };
+            throw exception;
+        }
     }
 
-    validateEsfState(esfState: EsfStateViewModel): EsfStateValidationResult[] {
-        return [
-            this.validateMapping(esfState.mapping),
-            this.validateDocuments(esfState.documents),
-            this.validateQuery(esfState.query)
-        ].filter(r => r.isError);
-    }
-
-    private validateMapping(mapping: string): EsfStateValidationResult {
+    private validateMapping(mapping: string): string[] {
         return this.validateCommonProperties('Mapping', mapping);
     }
 
-    private validateQuery(query: string): EsfStateValidationResult {
+    private validateQuery(query: string): string[] {
         return this.validateCommonProperties('Query', query);
     }
 
-    private validateDocuments(documents: string): EsfStateValidationResult {
+    private validateDocuments(documents: string): string[] {
+        let errors: string[] = [];
+
         let result = this.validateCommonProperties('Documents', documents);
-        if (result.isError) {
-            return result;
-        }
+        errors.push(...result);
 
         if (!this.isJSONArray(documents)) {
-            return {
-                isError: true,
-                errorMessage: `Documents field must be an array, but was ${documents}`
-            };
+            errors.push(`Documents field must be an array, but was ${documents}`);
         }
 
-        return {
-            isError: false,
-            errorMessage: null
-        };
+        return errors;
     }
 
-    private validateCommonProperties(fieldName: string, fieldValue: string): EsfStateValidationResult {
+    private validateCommonProperties(fieldName: string, fieldValue: string): string[] {
+        var errors: string[] = [];
+
         if (!this.isWithinLenghtLimit(fieldValue, EsfStateValidationService.maxJSONLength)) {
-            return {
-                isError: true,
-                errorMessage: `${fieldName} length cannot be longer than ${EsfStateValidationService.maxJSONLength} characters`
-            };
+            errors.push( `${fieldName} length cannot be longer than ${EsfStateValidationService.maxJSONLength} characters`);
         }
 
         if (!this.isJSON(fieldValue)) {
-            return {
-                isError: true,
-                errorMessage: `${fieldName} has to be a valid JSON document ${fieldValue}`
-            };
+            errors.push(`${fieldName} has to be a valid JSON document ${fieldValue}`);
         }
 
-        return {
-            isError: false,
-            errorMessage: null
-        };
+        return errors;
     }
 
     private isJSON(document: string): boolean {
-
         try {
             JSON.parse(document);
         } catch (e) {
@@ -84,15 +70,16 @@ export class EsfStateValidationService {
     }
 
     private isJSONArray(document: string): boolean {
-        return JSON.parse(document) instanceof Array;
+        try {
+            return JSON.parse(document) instanceof Array;
+        }
+        catch (e) {
+            console.log('JSON parse error: ', e);
+            return false;
+        }
     }
 
     private isWithinLenghtLimit(document: string, maxLength: number): boolean {
         return document === undefined || document === null || document.length <= maxLength;
     }
-}
-
-export class EsfStateValidationResult {
-    isError: boolean;
-    errorMessage: string;
 }

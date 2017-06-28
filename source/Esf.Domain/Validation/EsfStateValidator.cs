@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Esf.Domain.Exceptions;
 using System.Linq;
 
 namespace Esf.Domain.Validation
@@ -8,36 +7,41 @@ namespace Esf.Domain.Validation
     {
         public const int MaxJsonFieldLength = 10000;
 
-        public IEnumerable<InputValidationResponse> GetStateErrors(string mapping, string query, string[] documents)
-        {
-            return GetValidationResponses(mapping, query, documents)
-                .Where(r => !r.IsValid);
-        }
-
-        private IEnumerable<InputValidationResponse> GetValidationResponses(string mapping, string query, string[] documents)
+        public void Validate(string mapping, string query, string[] documents)
         {
             var jsonFieldValidationRule = new JsonValidationRule();
             var lenghtValidationRule = new LengthValidationRule(MaxJsonFieldLength);
 
-            yield return lenghtValidationRule.Validate("mapping", mapping);
-            yield return lenghtValidationRule.Validate("query", mapping);
-
-            int index = 0;
-            foreach (var document in documents)
+            var mappingErrors = new[] 
             {
-                yield return lenghtValidationRule.Validate($"document[{index++}]", document);
-            }
-            
-            yield return jsonFieldValidationRule.Validate("mapping", Truncate(mapping));
-            yield return jsonFieldValidationRule.Validate("query", Truncate(query));
+                lenghtValidationRule.Validate("mapping", mapping),
+                jsonFieldValidationRule.Validate("mapping", mapping)
+            };
 
-            index = 0;
-            foreach (var document in documents)
+            var queryErrors = new[]
             {
-                yield return jsonFieldValidationRule.Validate($"document[{index++}]", document);
+                lenghtValidationRule.Validate("query", mapping),
+                jsonFieldValidationRule.Validate("query", query)
+            };
+
+            var documentErrors = documents.SelectMany((document, ind) =>
+            {
+                return new[]
+                {
+                    lenghtValidationRule.Validate($"document[{ind}]", document),
+                    jsonFieldValidationRule.Validate($"document[{ind}]", document)
+                };
+            });
+
+            if (mappingErrors.Union(queryErrors).Union(documentErrors).Any(input => !input.IsValid))
+            {
+                throw new EsfInvalidStateException
+                {
+                    Mapping = mappingErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray(),
+                    Documents = documentErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray(),
+                    Query = queryErrors.Where(e => !e.IsValid).Select(x => x.ErrorMessage).ToArray()
+                };
             }
         }
-
-        private static string Truncate(string input) => input?.Substring(0, Math.Min(input.Length, MaxJsonFieldLength));
     }
 }

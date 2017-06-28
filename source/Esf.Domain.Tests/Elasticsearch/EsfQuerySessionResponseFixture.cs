@@ -3,37 +3,33 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Esf.Domain.Tests.Elasticsearch
 {
     public class EsfQuerySessionResponseFixture
     {
-        public EsfQuerySessionResponseFixture(EsfQuerySessionResponse sessionResponse)
+        public EsfQuerySessionResponseFixture(EsfQueryRunResult sessionResponse)
         {
             SessionResponse = sessionResponse;
         }
 
-        public EsfQuerySessionResponse SessionResponse { get; private set; }
+        public EsfQueryRunResult SessionResponse { get; private set; }
 
         public SuccessfulQuery GetSuccessfulQuery()
         {
-            return new SuccessfulQuery(SessionResponse.QueryResponse);
+            return new SuccessfulQuery(SessionResponse.Result);
         }
 
         public class SuccessfulQuery
         {
             private dynamic _queryJsonResult;
 
-            public SuccessfulQuery(EsfResponse queryResponse)
+            public SuccessfulQuery(string queryResponse)
             {
-                if (!queryResponse.IsSuccess)
-                    throw new ArgumentException("queryResponse is not successful!");
-                _queryJsonResult = JSON.Deserialize<dynamic>(queryResponse.SuccessJsonResult);
+                _queryJsonResult = JSON.Deserialize<dynamic>(queryResponse);
                 if (_queryJsonResult.timed_out.Value)
                     throw new ArgumentException("queryResponse timed out!");
-                Json = queryResponse.SuccessJsonResult;
+                Json = queryResponse;
             }
 
             public string Json { get; private set; }

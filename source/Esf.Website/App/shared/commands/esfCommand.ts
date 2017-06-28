@@ -16,4 +16,5 @@ export class EsfCommand<TCommandState extends EsfCommandState> {
 
 export interface EsfCommandState {
     commandState: CommandStateType;
+    error?: Error;
 }
