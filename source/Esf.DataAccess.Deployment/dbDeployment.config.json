@@ -1,5 +1,8 @@
 {
-  "mongoDbServerDirectory": "C:\\Program Files\\MongoDB\\Server\\3.2\\bin\\",
-  "mongoDbServerPort" :  "27017",
-  "esFiddleDbPath": "C:\\Databases\\EsFiddle"
+	"mongoDbServerDirectory": "C:\\Program Files\\MongoDB\\Server\\3.2\\bin\\",
+	"mongoDbServerPort": "27017",
+	"esFiddleDbPath": "C:\\Databases\\EsFiddle",
+	"ConnectionStrings": {
+		"esFiddleDb": "mongodb://localhost:27017/esFiddle"
+	}
 }

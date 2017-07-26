@@ -39,9 +39,9 @@
 			return [bool] (GetMsiInstalledPackage $msiDisplayName $majorVersion $minorVersion $displayVersion)
 		}
 
-		It "Checks Visual Studio 2015 Update 3" {
-			$msiName = "*Visual Studio 2015 Update 3*"
-			$majorVersion = "14"
+		It "Checks Visual Studio 2017" {
+			$msiName = "*Visual Studio 2017*"
+			$majorVersion = "15"
 			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
@@ -51,11 +51,9 @@
 			(IsMsiPackageInstalled $msiName $majorVersion) | Should Be $true
 		}
 
-		It "Checks Typescript Tools for Visual Studio 2015 is 2.2" {
-			$msiName = "TypeScript*"
-			$majorVersion = "2"
-			$minorVersion = "2"
-			(IsMsiPackageInstalled $msiName $majorVersion $minorVersion) | Should Be $true
+		It "Checks Typescript Tools for Visual Studio is 2.2" {	
+			$isTypescript2_2Installed = Test-Path "${env:ProgramFiles(x86)}\Microsoft SDKs\TypeScript\2.2\tsc.exe"
+			$isTypescript2_2Installed | Should Be $true
 		}
 
 	}

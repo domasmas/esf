@@ -1,12 +1,16 @@
 ﻿using Esf.Domain.Exceptions;
-using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Esf.Domain.Tests.Elasticsearch.Tests
 {
     public class ElasticsearchErrorsInQuery : ElasticsearchTestsBase
     {
-        [Test]
+        [Fact]
         public void ErrorInQuery()
         {
             var mapping = new { };
@@ -41,12 +45,12 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 errorMessage = ex.ErrorMessage;
             }
 
-            Assert.IsFalse(success, "expected unsuccessful QueryResponse for query with invalid operator");
+            Assert.False(success, "expected unsuccessful QueryResponse for query with invalid operator");
             _esfQueryRunner.LogTestRun(errorMessage);
-            Assert.AreEqual("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", errorMessage);
+            Assert.Equal("Type: parsing_exception Reason: \"no [query] registered for [match_error]\"", errorMessage);
         }
 
-        [Test]
+        [Fact]
         public void WrongSortCriteria()
         {
             var mapping = new
@@ -100,9 +104,9 @@ namespace Esf.Domain.Tests.Elasticsearch.Tests
                 errorMessage = ex.ErrorMessage;
             }
 
-            Assert.IsFalse(success, "Expected wrong sort criteria query to fail");
+            Assert.False(success, "Expected wrong sort criteria query to fail");
             _esfQueryRunner.LogTestRun(errorMessage);
-            Assert.IsTrue(errorMessage.Contains("Type: search_phase_execution_exception"));
+            Assert.Contains("Type: search_phase_execution_exception", errorMessage);
         }
     }
 }

@@ -1,11 +1,15 @@
 ﻿using Elasticsearch.Net;
 using Esf.Domain.Helpers;
 using Esf.Domain.Validation;
-using NUnit.Framework;
+using Newtonsoft.Json.Linq;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace Esf.Domain.Tests.Elasticsearch
 {
@@ -44,12 +48,13 @@ namespace Esf.Domain.Tests.Elasticsearch
             return new EsfQuerySessionResponseFixture(esfSesionResponse);
         }
 
-        public void LogTestRun(string jsonToLog)
+        public void LogTestRun(string jsonToLog, [CallerMemberName] string testMethodName = "")
         {
-            string outputPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ElasticserachTests");
+            string outputPath = Path.Combine(Path.GetDirectoryName(Directory.GetCurrentDirectory()), "ElasticserachTests");
             if (!Directory.Exists(outputPath))
                 Directory.CreateDirectory(outputPath);
-            outputPath = string.Format("{0}\\{1}.json", outputPath, TestContext.CurrentContext.Test.Name);
+            
+            outputPath = string.Format("{0}\\{1}.json", outputPath, testMethodName);
             Console.WriteLine(outputPath);
             File.WriteAllText(outputPath, jsonToLog);
         }

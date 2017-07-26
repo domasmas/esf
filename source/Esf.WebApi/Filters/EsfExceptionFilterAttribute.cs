@@ -1,6 +1,6 @@
 ﻿using Esf.Domain.Exceptions;
-using System.Net.Http;
-using System.Web.Http.Filters;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Esf.WebApi.Filters
 {
@@ -13,12 +13,14 @@ namespace Esf.WebApi.Filters
             _serializer = serializer;
         }
 
-        public override void OnException(HttpActionExecutedContext context)
+        public override void OnException(ExceptionContext context)
         {
-            context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
+            if (context.Exception is EsfException)
             {
-                Content = new StringContent(_serializer.Serialize(context.Exception))
-            };
+                var result = new JsonResult(_serializer.Serialize(context.Exception));
+                result.StatusCode = (int) System.Net.HttpStatusCode.BadRequest;
+                context.Result = result;
+            }
 
             base.OnException(context);
         }

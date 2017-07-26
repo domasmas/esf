@@ -27,7 +27,7 @@ var protractor = require('gulp-protractor').protractor;
 
 gulp.task('clean:app',
     function() {
-    	return gulp.src([APP_DESTINATION, END_TO_END_TESTS_DESTINATION], { read: false })
+        return gulp.src([APP_DESTINATION, END_TO_END_TESTS_DESTINATION], { read: false })
             .pipe(clean({ force: true }));
     });
 
@@ -97,18 +97,34 @@ gulp.task('copy:vendor', function () {
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
 });
 
+gulp.task('copy:systemjs', function () {
+    return gulp.src([
+        'node_modules/systemjs/dist/system-polyfills.js',
+        'node_modules/systemjs/dist/system.js'
+    ])
+        .pipe(gulp.dest(WWW_ROOT));
+});
+
+gulp.task('copy:htmlTemplates', function () {
+    return gulp.src([
+        'app/**/*.html'
+    ]).pipe(gulp.dest(APP_DESTINATION));
+});
+
 gulp.task('bundle:vendor', function () {
 	return gulp.src([
         'node_modules/systemjs/dist/system-polyfills.js',
         'node_modules/systemjs/dist/system.js',
-        'systemjs.config.js'
     ])
         .pipe(concat('vendors.js'))
         .pipe(gulp.dest(LIBRARIES_DESTINATION));
 });
 
 gulp.task('bundle:app', ['compile:ts'], function () {
-    var builder = new systemjsBuilder('/', './systemjs.config.js');
+    var builder = new systemjsBuilder('/');
+    var systemjsConfig = require('./systemjs.config.js');
+    systemjsConfig.map.app = 'wwwroot/app/';
+    builder.config(systemjsConfig);
     return builder.buildStatic('app', APP_DESTINATION + '/app.js');
 });
 
@@ -139,9 +155,10 @@ gulp.task('bundle:minify', function () {
 
 gulp.task('build:dev', function(callback) {
     runSequence(
-            ['clean:app', 'clean:content'],
-            ['compile:ts', 'compile:less'],
-            callback
+        ['clean'],
+        ['copy:systemjs', 'copy:htmlTemplates'],
+        ['compile:ts', 'compile:less'],
+        callback
         );
 });
 
@@ -186,7 +203,7 @@ gulp.task('watch:ts',
         gulp.watch(['./App/**/*.ts', './App/*.ts', './endToEndTests/**/*.ts'], ['compile:ts']);
     });
 
-gulp.task('watch', ['watch:less', 'watch:ts']);
+gulp.task('watch', ['watch:less', 'watch:ts', 'copy:htmlTemplates']);
 
 
 

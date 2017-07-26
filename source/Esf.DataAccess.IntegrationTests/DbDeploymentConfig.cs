@@ -1,13 +1,15 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.IO;
 using System.Reflection;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.IntegrationTests
 {
     public class DbDeploymentConfig
     {
         public string mongoDbServerDirectory { get; set; }
         public string esFiddleDbPath { get; set; }
+        public EsfConnectionStrings ConnectionStrings { get; set; }
 
         public static DbDeploymentConfig Load()
         {
@@ -19,10 +21,15 @@ namespace Esf.DataAccess.Tests
         }
 
         public static string GetDeploymentScriptPath(string fileName)
-        {
-            string projectDirectory = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string result = Path.Combine(projectDirectory, "DeploymentScripts", fileName);
+        {            
+            string projectOutputDirectory = Path.GetDirectoryName(typeof(DbDeploymentConfig).GetTypeInfo().Assembly.Location);
+            string result = Path.Combine(projectOutputDirectory, "DeploymentScripts", fileName);
             return result;
         }
+    }
+
+    public class EsfConnectionStrings
+    {
+        public string esFiddleDb { get; set; }
     }
 }
