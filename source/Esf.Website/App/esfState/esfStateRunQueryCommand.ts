@@ -53,7 +53,7 @@ export class EsfStateRunQueryCommand extends EsfCommand<EsfStateRunQueryCommandS
                 this.commandStateStream.next({
                     commandState: CommandStateType.Enabled,
                     result: '',
-                    error: ((error instanceof Response) ? (<Response>error).json() : error)
+                    error: ((error instanceof Response) ? (<Response>error).json() : JSON.parse(error.message))
                 });
             });
     }

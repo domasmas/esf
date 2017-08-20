@@ -1,4 +1,4 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateService } from './esfState.service';
@@ -14,15 +14,16 @@ import { Response } from '@angular/http';
 import { EsfException } from '../shared/exceptions/esfException';
 import { EsfInvalidStateException } from '../shared/exceptions/esfInvalidStateException';
 import { EsfElasticSearchException } from '../shared/exceptions/esfElasticSearchException';
-
+ 
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
+    styleUrls: ['/App/esfState/esfState.styles.css'],
     providers: [
         EsfStateService,
         { provide: EsfQueryRunnerServiceContract, useClass: EsfQueryRunnerService },
         EsfStateValidationService,
         EsfStateSaveCommand,
-        EsfStateRunQueryCommand
+        EsfStateRunQueryCommand   
     ]
 })
 export class EsFiddlerComponent implements OnInit {
@@ -43,6 +44,8 @@ export class EsFiddlerComponent implements OnInit {
     private mappingInputErrors: string[];
     private documentsInputErrors: string[];
 
+    private onSplitViewResized: EventEmitter<any>;
+
     constructor(
         private route: ActivatedRoute,
         private esfStateService: EsfStateService,
@@ -58,6 +61,8 @@ export class EsFiddlerComponent implements OnInit {
         this.saveCommandEnabled = true;
         this.editorsEnabled = true;
         this.refreshStateFlags();
+
+        this.onSplitViewResized = new EventEmitter<any>();
         
         this.setupCommands();
     }
@@ -82,6 +87,7 @@ export class EsFiddlerComponent implements OnInit {
 			this.state = commandState.savedState;
 			this.saveCommandInProgress = commandState.commandState == CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.clearErrors();
             this.handleError(commandState.error);
         });
 
@@ -92,6 +98,7 @@ export class EsFiddlerComponent implements OnInit {
             this.runCommandEnabled = commandState.commandState === CommandStateType.Enabled;
             this.runCommandInProgress = commandState.commandState === CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.clearErrors();
             this.handleError(commandState.error);
         });
     }
@@ -100,12 +107,16 @@ export class EsFiddlerComponent implements OnInit {
         this.editorsEnabled = !this.runCommandInProgress && !this.saveCommandInProgress;
     }
 
+    private clearErrors(): void {
+        this.mappingInputErrors = undefined;
+        this.queryInputErrors = undefined;
+        this.documentsInputErrors = undefined;
+    }
+
     private handleError(error: Error): void {
         if (!error) {
             return;
         }
-
-        console.error(error);
 
         let errorType = (<EsfException><any>error).type;
 
@@ -141,6 +152,7 @@ export class EsFiddlerComponent implements OnInit {
         this.mappingInputErrors = [];
         this.queryInputErrors = [];
         this.documentsInputErrors = [];
+        this.queryError = undefined;
     }
 
 	private getInitialState(): void {
@@ -176,5 +188,9 @@ export class EsFiddlerComponent implements OnInit {
     private runClicked(): void {
         this.resetErrorState();
         this.runQueryCommand.run(this.state);
+    }
+
+    private splitViewResized(): void {
+        this.onSplitViewResized.emit();
     }
 }

@@ -13,6 +13,8 @@ using Esf.DataAccess;
 using Esf.Domain.Validation;
 using AutoMapper;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using Esf.WebApi.Filters;
+using Esf.Domain.Exceptions;
 
 namespace Esf.WebApi.NetCore
 {
@@ -36,7 +38,10 @@ namespace Esf.WebApi.NetCore
             ConfigureDI(services, Configuration);
 
             // Add framework services.
-            services.AddMvc();
+            services.AddMvc(config =>
+            {
+                config.Filters.Add(new EsfExceptionFilterAttribute(new EsfExceptionSerializer()));
+            });
             services.AddCors();
         }
 

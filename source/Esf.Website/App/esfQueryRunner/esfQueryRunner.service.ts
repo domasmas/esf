@@ -33,7 +33,10 @@ export class EsfQueryRunnerService extends EsfQueryRunnerServiceContract {
         return this.http.post(endpointUrl, body, options).map((response: Response) => {
             return response.json();
         }, (error: Error) => {
+            console.log(error);
             return error;
+        }).catch(error => {
+            return Observable.throw(new Error(error.json()));
         });
     }
 }

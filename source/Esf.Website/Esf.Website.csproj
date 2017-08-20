@@ -15,6 +15,9 @@
 		<PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="1.1.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="1.1.2" />
+    <Content Include="App\shared\layout\horizontalSplitView\horizontalSplitView.component.html" />
+    <Content Include="App\shared\layout\verticalSplitView\verticalSplitView.component.html" />
+    <Content Include="App\shared\layout\horizontalSplitView\horizontalSplitView.styles.component.less" />
 	</ItemGroup>
 	<ItemGroup>
 		<DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1" />
@@ -24,6 +27,8 @@
     <None Include="package.json" />
   </ItemGroup>
   <ItemGroup>
+    <TypeScriptCompile Include="App\shared\layout\horizontalSplitView\horizontalSplitView.component.ts" />
+    <TypeScriptCompile Include="App\shared\layout\verticalSplitView\verticalSplitView.component.ts" />
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>

@@ -54,7 +54,7 @@ export class EsfStateSaveCommand extends EsfCommand<EsfStateSaveCommandState> {
                 this.commandStateStream.next({
                     commandState: CommandStateType.Disabled,
                     savedState: state,
-                    error: ((error instanceof Response) ? (<Response>error).json() : error)
+                    error: ((error instanceof Response) ? (<Response>error).json() : JSON.parse(error.message))
                 });
             });
     }
