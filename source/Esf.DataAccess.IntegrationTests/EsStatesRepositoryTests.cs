@@ -1,76 +1,46 @@
 ﻿using MongoDB.Driver.Core.Clusters;
-using NUnit.Framework;
 using System;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Xunit;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.IntegrationTests
 {
-    [TestFixture]
-    public class EsStatesRepositoryTests
+    public class EsStatesRepositoryTests: IClassFixture<EsStatesRepositoryFixture>
     {
-        private string mongoDbServerDirectory;
-        private IEsDatabaseClient _database;
+        private EsStatesRepositoryFixture _esStatesRepositoryFixture;
 
-        [OneTimeSetUp]
-        public void Init()
+        public EsStatesRepositoryTests(EsStatesRepositoryFixture esStatesRepositoryFixture)
         {
-            var dbDeploymentConfig = DbDeploymentConfig.Load();
-            mongoDbServerDirectory = dbDeploymentConfig.mongoDbServerDirectory;
-            string dbDeploymentPath = Path.Combine(dbDeploymentConfig.esFiddleDbPath, "IntegrationTests");
-            SetupDbPathAndLogFile(dbDeploymentPath); 
-            var arguments = string.Format(@"-dbpath ""{0}\\DB"" -logpath ""{1}\\Log.log""", dbDeploymentPath, dbDeploymentPath);
-            var startInfo = new ProcessStartInfo(mongoDbServerDirectory + "mongod.exe", arguments);
-            Process.Start(startInfo);
+            _esStatesRepositoryFixture = esStatesRepositoryFixture;
         }
 
-        [SetUp]
-        public void Setup()
-        {
-            string esFiddleConnectionString = ConfigurationManager.ConnectionStrings["EsFiddleDb"].ConnectionString;
-            _database = new EsDatabaseClient(esFiddleConnectionString);
-        }
-
-        private void SetupDbPathAndLogFile(string dbDeploymentPath)
-        {
-            if (Directory.Exists(dbDeploymentPath))
-                Directory.Delete(dbDeploymentPath, true);
-            Directory.CreateDirectory(dbDeploymentPath);
-            Directory.CreateDirectory(dbDeploymentPath + "\\DB");
-        }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            string stopDbServerPath = DbDeploymentConfig.GetDeploymentScriptPath("StopDbServer.js");
-            Process.Start(mongoDbServerDirectory + "mongo.exe", stopDbServerPath);
-        }
-        
-        [Test]
+        [Fact]
         public void TestDatabaseIsUp()
         {
             TimeSpan timeoutSpan = new TimeSpan(0, 0, 0, 0, 5000);
             DateTime timeout = DateTime.Now.Add(timeoutSpan);
+            var database = new EsDatabaseClient(_esStatesRepositoryFixture.esFiddleConnectionString);
             do
             {
-                if (_database.Database.Client.Cluster.Description.State == ClusterState.Connected)
+                if (database.Database.Client.Cluster.Description.State == ClusterState.Connected)
                 {
-                    Assert.AreEqual(_database.Database.DatabaseNamespace.DatabaseName, "esFiddle");
-                    Assert.Pass();
+                    Assert.Equal("esFiddle", database.Database.DatabaseNamespace.DatabaseName);
+                    return;
                 }
                 Thread.Sleep(100);
             }
             while (DateTime.Now < timeout);
-            Assert.Fail(); 
+            Assert.True(false, "Database could not be brought tup in timely manner"); 
         }
         
-        [Test]
+        [Fact]
         public async Task TestEsStatesCollectionInsertReadDelete()
         {
-            var esStatesRepository = new EsStatesRepository(_database);
+            var database = new EsDatabaseClient(_esStatesRepositoryFixture.esFiddleConnectionString);
+            var esStatesRepository = new EsStatesRepository(database);
             Func<int> getEsStatesRepositoryCount = () => (esStatesRepository.FindEsStates((esState) => true)).Result.Count; 
             int initialEsStatesCount = getEsStatesRepositoryCount();
             var testData1 = new EsStateBuilder().SetQuery("query1").SetMapping("mapping").SetStateUrl(Guid.NewGuid())
@@ -79,22 +49,22 @@ namespace Esf.DataAccess.Tests
             var insertedState = await esStatesRepository.InsertEsState(testData1);
 
             var readState = await esStatesRepository.GetEsState(insertedState.Id);
-            Assert.AreEqual(insertedState.Id, readState.Id);
-            Assert.AreEqual(insertedState.Query, readState.Query);
-            Assert.AreEqual(insertedState.Mapping, readState.Mapping);
-            Assert.AreEqual(insertedState.StateUrl, readState.StateUrl);
+            Assert.Equal(readState.Id, insertedState.Id);
+            Assert.Equal(readState.Query, insertedState.Query);
+            Assert.Equal(readState.Mapping, insertedState.Mapping);
+            Assert.Equal(readState.StateUrl, insertedState.StateUrl);
             
             Action<string[], string[]> verifyInsertedEqualsRead = (string[] insertedDoc, string[] readDoc) =>
             {
-                Assert.AreEqual(insertedDoc, readDoc);
+                Assert.Equal(readDoc, insertedDoc);
             };
             verifyInsertedEqualsRead(insertedState.Documents, readState.Documents);
 
             bool isAcknowledgedDeletion = await esStatesRepository.DeleteEsState(readState.Id);
-            Assert.IsTrue(isAcknowledgedDeletion);
+            Assert.True(isAcknowledgedDeletion);
 
             int finalEsStatesCount = getEsStatesRepositoryCount();
-            Assert.AreEqual(initialEsStatesCount, finalEsStatesCount);
+            Assert.Equal(finalEsStatesCount, initialEsStatesCount);
         }
     }
 }

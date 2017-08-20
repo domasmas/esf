@@ -1,16 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
 using Esf.DataAccess;
 using AutoMapper;
 using Esf.Domain.Validation;
-using System.Linq;
-using Esf.WebApi.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Esf.WebApi.Areas.EsfState
 {
-    [RoutePrefix("states")]
-    public class EsfStateController : ApiController
+    [Route("states")]
+    public class EsfStateController : Controller
     {
         protected readonly IEsStatesRepository _esStatesRepository;
 		protected readonly IMapper _mapper;
@@ -24,7 +22,6 @@ namespace Esf.WebApi.Areas.EsfState
         }
         
         [HttpGet]
-        [Route("")]
         public async Task<EsfStateResponseDto> Get(string stateUrl)
         {
             Guid parsedStateUrl = Guid.Parse(stateUrl);
@@ -38,17 +35,9 @@ namespace Esf.WebApi.Areas.EsfState
         }
         
         [HttpPost]
-        [Route("")]
         public async Task<EsfStateResponseDto> Post([FromBody]EsfStateDto state)
         {
-            var inputErrors = _validator.GetStateErrors(state.Mapping, state.Query, state.Documents);
-            if (inputErrors != null && inputErrors.Any())
-            {
-                throw new EsfValidationException
-                {
-                    ErrorMessage = String.Join(Environment.NewLine, inputErrors.Select(x => x.ErrorMessage))
-                };
-            }
+            _validator.Validate(state.Mapping, state.Query, state.Documents);
 
             var newEsState = _mapper.Map<EsfStateDto, EsState>(state);
             var insertResponse = await _esStatesRepository.InsertEsState(newEsState);

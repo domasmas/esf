@@ -1,9 +1,10 @@
 ﻿import { TestBed, inject } from '@angular/core/testing';
 import { Headers } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, IEsfRunQueryResponse } from './esfQueryRunner.service';
-import { MockHttpFixture, RequestResponsePair } from '../shared/unitTests/mockHttpFixture';
 import { ResponseOptionsArgs } from '@angular/http';
+import { Observable } from 'rxjs/Rx';
+
+import { EsfQueryRunnerServiceContract, EsfQueryRunnerService, EsfQueryRunResult } from './esfQueryRunner.service';
+import { MockHttpFixture, RequestResponsePair } from '../shared/unitTests/mockHttpFixture';
 import '../testsFramework/jasmineExtraMatchers';
 
 class EsfQueryRunnerServiceFixture {
@@ -27,7 +28,7 @@ class EsfQueryRunnerServiceFixture {
         return this.mockHttp.configureResponses(requestResponsePair);
     }
 
-    runSearchQuery(mapping: Object, documents: Object[], query: Object): Observable<IEsfRunQueryResponse> {
+    runSearchQuery(mapping: Object, documents: Object[], query: Object): Observable<EsfQueryRunResult> {
         return this.queryRunnerService.runQuery(JSON.stringify(mapping), documents.map(doc => JSON.stringify(doc)), JSON.stringify(query));
     }
 }
@@ -80,7 +81,7 @@ describe('esfQueryRunner.service', function () {
             response: { status: 200, body: expectedResult }
         });
 
-        serviceFixture.runSearchQuery(mapping, documents, query).subscribe((actualQueryResult: IEsfRunQueryResponse) => {
+        serviceFixture.runSearchQuery(mapping, documents, query).subscribe((actualQueryResult: EsfQueryRunResult) => {
             expect(actualQueryResult).toEqual(expectedResult);
         });
     });

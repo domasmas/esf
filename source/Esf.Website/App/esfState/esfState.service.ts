@@ -34,7 +34,9 @@ export class EsfStateService {
             return <ExistingEsfStateDto>result.esfState;
         }, (error: Error) => {
             return error;
-        }); 
+        }).catch(error => {
+            return Observable.throw(new Error(error.json()));
+        });
     }
 
     getState(stateUrl: string): Observable<ExistingEsfStateDto> {
@@ -45,6 +47,8 @@ export class EsfStateService {
             return <ExistingEsfStateDto>result.esfState;
         }, (error: Error) => {
             return error;
-        });        
+        }).catch(error => {
+            return Observable.throw(new Error(error.json()));
+        });   
     }
 }

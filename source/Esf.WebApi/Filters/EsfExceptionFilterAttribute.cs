@@ -1,19 +1,25 @@
-﻿using Esf.WebApi.Exceptions;
-using System.Net.Http;
-using System.Web.Http.Filters;
+﻿using Esf.Domain.Exceptions;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace Esf.WebApi.Filters
 {
     public class EsfExceptionFilterAttribute : ExceptionFilterAttribute
     {
-        public override void OnException(HttpActionExecutedContext context)
+        private readonly EsfExceptionSerializer _serializer;
+
+        public EsfExceptionFilterAttribute(EsfExceptionSerializer serializer)
         {
-            if (context.Exception is EsfValidationException)
+            _serializer = serializer;
+        }
+
+        public override void OnException(ExceptionContext context)
+        {
+            if (context.Exception is EsfException)
             {
-                context.Response = new HttpResponseMessage(System.Net.HttpStatusCode.BadRequest)
-                {
-                    Content = new StringContent(((EsfValidationException)context.Exception).ErrorMessage)
-                };
+                var result = new JsonResult(_serializer.Serialize(context.Exception));
+                result.StatusCode = (int) System.Net.HttpStatusCode.BadRequest;
+                context.Result = result;
             }
 
             base.OnException(context);

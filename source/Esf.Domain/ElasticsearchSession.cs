@@ -1,8 +1,7 @@
 ﻿using Elasticsearch.Net;
+using Esf.Domain.Exceptions;
 using Esf.Domain.Helpers;
 using Esf.Domain.Validation;
-using System;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,30 +28,18 @@ namespace Esf.Domain
             _validator = validator;
         }
 
-        public async Task<EsfResponse> CreateMapping(string mappingObject)
+        public async Task CreateMapping(string mappingObject)
         {
-            EsfResponse invalidJsonResponse = TestInvalidJson("mapping", mappingObject);
-            if (invalidJsonResponse != null)
-            {
-                return invalidJsonResponse;
-            }
             var response = await _elasticClient.IndexAsync<string>(_indexName, _typeName, mappingObject);
-            return GetEsfResponse(response);
+            ThrowIfError(response);
         }
 
-        public async Task<EsfResponse> InsertDocuments(params string[] documents)
+        public async Task InsertDocuments(params string[] documents)
         {
             StringBuilder bulkBody = new StringBuilder();
 
-            int index = 0;
             foreach (string source in documents)
             {
-                EsfResponse invalidJsonResponse = TestInvalidJson($"document[{index++}]", source);
-                if (invalidJsonResponse != null)
-                {
-                    return invalidJsonResponse;
-                }
-
                 var actionObject = new
                 {
                     create = new
@@ -73,76 +60,32 @@ namespace Esf.Domain
             var response = await _elasticClient.BulkPutAsync<string>(_indexName,
                 _typeName,
                 bulkBody.ToString(),
-                x => x.Refresh(Elasticsearch.Net.Refresh.WaitFor));
+                x => x.Refresh(Refresh.WaitFor));
 
-            return GetEsfResponse(response);
+            ThrowIfError(response);
         }
 
-        public async Task<EsfResponse> RunQuery(string query)
+        public async Task<EsfQueryRunResult> RunQuery(string query)
         {
-            EsfResponse invalidJsonResponse = TestInvalidJson("query", query);
-            if (invalidJsonResponse != null)
-            {
-                return invalidJsonResponse;
-            }
             var response = await _elasticClient.SearchAsync<string>(_indexName, _typeName, query);
-            return GetEsfResponse(response);
-        }
+            ThrowIfError(response);
 
-        private EsfResponse TestInvalidJson(string fieldName, string serializedJson)
-        {
-            var errors = _validator.GetErrors(fieldName, serializedJson);
-
-            if (errors.Any())
+            return new EsfQueryRunResult
             {
-                var combinedErrorMessages = String.Join(Environment.NewLine, errors.Select(x => x.ErrorMessage));
-
-                var jsonValidationError = new JsonError()
-                {
-                    Error = combinedErrorMessages,
-                    SourceJson = serializedJson
-                };
-
-                return new EsfResponse()
-                {
-                    IsSuccess = false,
-                    JsonValidationError = jsonValidationError,
-                    ElasticsearchError = null,
-                    SuccessJsonResult = null
-                };
-            }
-
-            return null;
-        }
-
-        private static EsfResponse GetEsfResponse(ElasticsearchResponse<string> response)
-        {
-            EsfError error = GetEsfResponseError(response);
-            return new EsfResponse()
-            {
-                IsSuccess = response.Success,
-                SuccessJsonResult = response.Body,
-                ElasticsearchError = error
+                Result = response.Body
             };
         }
 
-        private static EsfError GetEsfResponseError(ElasticsearchResponse<string> response)
+        private void ThrowIfError(ElasticsearchResponse<string> response)
         {
-            EsfError error;
-            if (response.ServerError != null)
+            if (!response.Success)
             {
-                error = new EsfError()
-                {
-                    HttpStatusCode = response.ServerError.Status,
-                    Error = response.ServerError.Error.ToString()
+                throw new EsfElasticSearchException
+                { 
+                    StatusCode = response.ServerError.Status,
+                    ErrorMessage = response.ServerError.Error.ToString(),
                 };
             }
-            else
-            {
-                error = null;
-            }
-
-            return error;
         }
 
         public void Cleanup()

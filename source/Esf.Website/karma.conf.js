@@ -25,7 +25,7 @@ module.exports = function (config) {
         // list of files / patterns to load in the browser
         files: [
             //Third party libraries
-            thirdPartyLibs + 'systemjs/dist/system.src.js',
+            dest + 'system.js',
             // Polyfills
             thirdPartyLibs + 'core-js/client/shim.js',
             thirdPartyLibs + 'reflect-metadata/Reflect.js',
@@ -59,7 +59,7 @@ module.exports = function (config) {
             // transpiled application & spec code paths loaded via module imports
             { pattern: appDestBase + '**/*.js', included: false, watched: true },
             // Paths for debugging with source maps in dev tools
-            { pattern: appSrcBase + '**/*.ts', included: false, watched: false },
+            { pattern: appSrcBase + '**/*.ts', included: true, watched: false },
             { pattern: appDestBase + '**/*.js.map', included: false, watched: true },
             // Asset (HTML & CSS) paths loaded via Angular's component compiler
             { pattern: appSrcBase + '**/*.html', included: true, watched: true },

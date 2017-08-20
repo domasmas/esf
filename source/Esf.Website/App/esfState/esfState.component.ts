@@ -1,15 +1,19 @@
-﻿import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit, EventEmitter } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateService } from './esfState.service';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { EsfStateDto } from './esfStateDto';
 import { EsfQueryRunnerService, EsfQueryRunnerServiceContract } from '../esfQueryRunner/esfQueryRunner.service';
-import { EsfStateValidationService, EsfStateValidationResult } from './esfStateValidation.service';
+import { EsfStateValidationService } from './esfStateValidation.service';
 import { EsfStateSaveCommand, EsfStateSaveCommandState } from './esfStateSaveCommand';
 import { EsfStateRunQueryCommand, EsfStateRunQueryCommandState } from './esfStateRunQueryCommand';
 import { EsfCommandState } from '../shared/commands/esfCommand';
 import { CommandStateType } from '../shared/commands/commandStateType';
+import { Response } from '@angular/http';
+import { EsfException } from '../shared/exceptions/esfException';
+import { EsfInvalidStateException } from '../shared/exceptions/esfInvalidStateException';
+import { EsfElasticSearchException } from '../shared/exceptions/esfElasticSearchException';
  
 @Component({
     templateUrl: '/App/esfState/esfState.component.html',
@@ -36,6 +40,12 @@ export class EsFiddlerComponent implements OnInit {
 
     private editorsEnabled: boolean;
 
+    private queryInputErrors: string[];
+    private mappingInputErrors: string[];
+    private documentsInputErrors: string[];
+
+    private onSplitViewResized: EventEmitter<any>;
+
     constructor(
         private route: ActivatedRoute,
         private esfStateService: EsfStateService,
@@ -51,6 +61,8 @@ export class EsFiddlerComponent implements OnInit {
         this.saveCommandEnabled = true;
         this.editorsEnabled = true;
         this.refreshStateFlags();
+
+        this.onSplitViewResized = new EventEmitter<any>();
         
         this.setupCommands();
     }
@@ -63,7 +75,7 @@ export class EsFiddlerComponent implements OnInit {
             } else {
                 this.getStateByUrl(stateUrl);
             }
-        }); 
+        });
     }
 
     private setupCommands() {
@@ -75,21 +87,72 @@ export class EsFiddlerComponent implements OnInit {
 			this.state = commandState.savedState;
 			this.saveCommandInProgress = commandState.commandState == CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.clearErrors();
+            this.handleError(commandState.error);
         });
 
         // Run Query Command
 
         this.runQueryCommand.getCommandState().subscribe((commandState: EsfStateRunQueryCommandState) => {
             this.queryResult = commandState.result;
-            this.queryError = commandState.status;
             this.runCommandEnabled = commandState.commandState === CommandStateType.Enabled;
             this.runCommandInProgress = commandState.commandState === CommandStateType.InProgress;
             this.refreshStateFlags();
+            this.clearErrors();
+            this.handleError(commandState.error);
         });
     }
 
     private refreshStateFlags(): void {
         this.editorsEnabled = !this.runCommandInProgress && !this.saveCommandInProgress;
+    }
+
+    private clearErrors(): void {
+        this.mappingInputErrors = undefined;
+        this.queryInputErrors = undefined;
+        this.documentsInputErrors = undefined;
+    }
+
+    private handleError(error: Error): void {
+        if (!error) {
+            return;
+        }
+
+        let errorType = (<EsfException><any>error).type;
+
+        if (errorType) {
+            switch (errorType) {
+                case EsfInvalidStateException.name:
+                    {
+                        let exception = (<EsfInvalidStateException><any>error);
+                        this.mappingInputErrors = exception.mapping;
+                        this.queryInputErrors = exception.query;
+                        this.documentsInputErrors = exception.documents;
+                    }
+                    break;
+                case EsfElasticSearchException.name:
+                    {
+                        let exception = (<EsfElasticSearchException><any>error);
+                        this.queryError = exception.errorMessage;
+                    }
+                    break;
+                default:
+                    {
+                        let exception = <EsfException><any>error;
+                        this.queryError = exception.errorMessage;
+                    }
+                    break;
+            }
+        } else {
+            this.queryError = error.message;
+        }
+    }
+
+    private resetErrorState(): void { 
+        this.mappingInputErrors = [];
+        this.queryInputErrors = [];
+        this.documentsInputErrors = [];
+        this.queryError = undefined;
     }
 
 	private getInitialState(): void {
@@ -115,5 +178,19 @@ export class EsFiddlerComponent implements OnInit {
             }, (error: Error) => {
                 console.error(error);
             });
+    }
+
+    private saveClicked(): void {
+        this.resetErrorState();
+        this.saveCommand.run(this.state);
+    }
+
+    private runClicked(): void {
+        this.resetErrorState();
+        this.runQueryCommand.run(this.state);
+    }
+
+    private splitViewResized(): void {
+        this.onSplitViewResized.emit();
     }
 }

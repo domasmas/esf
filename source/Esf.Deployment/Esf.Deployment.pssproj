@@ -33,22 +33,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CleanEnvironment.ps1" />
+    <Compile Include="Esf.WebApiDeloyment.tests.ps1" />
+    <Compile Include="Esf.WebsiteDeployment.tests.ps1" />
     <Compile Include="PesterSuite.psm1" />
     <Compile Include="Prerequisites.tests.ps1" />
     <Compile Include="Esf.Website.GulpBuild.psm1" />
-    <Compile Include="MsBuild.psm1" />
     <Compile Include="Deploy.ps1" />
-    <Compile Include="esfWebApi.config.json" />
-    <Compile Include="DeployToIss.tests.ps1" />
-    <Compile Include="DeployToIss.psm1" />
-    <Compile Include="Permissions.psm1" />
     <Compile Include="PsModule.psm1" />
     <Compile Include="RunTests.ps1" />
     <Compile Include="SetupDevEnvironment.ps1" />
-    <Compile Include="StartEsfServices.ps1" />
+    <Compile Include="DotNetCoreBuild.psm1" />
+    <Compile Include="StartEsfServices-Debug.ps1" />
+    <Compile Include="StartEsfServices-Release.ps1" />
+    <Compile Include="StartEsfServices.psm1" />
+    <Compile Include="UnitTests\DotNetCoreBuild.tests.ps1" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="esfWebsite.config.json" />
+    <Folder Include="UnitTests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="Build" />

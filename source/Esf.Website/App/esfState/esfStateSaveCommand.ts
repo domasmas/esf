@@ -1,8 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Response } from '@angular/http';
+
 import { EsfStateViewModel } from './esfStateViewModel';
 import { EsfStateService } from './esfState.service';
-import { EsfStateValidationService, EsfStateValidationResult } from './esfStateValidation.service';
+import { EsfStateValidationService } from './esfStateValidation.service';
 import { ExistingEsfStateDto } from './existingEsfStateDto';
 import { EsfStateDto } from './esfStateDto';
 import { CommandStateType } from '../shared/commands/commandStateType';
@@ -22,11 +24,15 @@ export class EsfStateSaveCommand extends EsfCommand<EsfStateSaveCommandState> {
     }
 
     public run(state: EsfStateViewModel): void {
-        let validationMessage = this.stateValidationService.getValidationMessage(state);
-
-        // TODO: show proper popover, better formatting, better message
-        if (validationMessage) {
-            alert("Cannot save because of errors: " + "\n" + validationMessage);
+        try {
+            this.stateValidationService.validateEsfState(state);
+        }
+        catch (error) {
+            this.commandStateStream.next({
+                commandState: CommandStateType.Disabled,
+                savedState: state,
+                error: error
+            });
             return;
         }
 
@@ -45,10 +51,10 @@ export class EsfStateSaveCommand extends EsfCommand<EsfStateSaveCommandState> {
                 });
                 this.router.navigate(['/state', existingState.stateUrl]);
             }, (error: Error) => {
-                console.error(error);
                 this.commandStateStream.next({
                     commandState: CommandStateType.Disabled,
-                    savedState: state
+                    savedState: state,
+                    error: ((error instanceof Response) ? (<Response>error).json() : JSON.parse(error.message))
                 });
             });
     }

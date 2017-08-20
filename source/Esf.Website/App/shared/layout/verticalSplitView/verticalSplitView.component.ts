@@ -1,9 +1,13 @@
-﻿import { Component, Input, Output } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
+
 @Component({
     selector: 'vertical-split-view',
+    styleUrls: ['/App/shared/layout/verticalSplitView/verticalSplitView.styles.css'],
     templateUrl: '/App/shared/layout/verticalSplitView/verticalSplitView.component.html',
 })
 export class VerticalSplitViewComponent {
+    @Output() onResize: EventEmitter<any> = new EventEmitter();
+
     private view1Width: string;
     private view2Width: string;
 
@@ -38,11 +42,13 @@ export class VerticalSplitViewComponent {
     private startDragging(event: MouseEvent): void {
         this.isDragging = true;
         this.containerNode = event.srcElement.parentNode;
+        document.body.style.cursor = 'ew-resize';
     }
 
     private stopDragging(event: MouseEvent): void {
         this.isDragging = false;
         this.containerNode = null;
+        document.body.style.cursor = 'auto';
     }
 
     private recalculateWidths(event: MouseEvent): void {
@@ -52,5 +58,7 @@ export class VerticalSplitViewComponent {
 
         this.view1Width = `${newWitdth1}%`;
         this.view2Width = `${newWitdth2}%`;
+
+        this.onResize.emit(null);
     }
 }

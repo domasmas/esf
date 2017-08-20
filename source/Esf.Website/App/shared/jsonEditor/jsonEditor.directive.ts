@@ -86,4 +86,12 @@ export class JsonEditorDirective {
             this.editor.clearSelection();
         });
     }
+
+    @Input() set resizeTrigger(event: EventEmitter<any>) {
+        if (event) {
+            event.subscribe(() => {
+                this.editor.resize();                
+            });
+        }
+    }
 }

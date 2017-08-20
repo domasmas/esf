@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Esf.DataAccess.Tests
+namespace Esf.DataAccess.IntegrationTests
 {
     public class EsStateBuilder
     {

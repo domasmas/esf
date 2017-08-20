@@ -3,9 +3,9 @@ function EsfWebsiteGulpBuild() {
 	cd $esfWebsiteProjectPath
 	# Setup npm and gulp
 	npm install
-	npm install --dev
+	npm install --only=dev
 	# Builds JS files and LESS, and copies everything in debug mode to wwwroot folder
-	npm run gulp build
+	npm run gulp build:release
 }
 
 Export-ModuleMember -Function EsfWebsiteGulpBuild

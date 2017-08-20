@@ -1,45 +1,29 @@
-﻿using System.Threading.Tasks;
+﻿using Esf.Domain.Validation;
+using System.Threading.Tasks;
 
 namespace Esf.Domain
 {
     public class EsfQueryRunner : IEsfQueryRunner
     {
-        private IElasticsearchSessionFactory _elasticsearchFactory;
+        protected readonly IElasticsearchSessionFactory _elasticsearchFactory;
+        protected readonly IEsfStateValidator _validator;
 
-        public EsfQueryRunner(IElasticsearchSessionFactory elasticsearchFactory)
+        public EsfQueryRunner(IElasticsearchSessionFactory elasticsearchFactory, IEsfStateValidator validator)
         {
             _elasticsearchFactory = elasticsearchFactory;
+            _validator = validator;
         }
         
-        public async Task<EsfQuerySessionResponse> Run(string mappingObject, string[] documents, string query)
+        public async Task<EsfQueryRunResult> Run(string mappingObject, string[] documents, string query)
         {
+            _validator.Validate(mappingObject, query, documents);
+
             using (var session = _elasticsearchFactory.Create())
             {
-                EsfResponse mappingResponse = await session.CreateMapping(mappingObject);
-                var blankUnuccessfulReponse = new EsfResponse()
-                {
-                    IsSuccess = false
-                };
-                if (!mappingResponse.IsSuccess)
-                    return CreateResponse(mappingResponse, blankUnuccessfulReponse, blankUnuccessfulReponse);
-
-                EsfResponse documentsResponse = await session.InsertDocuments(documents);
-                if (!documentsResponse.IsSuccess)
-                    return CreateResponse(mappingResponse, documentsResponse, blankUnuccessfulReponse);
-
-                EsfResponse queryResponse = await session.RunQuery(query);
-                return CreateResponse(mappingResponse, documentsResponse, queryResponse);
+                await session.CreateMapping(mappingObject);
+                await session.InsertDocuments(documents);
+                return await session.RunQuery(query);
             }
-        }
-
-        private EsfQuerySessionResponse CreateResponse(EsfResponse mappingResponse, EsfResponse documentsResponse, EsfResponse queryResponse)
-        {
-            return new EsfQuerySessionResponse()
-            {
-                CreateMappingResponse = mappingResponse,
-                CreateDocumentsResponse = documentsResponse,
-                QueryResponse = queryResponse
-            };
         }
     }
 }

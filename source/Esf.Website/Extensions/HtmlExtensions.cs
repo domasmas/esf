@@ -1,10 +1,10 @@
-﻿using System.Web.Mvc;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Esf.Website.Extensions
 {
-    public static class HtmlExtensionss
+    public static class HtmlExtensions
     {
-        public static bool IsDebug(this HtmlHelper htmlHelper)
+        public static bool IsDebug(this IHtmlHelper<dynamic> htmlHelper)
         {
 #if DEBUG
             return true;

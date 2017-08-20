@@ -11,7 +11,7 @@ namespace Esf.Domain.Validation
             {
                 JSON.Deserialize<dynamic[]>(input);
             }
-            catch (FormatException exception)
+            catch (Exception exception)
             {
                 return new InputValidationResponse
                 {

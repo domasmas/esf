@@ -1,22 +1,9 @@
-function RunEsfNUnitDeploymentTests($deployDbOutputDir) {
-	$EsfRootDir = Resolve-Path "$PSScriptRoot\.."
-	# Set nunit path test runner
-	$nunit = Resolve-Path "$EsfRootDir\packages\NUnit.ConsoleRunner.3.4.1\tools\nunit3-console.exe"
-	$deploymentTestsOutputDir = Resolve-Path "$EsfRootDir\..\bin\Esf.DataAccess.DeploymentTests"
-	#Find tests in OutDir
-	$tests = (Get-ChildItem $deploymentTestsOutputDir -Recurse -Include *Tests.dll)
-
-	# Run tests
-	$deployDbTestsXml = "deployDb.tests.xml"
-	& $nunit "-work" $deployDbOutputDir "-result" $deployDbTestsXml $tests
-	Return [PSCustomObject]@{
-	  FailedTestsCount = (ReadNUnitFailedTestsCount $deployDbOutputDir\$deployDbTestsXml)
-	}
-}
-
-function ReadNUnitFailedTestsCount($xmlResultFilePath) {
-	$nUnitXmlResult = [xml](Get-Content $xmlResultFilePath)
-	return [int] $nUnitXmlResult."test-run".failed
+function RunEsfStateDbDeploymentTests() {
+	Import-Module (Resolve-Path $PSScriptRoot\..\Esf.Deployment\DotNetCoreBuild.psm1)
+	$testsPath = "$PSScriptRoot\..\Esf.DataAccess.DeploymentTests"
+	RestoreDotNetSolution $testsPath #TODO - provide error logginf for the restore
+	$deploymentTests = (RunXunitSuite $testsPath)
+	Return $deploymentTests
 }
 
 function StartMongoDbServerInSeparateProcess() {
@@ -31,4 +18,4 @@ function DeployDb() {
 	& UpgradeDb
 }
 
-Export-ModuleMember -Function DeployDb, StartMongoDbServerInSeparateProcess, RunEsfNUnitDeploymentTests
+Export-ModuleMember -Function DeployDb, StartMongoDbServerInSeparateProcess, RunEsfStateDbDeploymentTests

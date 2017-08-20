@@ -105,7 +105,7 @@ export class EsfHome {
 	}
 
 	isSaveCommandDisabled(): webDriverPromise.Promise<boolean> {
-		return this.browserInstance.element(by.css('.save-command.disabled')).isPresent();
+		return this.browserInstance.element(by.css('.save-command[disabled]')).isPresent();
 	}
 
 	executeSaveCommand(): webDriverPromise.Promise<{}> {

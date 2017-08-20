@@ -3,7 +3,7 @@
         <ng-content select="view1" fxFlex>
         </ng-content>
     </div>
-    <div fxFlex="3px" style="background-color: gainsboro; cursor: ns-resize;display: block" (mousedown)="onMouseDown($event)">
+    <div fxFlex="3px" class="horizontal-split-view-separator" (mousedown)="onMouseDown($event)">
     </div>
     <div fxLayout="row" [fxFlex]="view2Height">
         <ng-content select="view2" fxFlex>

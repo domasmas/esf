@@ -2,14 +2,14 @@
 using Esf.Domain.Helpers;
 using Esf.Domain.Validation;
 using Newtonsoft.Json.Linq;
-using NUnit.Framework;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Xunit.Abstractions;
 
 namespace Esf.Domain.Tests.Elasticsearch
 {
@@ -26,8 +26,9 @@ namespace Esf.Domain.Tests.Elasticsearch
             var esConfig = new ConnectionConfiguration(esfQueryRunnerUri);
             var esClient = new ElasticLowLevelClient(esConfig);
             var validator = new EsfStateInputValidator();
+            var stateValidator = new EsfStateValidator();
             var elasticsearchFactory = new ElasticsearchSessionFactory(esClient, uniqueNameResolver, idGenerator, validator);
-            _esfQueryRunner = new EsfQueryRunner(elasticsearchFactory);
+            _esfQueryRunner = new EsfQueryRunner(elasticsearchFactory, stateValidator);
         }
 
         public EsfQuerySessionResponseFixture RunQuery(object mapping, object[] documents, object query)
@@ -47,12 +48,13 @@ namespace Esf.Domain.Tests.Elasticsearch
             return new EsfQuerySessionResponseFixture(esfSesionResponse);
         }
 
-        public void LogTestRun(string jsonToLog)
+        public void LogTestRun(string jsonToLog, [CallerMemberName] string testMethodName = "")
         {
-            string outputPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "ElasticserachTests");
+            string outputPath = Path.Combine(Path.GetDirectoryName(Directory.GetCurrentDirectory()), "ElasticserachTests");
             if (!Directory.Exists(outputPath))
                 Directory.CreateDirectory(outputPath);
-            outputPath = string.Format("{0}\\{1}.json", outputPath, TestContext.CurrentContext.Test.Name);
+            
+            outputPath = string.Format("{0}\\{1}.json", outputPath, testMethodName);
             Console.WriteLine(outputPath);
             File.WriteAllText(outputPath, jsonToLog);
         }
